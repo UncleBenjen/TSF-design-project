@@ -39,17 +39,23 @@ class Concept(models.Model):
 	ceab_unit = models.CharField(max_length = 2, choices = ACCREDITATION_TYPES, blank = False)
 	
 	# Relate concepts to to themselves
-	related_concepts = models.ManyToManyField('self')
+	related_concepts = models.ManyToManyField('self',blank = True)
 	
 	def __str__(self):
 		return self.name
 		
 # Course model
 class Course(models.Model):
-	name = models.CharField(max_length = 6, unique = True)
-	credit = models.IntegerField(blank = False)
-	description = models.CharField(max_length = 500, blank = False)
+	course_code = models.CharField(max_length = 12, unique = True)
+	name = models.CharField(max_length = 128, unique = True)
+    
+	lecture_hours = models.FloatField(default=0.0, blank = False)
+	lab_hours = models.FloatField(default=0.0, blank = False)
+	credit = models.FloatField(blank = False)
+    
+	description = models.CharField(max_length = 500, blank = True)
 	website = models.URLField(blank = True)
+    
 	
 	# Define options for class year
 	YEAR_TYPES = (('FI','First'), ('SE', 'Second'), ('TH','Third'), ('FO', 'Fourth'), ('GR', 'Graduate'))
@@ -58,12 +64,14 @@ class Course(models.Model):
 	# Create a recursive relationship with other course 
 	# objects to link a course to its requisite courses
 	# *** REMEMBER TO MAKE THESE MUTUALLY EXCLUSIVE ***
-	pre_requisites = models.ManyToManyField('self')
-	anti_requisites = models.ManyToManyField('self')
-	co_requisites = models.ManyToManyField('self')
+	pre_requisites = models.ManyToManyField('self', blank = True)
+	anti_requisites = models.ManyToManyField('self', blank = True)
+	co_requisites = models.ManyToManyField('self', blank = True)
 	
 	# Department this course belongs to
-	department = models.ForeignKey(Department)
+	# ~~ not sure we need this now that we have program streams
+	# a course like design doesn't "belong" to any specific department...
+	#department = models.ForeignKey(Department)
 
 	def __str__(self):
 		return self.name
@@ -74,8 +82,9 @@ class CourseInstance(models.Model):
 	name = models.CharField(max_length = 6, unique = False)
 	course = models.ForeignKey(Course)
 	professors = models.ManyToManyField(UserInfo, related_name = 'teaches')
-	assistants = models.ManyToManyField(UserInfo, related_name = 'assists')
-	
+	assistants = models.ManyToManyField(UserInfo, related_name = 'assists', blank = True)
+	textbook = models.CharField(max_length = 128, blank = True)
+    
 	# Hold the percent values for accreditation categories
 	acc_math = models.IntegerField(blank = True)
 	acc_science = models.IntegerField(blank = True)
@@ -88,7 +97,7 @@ class CourseInstance(models.Model):
 	semester = models.CharField(max_length = 1, choices = SEMESTER_TYPES, blank = False)
 	
 	# Define concepts covered in this course
-	concepts = models.ManyToManyField(Concept)
+	concepts = models.ManyToManyField(Concept, blank = True)
 	
 	def __str__(self):
 		return self.name	
@@ -120,7 +129,7 @@ class LearningObjective(models.Model):
 # Program Stream model
 class ProgramStream(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
-	description = models.CharField(max_length= 500, blank = False)
+	description = models.CharField(max_length= 500, blank = True)
 	
 	# Department is the parent of a program stream
 	department = models.ForeignKey(Department)
@@ -132,9 +141,10 @@ class ProgramStream(models.Model):
 		return self.name
 
 # CEAB Accreditation Units
+# ~~ Still not sure if we need this... might come in handy ~~
 class CEABUnit(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
-	description = models.CharField(max_length = 128, blank = False)
+	description = models.CharField(max_length = 128, blank = True)
 	
 	def __str__(self):
 		return self.name
