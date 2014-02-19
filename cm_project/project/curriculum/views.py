@@ -4,8 +4,10 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from curriculum.forms import UserForm, UserProfileForm
+from curriculum.models import UserInfo
 
 def index(request):
 	context = RequestContext(request)
@@ -18,8 +20,21 @@ def about(request):
 	context = RequestContext(request)
 	return render_to_response('curriculum/about.html', context)
 
-def register(request):
+@login_required	
+def profile(request):
+	context = RequestContext(request)
+	u = User.objects.get(username = request.user)	
 
+	try:
+		up = UserInfo.objects.get(user=u)
+	except:
+		up = u
+
+	context_dict = {'userprofile' : up}	
+	
+	return render_to_response('curriculum/profile.html',context_dict, context) 
+
+def register(request):
 	context = RequestContext(request)
 	
 	# Boolean to see if registration was successful

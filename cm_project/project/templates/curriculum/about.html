@@ -2,12 +2,44 @@
 
 {% load static %}
 
-{% block title %}About{% endblock %}=
+{% block title %}About{% endblock %}
 
 {% block body_block %}
 	<div class = "hero-unit">
-		<h1>About</h1>
-		<img src = "{% static "tesseract.jpg" %}" alt = "HEY" />
+		<div class = "text-center">
+			<h1>About</h1>
+		</div>
+		<br />
+		<div>
+			<h2>Application features:</h2>
+			<ul>
+				<li>Analyze a curriculum</li>
+				<li>Modify a curriculum</li>
+				<li>View the hierchy of a curriculum</li>
+			<ul>
+		</div>
+		<div>
+			<h2>The hierarchy:</h2>
+			<ul>
+				<li>Departments have program streams</li>
+				<li>Program streams are made of courses</li>
+				<li>Courses are made of concepts</li>
+			<ul>
+		</div>
+		<div>
+			<h2>To get started:</h2>
+			<ul>
+				<li>Click register in the top right</li>
+				<li>Start browsing the curriculum map</li>
+			<ul>
+		</div>
+		<div>
+			<h2>Professors can:</h2>
+			<ul>
+				<li>Create courses</li>
+				<li>Create concepts</li>
+			<ul>
+		</div>
 	</div>
 {% endblock %}
 

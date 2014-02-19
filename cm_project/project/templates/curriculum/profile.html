@@ -1,0 +1,32 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Your Profile{% endblock %}
+
+{% block body_block %}
+	<div class = "hero-unit">
+		<div class = "text-center">
+			<h1>{{ user.username }}</h1>
+			<br />
+			
+			{% if userprofile.picture %}
+				<img src = "{{ userprofile.picture.url }}" style = "max-width:200px;height:auto;border:1px solid;"/>
+				<br />
+			{% endif %}
+			
+			<br />
+		</div>
+		<div>
+			<strong>Email: {{ user.email }}</strong>
+			<br />
+		</div>
+		{% if userprofile %}
+			<div>
+				<strong>Website: <a href = "{{ userprofile.website }}">{{ userprofile.website }}</a></strong>
+				<br />
+				<strong>Type: {{ userprofile.type }}</strong>
+			</div>
+		{% endif %}		
+	</div>
+{% endblock %}

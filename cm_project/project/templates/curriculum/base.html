@@ -25,10 +25,11 @@
 					<a class = "brand" href = "/curriculum">Home</a>
 					
 					<div class = "nav-collapse collapse">
-						<ul class = "nav pull-right">
+						<ul class = "nav nav-pills pull-right">
 							{% if user.is_authenticated %}
-								<li class = "navbar-text">Welcome, {{ user.username }}!</li>
-								<li><a href = "/curriculum/logout/">Logout</a></li>
+								<li class = "navbar-text" style="color:white;padding-right:20px;">Welcome, {{ user.username }}!</li>
+								<li><a href = "/curriculum/profile/">Profile</a></li>
+								<li><a href = "/curriculum/logout/">Logout</a></li>							
 							{% else %}
 								<li><a href = "/curriculum/register/">Register</a></li>
 								<li><a href = "/curriculum/login/">Login</a></li>
@@ -56,16 +57,20 @@
 					</div>
 				</div> -->
 				<div class = "span3">
-					{% block left_block %}
-					{% endblock %}
+					<div class = "hero-unit">
+						{% block left_block %}
+						{% endblock %}
+					</div>
 				</div>
 				<div class = "span6">
 					{% block body_block %}
 					{% endblock %}
 				</div>
 				<div class = "span3">
-					{% block right_block %}
-					{% endblock %}
+					<div class = "hero-unit">
+						{% block right_block %}
+						{% endblock %}
+					</div>
 				</div>
 			</div>
 		</div> 
