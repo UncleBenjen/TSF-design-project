@@ -1,16 +1,17 @@
-<!DOCTYPE html>
+{% extends 'curriculum/base.html' %}
 
 {% load static %}
 
-<html>
-	<head>
-		<title>Curriculum Map</title>
-	</head>
-	
-	<body>
+{% block title %}Home{% endblock %}
+
+{% block body_block %}
 		<h1>Curriculum Map</h1>
 		<strong>{{ boldmessage }}<strong>
 		<a href = "/curriculum/about/">About</a><br/>
 		<img src = "{% static "tesseract.jpg" %}" alt = "HEY" />
-	</body>
-</html>
+		<br />
+		<a href = "/curriculum/register/">Register Here Nigga!</a>
+		<br />
+		<a href = "/curriculum/login/">Login Here Nigga!</a>
+{% endblock %}
+

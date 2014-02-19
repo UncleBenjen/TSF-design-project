@@ -1,0 +1,25 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block body_block %}
+	<h1>Register to get going</h1>
+	<h2>Your information will be stolen and sold to 3rd parties</h2>
+	
+	{% if registered %}
+		<strong>Thanks for joining up!</strong>
+	{% else %}
+		<strong>Register here ma nigga!</strong>
+		<br />
+		
+		<form id = "user_form" method = "post" action = "/curriculum/register/" enctype = "multipart/form-data">
+			{% csrf_token %}
+			{{ user_form.as_p }}
+			{{ profile_form.as_p }}
+	
+			<input type = "submit" name = "submit" value = "Register"/>
+		</form>
+	{% endif %}
+{% endblock %}

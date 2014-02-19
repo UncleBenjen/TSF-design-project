@@ -1,9 +1,10 @@
 from django.contrib import admin
-from curriculum.models import UserInfo, Department, Concept, Course, CourseInstance,Deliverable, LearningObjective, ProgramStream, CEABUnit, CEABGrad
+from curriculum.models import UserInfo
+from curriculum.models import Department, Concept, Course, CourseInstance,Deliverable, LearningObjective, ProgramStream, CEABUnit, CEABGrad
 
 # Defining classes to customize admin interface
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('user','type', 'email')
+    list_display = ('user','type')
 
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'head', 'website')

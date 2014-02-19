@@ -41,6 +41,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'django.contrib.admin',
+	'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -105,6 +106,9 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# For the login_Required decorator
+LOGIN_URL = '/curriculum/login/'
 
 STATICFILES_DIRS = (
 	STATIC_PATH,

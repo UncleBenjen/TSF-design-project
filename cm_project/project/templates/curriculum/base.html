@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+		<!-- This is the links for bootstrap files -->
+		<link href = "{% static 'css/bootstrap-fluid-adj.css' %}" rel = "stylesheet">
+		<link href = "{% static 'css/bootstrap.min.css' %}" rel = "stylesheet">
+		<link href = "{% static 'css/bootstrap-responsive.css' %}" rel = "stylesheet">
+		
+		<title>Curriculum Map - {% block title %}{% endblock %}</title>
+	</head>
+	
+	<body>
+		{% if user.is_authenticated%}
+			<strong>Logged in as {{ user.username }}</strong>
+			<br />
+			<a href = "/curriculum/logout">Logout</a>
+		{% endif %}
+		
+		<!-- Top menubar -->
+		<div class = "navbar navbar-inverse navbar-fixed-top">
+			<div class = "navbar-inner">
+				<div class = "container">
+					<button type = "button" class = "btn btn-navbar" data-toggle = "collapse" data-target = ".nav-collapse">
+						<span class = "icon-bar"></span>
+						<span class = "icon-bar"></span>
+					</button>
+					<a class = "brand" href = "/curriculum">Home</a>
+					
+					<div class = "nav-collapse collapse">
+						<ul class = "nav pull-right">
+							{% if user.is_authenticated %}
+								<li class = "nav-text">Welcome, {{ user.username }}!</li>
+								<li><a href = "/curriculum/logout/">Logout</a></li>
+							{% else %}
+								<li><a href = "/curriculum/register/">Register</a></li>
+								<li><a href = "/curriculum/login/">Logout</a></li>
+							{% endif %}
+						</ul>
+						<ul class = "nav">
+							{% if user.is_authenticated %}
+								<li><a href = "/curriculum/about/">Restricted</a></li>
+							{% endif %}
+							<li><a href = "/curriculum/about/">About</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end top menu bar -->
+		
+		<!-- side bar and main content window -->
+		<div class = "container-fluid">
+			<div class = "row-fluid">
+				<div class = "span3">
+					<div class = "well sidebar-nav">
+						<!-- fill in later -->
+					</div>
+				</div>
+				
+				<div class = "span9">
+					{% block body_block %}
+					{% endblock %}
+				</div>
+			</div>
+		</div>
+		<!-- end side bar and main content window-->
+		
+		<hr>
+		
+		<!-- footer yo -->
+		<footer>
+			<div class = "container">
+				<strong>Curriculum Analysis Project 2014</strong>
+				<p>&copy; M.Landry, D.Mackinnon, B.Speir</p>
+			</div>
+		</footer>
+		
+		<script src = "{% static 'js/jquery-2.1.0.min.js' %}"></script>
+		<script src = "{% static 'js/bootstrap.min.js' %}"></script>
+	</body>	
+</html>

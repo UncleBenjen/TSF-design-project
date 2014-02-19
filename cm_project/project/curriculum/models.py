@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 class UserInfo(models.Model):
 	# One to one field implies inheritance from User class
 	user = models.OneToOneField(User)
-	email = models.EmailField(blank = False, unique = True)
 	website = models.URLField(blank = True)
 	picture = models.ImageField(upload_to = 'profile_images', blank = True)
 	
@@ -70,7 +69,7 @@ class Course(models.Model):
 	
 	# Department this course belongs to
 	# ~~ not sure we need this now that we have program streams
-	# a course like design doesn't "belong" to any specific department...
+	# a course design doesn't "belong" to any specific department...
 	#department = models.ForeignKey(Department)
 
 	def __str__(self):
