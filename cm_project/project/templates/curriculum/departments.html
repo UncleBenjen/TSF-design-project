@@ -1,0 +1,23 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Departments{% endblock %}=
+
+{% block body_block %}
+<div class = "hero-unit">
+    <h1>Departments</h1>
+	<hr>
+	{% if departments %}
+		{% for department in departments %}
+		<h4>{{ department.name }}</h4>
+		<p>{{ department.description }}</p>
+		<p><a href="{{ department.website }}">{{ department.website }}</a></p>
+		<hr>
+		{% endfor %}
+	{% else %}
+		<h3>There were no departments present...</h3>
+	{% endif %}
+</div>
+{% endblock %}
+

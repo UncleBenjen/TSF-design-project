@@ -6,8 +6,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
+#
 from curriculum.forms import UserForm, UserProfileForm
-from curriculum.models import UserInfo
+from curriculum.models import UserInfo, Department
 
 def index(request):
 	context = RequestContext(request)
@@ -119,3 +120,11 @@ def user_logout(request):
 	logout(request)
 	
 	return HttpResponseRedirect('/curriculum/')
+
+def departments(request):
+	context = RequestContext(request)
+	#query the database to get departments, order by name, put it into a dict for response
+	department_list = Department.objects.order_by('name')[:4]
+	context_dict = {'departments':department_list}
+	
+	return render_to_response('curriculum/departments.html',context_dict,context)

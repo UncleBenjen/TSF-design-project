@@ -11,10 +11,10 @@ def populate_db():
 def populate_departments():
     # Create some department chairs as they are necessary for department creation
 	print("Populating department chair's...")
-	CHEM_CHAIR = add_user(user=User.objects.create(username="ben",password="password"),type = "SP", email = "fakeEmail1@lolwut.com")
-	CIVIL_CHAIR = add_user(user=User.objects.create(username="james",password="password"),type = "SP", email = "fakeEmail2@lolwut.com")
-	ECE_CHAIR = add_user(user=User.objects.create(username="mccrae",password="password"),type = "SP", email = "fakeEmail3@lolwut.com")
-	MECH_CHAIR = add_user(user=User.objects.create(username="speir",password="password"),type = "SP", email = "fakeEmail4@lolwut.com")
+	CHEM_CHAIR = add_user(user=User.objects.create(username="ben",password="password",email = "fakeEmail1@lolwut.com"),type = "SP")
+	CIVIL_CHAIR = add_user(user=User.objects.create(username="james",password="password", email = "fakeEmail2@lolwut.com"),type = "SP")
+	ECE_CHAIR = add_user(user=User.objects.create(username="mccrae",password="password", email = "fakeEmail3@lolwut.com"),type = "SP")
+	MECH_CHAIR = add_user(user=User.objects.create(username="speir",password="password", email = "fakeEmail4@lolwut.com"),type = "SP")
     
     # Create 4 departments...
 	print("Populating departments...")
@@ -53,8 +53,8 @@ def populate_courses():
 
 
 # Methods to add objects to the database:
-def add_user(user, type, email):
-	u = UserInfo.objects.get_or_create(user= user, email=email, type = type)[0]
+def add_user(user, type):
+	u = UserInfo.objects.get_or_create(user= user, type = type)[0]
 	return u
 
 def add_department(name, head, website):
