@@ -1,9 +1,8 @@
 import os
 from django.contrib.auth.models import User
 
-# Function to populate the database
+#call each populate method
 def populate_db():
-    #call each populate method
 	populate_departments()
 	populate_prgrm_strms()
 	populate_courses()
@@ -12,14 +11,14 @@ def populate_db():
 def populate_departments():
     # Create some department chairs as they are necessary for department creation
 	print("Populating department chair's...")
-	CHEM_CHAIR = add_user(user=User.objects.create(username="ben",password="password", email = "fakeEmail1@lolwut.com"), type = "SP")
-	CIVIL_CHAIR = add_user(user=User.objects.create(username="james",password="password", email = "fakeEmail2@lolwut.com"), type = "SP")
-	ECE_CHAIR = add_user(user=User.objects.create(username="mccrae",password="password", email = "fakeEmail3@lolwut.com"), type = "SP")
-	MECH_CHAIR = add_user(user=User.objects.create(username="speir",password="password", email = "fakeEmail4@lolwut.com"), type = "SP")
+	CHEM_CHAIR = add_user(user=User.objects.create(username="ben",password="password"),type = "SP", email = "fakeEmail1@lolwut.com")
+	CIVIL_CHAIR = add_user(user=User.objects.create(username="james",password="password"),type = "SP", email = "fakeEmail2@lolwut.com")
+	ECE_CHAIR = add_user(user=User.objects.create(username="mccrae",password="password"),type = "SP", email = "fakeEmail3@lolwut.com")
+	MECH_CHAIR = add_user(user=User.objects.create(username="speir",password="password"),type = "SP", email = "fakeEmail4@lolwut.com")
     
     # Create 4 departments...
 	print("Populating departments...")
-	add_department(name = "Chemical and Biochemical Engineering", head = CHEM_CHAIR, website = "http://www.eng.uwo.ca/chemical/")
+	add_department(name = "Chemical and Biochemical Engineering",head = CHEM_CHAIR, website = "http://www.eng.uwo.ca/chemical/")
 	add_department(name = "Civil and Environmental Engineering", head = CIVIL_CHAIR,  website = "http://www.eng.uwo.ca/civil/")
 	add_department(name = "Electrical and Computer Engineering", head = ECE_CHAIR, website = "http://www.eng.uwo.ca/electrical/")
 	add_department(name = "Mechanical and Materials Engineering", head = MECH_CHAIR, website = "http://www.eng.uwo.ca/mechanical/")
@@ -46,7 +45,6 @@ def populate_prgrm_strms():
 
 	add_program_strm(name="Software Engineering", department=Department.objects.get(name="Electrical and Computer Engineering"))
 
-#
 def populate_courses():
 	print("Populating courses...")
 	add_course(course_code="ES1050", name="Introductory Engineering Design and Innovation Studio", lecture_hours='3', lab_hours='4', credit='2', year="FI")
@@ -55,8 +53,8 @@ def populate_courses():
 
 
 # Methods to add objects to the database:
-def add_user(user, type):
-	u = UserInfo.objects.get_or_create(user=user, type=type)[0]
+def add_user(user, type, email):
+	u = UserInfo.objects.get_or_create(user= user, email=email, type = type)[0]
 	return u
 
 def add_department(name, head, website):

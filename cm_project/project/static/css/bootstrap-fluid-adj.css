@@ -5,6 +5,7 @@ padding-bottom: 40px;
 
 .sidebar-nav {
 padding: 9px 0;
+background-color: black
 }
 
 @media (max-width: 980px) {
