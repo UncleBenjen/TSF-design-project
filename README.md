@@ -1,8 +1,12 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  ~~ Curriculum Analysis and Tracking Application ~~
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  ~ 2013/2014  Software Engineering Design Project ~
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Group members: Mike Landry, Dylan Mackinnon, Ben Speir.
 
 - make sure you have the environment prepped for the application (correct versions of python, django, and other various libraries)
 
