@@ -5,14 +5,21 @@
 {% block title %}Login{% endblock %}
 
 {% block body_block %}
-	<h1>Please login to use the Curriculum Map</h1>
-	
-	<form id = "login_form" method = "post" action = "/curriculum/login/">
-		{% csrf_token %}
-		Username: <input type = "text" name = "username" value = "" size = "50"/>
-		<br />
-		Password: <input type = "password" name = "password" value = "" size = "50"/>
-		<br />
-		<input type = "submit" value = "submit" />
-	</form>
+	<div class = "hero-unit">
+		<h1>Login Here</h1>
+		
+		<div class = "container">		
+			<form class = "form-signin span4" id = "login_form" method = "post" action = "/curriculum/login/">
+				<h3 class = "form-signin-heading">Enter your username and password</h3>
+				
+				{% csrf_token %}
+					
+				Username: <input type = "text" class = "input-block-level" placeholder = "Username" name = "username" value = "" size = "50"/>
+				<br />
+				Password: <input type = "password" class = "input-block-level" placeholder = "Password" name = "password" value = "" size = "50"/>
+				<br />
+				<button class = "btn btn-primary" type = "submit">Sign in</button>
+			</form>
+		</div>
+	</div>
 {% endblock %}
