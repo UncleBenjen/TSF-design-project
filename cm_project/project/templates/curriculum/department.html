@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Departments{% endblock %}=
+{% block title %}Departments{% endblock %}
 
 {% block body_block %}
 <div class = "hero-unit">
@@ -10,12 +10,12 @@
 	<hr>
 	{% if program_streams %}
     {% for program_stream in program_streams %}
-    <h4>{{ program_stream.name }}</h4>
-    <p>{{ program_stream.description }}</p>
-    <hr>
+		<h4>{{ program_stream.name }}</h4>
+		<p>{{ program_stream.description }}</p>
+		<hr>
     {% endfor %}
 	{% else %}
-    <h3>There were no program streams present...</h3>
+		<h3>There were no program streams present...</h3>
 	{% endif %}
 </div>
 {% endblock %}

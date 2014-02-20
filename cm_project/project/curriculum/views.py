@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
 from curriculum.forms import UserForm, UserProfileForm
-from curriculum.models import UserInfo, Department, ProgramStream
+from curriculum.models import UserInfo, Department, ProgramStream, Course
 
 def index(request):
 	context = RequestContext(request)
@@ -145,3 +145,47 @@ def department(request, department_name_url):
 	except Department.DoesNotExist:
 		pass
 	return render_to_response('curriculum/department.html',context_dict,context)
+	
+def program(request, program_name_url):
+	context = RequestContext(request)
+	
+	program_name = program_name_url.replace('_',' ')
+	
+	context_dict = {'program_name' : program_name}
+	
+	try:
+		program = ProgramStream.objects.get(name = program_name)
+		context_dict['program'] = program
+		
+		department = program.department.name
+		context_dict['department'] = department
+		
+		courses1 = program.courses.filter(year = 'FI')
+		context_dict['courses1'] = courses1
+		
+		courses2 = program.courses.filter(year = 'SE')
+		context_dict['courses2'] = courses2
+		
+		courses3 = program.courses.filter(year = 'TH')
+		context_dict['courses3'] = courses3
+		
+		courses4 = program.courses.filter(year = 'FO')
+		context_dict['courses4'] = courses4
+		
+	except ProgramStream.DoesNotExist:
+		pass
+		
+	return render_to_response('curriculum/program.html', context_dict, context)
+	
+	
+def course(request, course_name_url):
+	context = RequestContext(request)
+	course_name = course_name_url.replace('_','/')
+	context_dict={'course_name':course_name}
+	
+	try:
+		course = Course.objects.get(course_code = course_name)
+		context_dict['course'] = course
+	except Course.DoesNotExist:
+		pass
+	return render_to_response('curriculum/course.html', context_dict, context)

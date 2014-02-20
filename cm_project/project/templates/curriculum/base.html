@@ -37,8 +37,6 @@
 						</ul>
 						<ul class = "nav">
 							{% if user.is_authenticated %}
-								<li><a href = "/curriculum/about/">Restricted</a></li>
-								
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Departments <b class="caret"></b></a>
 									<ul class="dropdown-menu">
@@ -54,15 +52,15 @@
                                 <li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Programs <b class="caret"></b></a>
 									<ul class="dropdown-menu">
-										<li><a href="#">Chemical Engineering</a></li>
-										<li><a href="#">Civil Engineering</a></li>
-										<li><a href="#">Computer Engineering</a></li>
-										<li><a href="#">Electrical Engineering</a></li>
-										<li><a href="#">Green Process Engineering</a></li>
-										<li><a href="#">Integrated Engineering</a></li>
-										<li><a href="#">Mechanical Engineering</a></li>
-										<li><a href="#">Mechatronic Systems Engineering</a></li>
-										<li><a href="#">Software Engineering</a></li>
+										<li><a href="/curriculum/programs/Chemical_Engineering">Chemical Engineering</a></li>
+										<li><a href="/curriculum/programs/Civil_Engineering">Civil Engineering</a></li>
+										<li><a href="/curriculum/programs/Computer_Engineering">Computer Engineering</a></li>
+										<li><a href="/curriculum/programs/Electrical_Engineering">Electrical Engineering</a></li>
+										<li><a href="/curriculum/programs/Green_Process_Engineering">Green Process Engineering</a></li>
+										<li><a href="/curriculum/programs/Integrated_Engineering">Integrated Engineering</a></li>
+										<li><a href="/curriculum/programs/Mechanical_Engineering">Mechanical Engineering</a></li>
+										<li><a href="/curriculum/programs/Mechatronic_Systems_Engineering">Mechatronic Systems Engineering</a></li>
+										<li><a href="/curriculum/programs/Software_Engineering">Software Engineering</a></li>
 									</ul>
 								</li>
 							{% endif %}

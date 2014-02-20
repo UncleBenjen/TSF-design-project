@@ -1,0 +1,19 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Departments{% endblock %}=
+
+{% block body_block %}
+<div class = "hero-unit">
+	{% if course %}
+    <h2>{{ course_name }} - {{ course.name }}</h2>
+    <hr>
+	
+	{% else %}
+	<p>There was no course found under this name...</p>
+	{% endif %}
+	
+    
+</div>
+{% endblock %}

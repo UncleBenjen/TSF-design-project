@@ -1,0 +1,86 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block body_block %}
+	<div class = "hero-unit">
+		<div class = "row-fluid">
+			<div class = "text-center">
+				<h1>{{ program_name }}</h1>
+			</div>
+			<hr>
+			<div class = "text-center">
+				<h3>Department: {{ department }}</h3>
+			</div>
+			<hr>
+			<p style = "font-size:80%; line-height:110%;">{{ program.description }}</p>
+			<hr>
+			
+			<div class = "text-center">
+				<h2>Courses</h2>
+				<hr>
+			</div>
+			
+			<div class = "row-fluid">
+				<div class = "span12">
+					<div class = "row-fluid">
+			
+						<div class = "span3">				
+							{% if courses1 %}
+								<strong>First year:</strong>
+								<ul>
+								{% for course in courses1 %}
+									<li style = "font-size:90%; line-height:130%;"><a href="#">{{ course.course_code }}</a></li>
+								{% endfor %}
+								</ul>
+							{% else %}
+								<p>No courses</p>
+							{% endif %}
+						</div>
+						
+						<div class = "span3">		
+							<strong>Second year:</strong>
+							{% if courses2 %}
+								<ul>
+								{% for course in courses2 %}
+									<li style = "font-size:90%; line-height:130%;"><a href="#">{{ course.course_code }}</a></li>
+								{% endfor %}
+								</ul>
+							{% else %}
+								<p>No courses</p>
+							{% endif %}
+						</div>
+						
+						<div class = "span3">	
+							<strong>Third year:</strong>
+							{% if courses3 %}
+								<ul>
+								{% for course in courses3 %}
+									<li style = "font-size:90%; line-height:130%;"><a href="#">{{ course.course_code }}</a></li>
+								{% endfor %}
+								</ul>
+							{% else %}
+								<p>No courses</p>
+							{% endif %}
+						</div>
+						
+						<div class = "span3">
+							<strong>Second year:</strong>						
+							{% if courses4 %}
+								<ul>
+								{% for course in courses4 %}
+									<li style = "font-size:90%; line-height:130%;">{{ course.course_code }}</li>
+								{% endfor %}
+								</ul>
+							{% else %}
+								<p>No courses</p>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			
+			</div>
+			
+		</div>
+	</div>
+{% endblock %}
