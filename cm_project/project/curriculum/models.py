@@ -128,7 +128,7 @@ class LearningObjective(models.Model):
 # Program Stream model
 class ProgramStream(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
-	description = models.CharField(max_length= 500, blank = True)
+	description = models.CharField(max_length= 850, blank = True)
 	
 	# Department is the parent of a program stream
 	department = models.ForeignKey(Department)

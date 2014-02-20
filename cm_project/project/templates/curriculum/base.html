@@ -42,12 +42,27 @@
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Departments <b class="caret"></b></a>
 									<ul class="dropdown-menu">
-										<li><a href="#">Chemical and Biochemical Engineering</a></li>
-										<li><a href="#">Civil and Environmental Engineering</a></li>
-										<li><a href="#">Electrical and Computer Engineering</a></li>
-										<li><a href="#">Mechanical and Materials Engineering</a></li>
+										<li><a href="/curriculum/departments/Chemical_and_Biochemical_Engineering/">Chemical and Biochemical Engineering</a></li>
+										<li><a href="/curriculum/departments/Civil_and_Environmental_Engineering">Civil and Environmental Engineering</a></li>
+										<li><a href="/curriculum/departments/Electrical_and_Computer_Engineering">Electrical and Computer Engineering</a></li>
+										<li><a href="/curriculum/departments/Mechanical_and_Materials_Engineering">Mechanical and Materials Engineering</a></li>
 										<li class="divider"></li>
 										<li><a href="/curriculum/departments/">View All Departments</a></li>
+									</ul>
+								</li>
+                                
+                                <li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Programs <b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a href="#">Chemical Engineering</a></li>
+										<li><a href="#">Civil Engineering</a></li>
+										<li><a href="#">Computer Engineering</a></li>
+										<li><a href="#">Electrical Engineering</a></li>
+										<li><a href="#">Green Process Engineering</a></li>
+										<li><a href="#">Integrated Engineering</a></li>
+										<li><a href="#">Mechanical Engineering</a></li>
+										<li><a href="#">Mechatronic Systems Engineering</a></li>
+										<li><a href="#">Software Engineering</a></li>
 									</ul>
 								</li>
 							{% endif %}
@@ -68,17 +83,17 @@
 
 					</div>
 				</div> -->
-				<div class = "span3">
+				<div class = "span2">
 					<div class = "hero-unit">
 						{% block left_block %}
 						{% endblock %}
 					</div>
 				</div>
-				<div class = "span6">
+				<div class = "span8">
 					{% block body_block %}
 					{% endblock %}
 				</div>
-				<div class = "span3">
+				<div class = "span2">
 					<div class = "hero-unit">
 						{% block right_block %}
 						{% endblock %}
@@ -93,8 +108,10 @@
 		<footer>
 			<div class = "row-fluid">
 				<div class = "container text-center">
-					<strong>Curriculum Analysis Project 2014</strong>
-					<p>&copy; M.Landry, D.Mackinnon, B.Speir</p>
+                        <br/>
+                        <strong>Curriculum Analysis and Tracking Project</strong>
+                        <p>&copy; M.Landry, D.Mackinnon, B.Speir</p>
+                    
 				</div>
 			</div>
 		</footer>

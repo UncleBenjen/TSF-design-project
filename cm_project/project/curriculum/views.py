@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
 from curriculum.forms import UserForm, UserProfileForm
-from curriculum.models import UserInfo, Department
+from curriculum.models import UserInfo, Department, ProgramStream
 
 def index(request):
 	context = RequestContext(request)
@@ -128,3 +128,20 @@ def departments(request):
 	context_dict = {'departments':department_list}
 	
 	return render_to_response('curriculum/departments.html',context_dict,context)
+
+def department(request, department_name_url):
+	context = RequestContext(request)
+
+	department_name = department_name_url.replace('_',' ')
+
+	context_dict = {'department_name': department_name}
+
+	try:
+		department = Department.objects.get(name = department_name)
+		program_streams = ProgramStream.objects.filter(department=department)
+		context_dict['program_streams'] = program_streams
+		context_dict['department'] = department
+
+	except Department.DoesNotExist:
+		pass
+	return render_to_response('curriculum/department.html',context_dict,context)
