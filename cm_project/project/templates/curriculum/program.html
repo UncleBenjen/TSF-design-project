@@ -29,8 +29,8 @@
 							{% if courses1 %}
 								<strong>First year:</strong>
 								<ul>
-								{% for course in courses1 %}
-									<li style = "font-size:90%; line-height:130%;"><a href="#">{{ course.course_code }}</a></li>
+								{% for course_url in courses1_urls %}
+									<li style = "font-size:85%; line-height:130%;"><a href = "/curriculum/courses/{{ course_url }}/">{{ course_url }}</a></li>
 								{% endfor %}
 								</ul>
 							{% else %}
@@ -42,8 +42,8 @@
 							<strong>Second year:</strong>
 							{% if courses2 %}
 								<ul>
-								{% for course in courses2 %}
-									<li style = "font-size:90%; line-height:130%;"><a href="#">{{ course.course_code }}</a></li>
+								{% for course_url in courses2_urls %}
+									<li style = "font-size:85%; line-height:130%;"><a href = "{{ course_url}}">{{ course_url }}</a></li>
 								{% endfor %}
 								</ul>
 							{% else %}
@@ -55,8 +55,8 @@
 							<strong>Third year:</strong>
 							{% if courses3 %}
 								<ul>
-								{% for course in courses3 %}
-									<li style = "font-size:90%; line-height:130%;"><a href="#">{{ course.course_code }}</a></li>
+								{% for course_url in courses3_urls %}
+									<li style = "font-size:85%; line-height:130%;"><a href = "{{ course_url}}">{{ course_url }}</a></li>
 								{% endfor %}
 								</ul>
 							{% else %}
@@ -68,8 +68,8 @@
 							<strong>Second year:</strong>						
 							{% if courses4 %}
 								<ul>
-								{% for course in courses4 %}
-									<li style = "font-size:90%; line-height:130%;">{{ course.course_code }}</li>
+								{% for course_url in courses4_urls %}
+									<li style = "font-size:85%; line-height:130%;"><a href = "{{ course_url}}">{{ course_url }}</a></li>
 								{% endfor %}
 								</ul>
 							{% else %}

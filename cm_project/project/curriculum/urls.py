@@ -10,6 +10,7 @@ urlpatterns = patterns('',
 		url(r'^profile/$', views.profile, name='profile'),
 		url(r'^departments/$',views.departments, name='departments'),
 		url(r'^departments/(?P<department_name_url>\w+)/$',views.department,name='department'),
-		url(r'^programs/(?P<program_name_url>\w+)/$',views.program, name='program'),
 		url(r'^courses/(?P<course_name_url>\w+)/$',views.course,name='course'),
+		url(r'^programs/(?P<program_name_url>\w+)/$',views.program, name='program'),
+		
 		)
