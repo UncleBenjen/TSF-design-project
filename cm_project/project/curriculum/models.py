@@ -63,14 +63,12 @@ class Course(models.Model):
 	# Create a recursive relationship with other course 
 	# objects to link a course to its requisite courses
 	# *** REMEMBER TO MAKE THESE MUTUALLY EXCLUSIVE ***
-	pre_requisites = models.ManyToManyField('self', blank = True)
-	anti_requisites = models.ManyToManyField('self', blank = True)
-	co_requisites = models.ManyToManyField('self', blank = True)
+	pre_requisites = models.ManyToManyField('self', symmetrical = False, related_name='pre',blank = True)
+	anti_requisites = models.ManyToManyField('self', symmetrical = False,related_name='anti', blank = True)
+	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co',blank = True)
 	
-	# Department this course belongs to
-	# ~~ not sure we need this now that we have program streams
-	# a course design doesn't "belong" to any specific department...
-	#department = models.ForeignKey(Department)
+	
+
 
 	def __str__(self):
 		return self.name

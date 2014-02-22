@@ -200,12 +200,27 @@ def program(request, program_name_url):
 	
 def course(request, course_name_url):
 	context = RequestContext(request)
+
+	# Get the name from the url that was passed with the request
 	course_name = course_name_url.replace('_','/')
 	context_dict={'course_name':course_name}
 	
 	try:
+		# Get the course object from the database and add it to the context dict
 		course = Course.objects.get(course_code = course_name)
 		context_dict['course'] = course
+
+    	# Add lists of pre/co/anti requisite courses to the context dict
+		pre_courses = course.pre_requisites.all()
+		context_dict['pre_requisites']=pre_courses
+
+		co_courses = course.co_requisites.all()
+		context_dict['co_requisites']=co_courses
+
+		anti_courses = course.anti_requisites.all()
+		context_dict['anti_requisites']=anti_courses
+
 	except Course.DoesNotExist:
 		pass
+
 	return render_to_response('curriculum/course.html', context_dict, context)
