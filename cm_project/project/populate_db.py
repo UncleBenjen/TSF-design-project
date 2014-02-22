@@ -47,25 +47,25 @@ def populate_prgrm_strms():
 
 def populate_courses():
 	print("Populating courses...")
-	add_course(course_code="ES1050", name="Introductory Engineering Design and Innovation Studio", lecture_hours='3', lab_hours='4', credit='2', year="FI")
+	add_course(course_code="ES1050", name="Introductory Engineering Design and Innovation Studio", lecture_hours='3', lab_hours='4', credit='2', description="Introduction to the principles and practices of professional engineering. The design studio fosters innovative thinking, improves problem solving, and provides context. Includes elements of need recognition, conceptualization, prototyping, and engineering design to satisfy commercial specifications. Emphasis on creativity, teamwork, communication and engineering skills necessary to practice in any engineering discipline.", year="FI")
 
-	add_course(course_code="AM1413", name="Applied Mathematics for Engineers", lecture_hours='3', lab_hours='0', credit='1', year="FI")
+	add_course(course_code="AM1413", name="Applied Mathematics for Engineers", lecture_hours='3', lab_hours='0', credit='1', description="The calculus of functions of one and more variables with emphasis on applications in Engineering.", year="FI")
 
-	add_course(course_code="ES1022A/B/Y", name="Engineering Statics", lecture_hours='2', lab_hours='1', credit='0.5', year="FI")
+	add_course(course_code="ES1022A/B/Y", name="Engineering Statics", lecture_hours='2', lab_hours='1', credit='0.5', description="Analysis of forces on structures and machines, including addition and resolution of forces and moments in two and three-dimensions. The application of the principles of equilibrium. Topics: trusses; frames; friction; and centroids.",year="FI")
 
-	add_course(course_code="AM1411A/B", name="Linear Algebra for Engineers", lecture_hours='3', lab_hours='2', credit='0.5', year='FI')
+	add_course(course_code="AM1411A/B", name="Linear Algebra for Engineers", lecture_hours='3', lab_hours='2', credit='0.5', description="Matrix operations, systems of linear equations, linear spaces and transformations, determinants, eigenvalues and eigenvectors, applications of interest to Engineers including diagonalization of matrices, quadratic forms, orthogonal transformations.",year='FI')
 
-	add_course(course_code="CHEM1024A/B", name="General Chemistry for Engineers", lecture_hours='3', lab_hours='3', credit='0.5', year='FI')
+	add_course(course_code="CHEM1024A/B", name="General Chemistry for Engineers", lecture_hours='3', lab_hours='3', credit='0.5', description="This course provides a basic understanding of the following topics: gas laws; chemical equilibrium; acid-base equilibria; thermodynamics and thermochemistry; chemical kinetics; electrochemistry. Restricted to students in Engineering and Geophysics programs.",year='FI')
     
-	add_course(course_code="ES1021A/B", name="Properties of Materials", lecture_hours='3', lab_hours='2', credit='0.5', year='FI')
+	add_course(course_code="ES1021A/B", name="Properties of Materials", lecture_hours='3', lab_hours='2', credit='0.5', description="An introduction to the relationship between the microstructure and engineering properties of metals, ceramics, polymers, semi-conductors and composites.", year='FI')
     
-	add_course(course_code="ES1036A/B", name="Programming Fundamentals for Engineers", lecture_hours='3', lab_hours='3', credit='0.5', year='FI')
+	add_course(course_code="ES1036A/B", name="Programming Fundamentals for Engineers", lecture_hours='3', lab_hours='3', credit='0.5', description="Designing, implementing and testing computer programs using a modern object-oriented language such as C++ to fulfill given specifications for small problems using sound engineering principles and processes. Awareness of the engineering aspects of the process of constructing a computer program.", year='FI')
     
-	add_course(course_code="PHYS1401A/B", name="Physics for Engineering Students I", lecture_hours='2', lab_hours='3', credit='0.5', year='FI')
+	add_course(course_code="PHYS1401A/B", name="Physics for Engineering Students I", lecture_hours='2', lab_hours='3', credit='0.5', description="A calculus-based laboratory course in physics for Engineering students. Kinematics, Newton’s laws of motion, work, energy, linear momentum, rotational motion, torque and angular momentum, oscillations.", year='FI')
     
-	add_course(course_code="PHYS1402A/B", name="Physics for Engineering Students II", lecture_hours='2', lab_hours='3', credit='0.5', year='FI')
+	add_course(course_code="PHYS1402A/B", name="Physics for Engineering Students II", lecture_hours='2', lab_hours='3', credit='0.5', description="A calculus-based laboratory course in physics for Engineering students. Electric fields and potential, Gauss’ law, capacitance, DC circuits, magnetic fields, electromagnetic induction.", year='FI')
     
-	add_course(course_code="1 NTE", name="Approved Non-Technical Elective", lecture_hours='3', lab_hours='0', credit='1.0', year='FI')
+	add_course(course_code="1 NTE", name="Approved Non-Technical Elective", lecture_hours='3', lab_hours='0', credit='1.0', description="The Canadian Engineering Accreditation Board (CEAB) requires that engineering programs include a course requirement that teaches the central issues, methodologies and thought processes of the Humanities and Social Sciences.  Please note that language courses do not meet this requirement.", year='FI')
 
 # Methods to add objects to the database:
 def add_user(user, type):
@@ -80,8 +80,8 @@ def add_program_strm(name, department, description):
 	ps = ProgramStream.objects.get_or_create(name=name, department=department, description=description)[0]
 	return ps
 
-def add_course(course_code, name, lecture_hours, lab_hours, credit, year):
-	c = Course.objects.get_or_create(course_code=course_code, name=name, lecture_hours=lecture_hours, lab_hours=lab_hours, credit=credit, year=year)[0]
+def add_course(course_code, name, lecture_hours, lab_hours, credit, description, year):
+	c = Course.objects.get_or_create(course_code=course_code, name=name, lecture_hours=lecture_hours, lab_hours=lab_hours, credit=credit, description=description, year=year)[0]
 	return c
 
 # Start script execution here

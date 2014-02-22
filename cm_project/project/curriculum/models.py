@@ -67,7 +67,9 @@ class Course(models.Model):
 	anti_requisites = models.ManyToManyField('self', symmetrical = False,related_name='anti', blank = True)
 	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co',blank = True)
 	
-	
+	@property
+	def get_url(self):
+		return self.course_code.replace('/','_')
 
 
 	def __str__(self):

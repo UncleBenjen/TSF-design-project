@@ -55,7 +55,7 @@
                     {% if pre_requisites %}
                     {% for pre_requisite in pre_requisites %}
                     <ul>
-                        <li style = "font-size:85%; line-height:125%;">{{ pre_requisite.course_code }}</li>
+                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ pre_requisite.get_url }}">{{ pre_requisite.course_code }}</a></li>
                     </ul>
                     {% endfor %}
                     {% else %}
@@ -67,7 +67,7 @@
                     {% if co_requisites %}
                     {% for co_requisite in co_requisites %}
                     <ul>
-                        <li style = "font-size:85%; line-height:125%;">{{ co_requisite.course_code }}</li>
+                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ co_requisite.get_url }}">{{ co_requisite.course_code }}</a></li>
                     </ul>
                     {% endfor %}
                     {% else %}
@@ -79,7 +79,7 @@
                     {% if anti_requisites %}
                     {% for anti_requisite in anti_requisites %}
                     <ul>
-                        <li style = "font-size:85%; line-height:125%;">{{ anti_requisite.course_code }}</li>
+                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ anti_requisite.get_url }}">{{ anti_requisite.course_code }}</a></li>
                     </ul>
                     {% endfor %}
                     {% else %}
