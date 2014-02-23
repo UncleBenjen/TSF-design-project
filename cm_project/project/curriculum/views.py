@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
-from curriculum.forms import UserForm, UserProfileForm
+from curriculum.forms import UserForm, UserProfileForm, CourseForm
 from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable
 
 def index(request):
@@ -238,3 +238,29 @@ def instance(request, course_name_url, instance_date_url):
 		pass
     
 	return render_to_response('curriculum/instance.html', context_dict, context)
+
+
+# Views for forms
+def add_course(request):
+	context = RequestContext(request)
+	success = False
+    
+	if request.method == 'POST':
+        
+		course_form = CourseForm(data = request.POST)
+		
+        # If forms are valid
+		if course_form.is_valid():
+			course = course_form.save()
+			success = True
+            #return HttpResponse("form complete")
+		else:
+			print(course_form.errors)
+
+
+		return render_to_response('curriculum/add_course_form.html',{'course_form' : course_form, 'success':success},context)
+	else:
+		
+		course_form = CourseForm()
+        
+		return render_to_response('curriculum/add_course_form.html',{'course_form' : course_form},context)

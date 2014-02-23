@@ -12,4 +12,5 @@ urlpatterns = patterns('',
 		url(r'^courses/(?P<course_name_url>\w+)/$',views.course,name='course'),
 		url(r'^programs/(?P<program_name_url>\w+)/$',views.program, name='program'),
 		url(r'^instances/(?P<course_name_url>\w+)/(?P<instance_date_url>\w+)/$',views.instance,name='instance'),
+        url(r'^add_course/$',views.add_course, name = 'add_course'),
 		)
