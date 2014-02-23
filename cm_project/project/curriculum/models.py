@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 # User model
 class UserInfo(models.Model):
 	# One to one field implies inheritance from User class
@@ -63,29 +62,32 @@ class Course(models.Model):
 	# Create a recursive relationship with other course 
 	# objects to link a course to its requisite courses
 	# *** REMEMBER TO MAKE THESE MUTUALLY EXCLUSIVE ***
-	pre_requisites = models.ManyToManyField('self', symmetrical = False, related_name='pre',blank = True)
-	anti_requisites = models.ManyToManyField('self', symmetrical = False,related_name='anti', blank = True)
-	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co',blank = True)
+	pre_requisites = models.ManyToManyField('self', symmetrical = False, related_name='pre', blank = True)
+	anti_requisites = models.ManyToManyField('self', symmetrical = False, related_name='anti', blank = True)
+	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co', blank = True)
 	
+	# Define a function that can be used within templates that will return the url for the course
 	@property
 	def get_url(self):
 		return self.course_code.replace('/','_')
 
-
 	def __str__(self):
-		return self.name
+		return self.course_code
 		
 # Course instance model, an actualization of a course
 # Course instance(s) and a course have a many to one relationship 
 class CourseInstance(models.Model):
-	name = models.CharField(max_length = 6, unique = False)
+	# course instances don't need names, they can get it from the parent course!
+	#name = models.CharField(max_length = 6, unique = False)
 	course = models.ForeignKey(Course)
 	date = models.DateField(blank = False)
+	textbook = models.CharField(max_length = 128, blank = True)
+
+	# Professors and T.A.'s require m2m relations so that multiple teachers can teacher multiple courses
 	professors = models.ManyToManyField(UserInfo, related_name = 'teaches')
 	assistants = models.ManyToManyField(UserInfo, related_name = 'assists', blank = True)
-	textbook = models.CharField(max_length = 128, blank = True)
     
-	# Hold the percent values for accreditation categories
+	# Hold the percent values for accreditation categories (calculated automatically?)
 	acc_math = models.IntegerField(blank = True)
 	acc_science = models.IntegerField(blank = True)
 	acc_eng_science = models.IntegerField(blank = True)
@@ -98,9 +100,18 @@ class CourseInstance(models.Model):
 	
 	# Define concepts covered in this course
 	concepts = models.ManyToManyField(Concept, blank = True)
-	
+
+	@property
+	def get_professors(self):
+		return self.professors.all()
+
+	@property
+	def get_assistants(self):
+		return self.assistants.all()
+
+
 	def __str__(self):
-		return self.name	
+		return "Instance of "+self.course.name
 		
 # Model for a course deliverable (Assignment, Quiz, Test, etc...)
 class Deliverable(models.Model):

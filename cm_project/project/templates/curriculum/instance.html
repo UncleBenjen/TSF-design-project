@@ -6,9 +6,45 @@
 
 {% block body_block %}
 <div class = "hero-unit">
-    <div class = "text-center">
-        <h1>Instance</h1>
+    <div class = "row-fluid">
+        <div class="span12">
+        	<h2>Course Instance:</h2>
+            
+            <hr>
+        	<h3>{{ parent_course.course_code }} - {{ parent_course.name }}</h3>
+            <h3>Date: {{ instance_date }}</h3>
+            <hr>
+            
+            {% if instance %}
+            
+            <p><strong>Textbook:</strong> {{ instance.textbook }}</p>
+            <hr>
+            
+            <div class = "row-fluid">
+                <div class="span6">
+                    <p><strong>Professors: </strong></p>
+                    <ul>
+                    {% for teacher in instance.get_professors %}
+                        <li>{{ teacher.user.username }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="span6">
+                    <p><strong>Assistants: </strong></p>
+                    <ul>
+                    {% for assistant in instance.get_assistants %}
+                        <li>{{ assistant.user.username }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            
+            {% else %}
+            <p>There were no course instances found for {{ parent_course.course_code }} with a date of {{ instance_date }}</p>
+            {% endif %}
+            
+        </div>
     </div>
-    
 </div>
 {% endblock %}

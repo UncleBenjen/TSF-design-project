@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
 from curriculum.forms import UserForm, UserProfileForm
-from curriculum.models import UserInfo, Department, ProgramStream, Course
+from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance
 
 def index(request):
 	context = RequestContext(request)
@@ -209,5 +209,26 @@ def course(request, course_name_url):
 
 def instance(request, course_name_url, instance_date_url):
 	context = RequestContext(request)
-	context_dict = {}
+	
+	# Get the date from the url that was passed
+	instance_date = instance_date_url.replace('_','-')
+	context_dict={'instance_date':instance_date}
+	
+	# Get the name from the url that was passed with the request
+	course_name = course_name_url.replace('_','/')
+
+	try:
+		parent_course = Course.objects.get(course_code=course_name)
+		context_dict['parent_course']=parent_course
+		try:
+			#instance = CourseInstance.objects.filter(course=parent_course).filter(date=instance_date)
+			instance = CourseInstance.objects.get(course=parent_course,date=instance_date)
+			context_dict['instance']=instance
+			#context_dict['professors']=instance.professors
+		except CourseInstance.DoesNotExist:
+			pass
+
+	except Course.DoesNotExist:
+		pass
+
 	return render_to_response('curriculum/instance.html', context_dict, context)
