@@ -150,7 +150,6 @@ def program(request, program_name_url):
 	context = RequestContext(request)
 	
 	program_name = program_name_url.replace('_',' ')
-	
 	context_dict = {'program_name' : program_name}
 	
 	try:
@@ -164,40 +163,23 @@ def program(request, program_name_url):
 		courses1 = program.courses.filter(year = 'FI')
 		context_dict['courses1'] = courses1
 		
-		courses1_urls = courses1.values_list('course_code', flat = True)
-		courses1_urls = [c.replace('/','_') for c in courses1_urls]
-		context_dict['courses1_urls'] = courses1_urls
-		
 		# Get second year courses and the urls to their pages
 		courses2 = program.courses.filter(year = 'SE')
 		context_dict['courses2'] = courses2
-		
-		courses2_urls = courses2.values_list('course_code', flat = True)
-		courses2_urls = [c.replace('/','_') for c in courses2_urls]
-		context_dict['courses2_urls'] = courses2_urls
 		
 		# Get third year courses and the urls to their pages
 		courses3 = program.courses.filter(year = 'TH')
 		context_dict['courses3'] = courses3
 		
-		courses3_urls = courses3.values_list('course_code', flat = True)
-		courses3_urls = [c.replace('/','_') for c in courses3_urls]
-		context_dict['courses3_url'] = courses3_urls
-		
 		# Get fourth year courses and the urls to their pages
 		courses4 = program.courses.filter(year = 'FO')
 		context_dict['courses4'] = courses4
-		
-		courses4_urls = courses4.values_list('course_code', flat = True)
-		courses4_urls = [c.replace('/','_') for c in courses4_urls]
-		context_dict['courses4_url'] = courses4_urls
 		
 	except ProgramStream.DoesNotExist:
 		pass
 		
 	return render_to_response('curriculum/program.html', context_dict, context)
-	
-	
+
 def course(request, course_name_url):
 	context = RequestContext(request)
 
