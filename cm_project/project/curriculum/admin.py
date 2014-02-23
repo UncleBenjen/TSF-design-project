@@ -16,7 +16,7 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ('course_code','name','lecture_hours','lab_hours','credit','description','website','year')
 
 class CourseInstanceAdmin(admin.ModelAdmin):
-    list_display = ('name','course','textbook','semester','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp')
+    list_display = ('name','course', 'date','textbook','semester','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp')
 
 class DeliverableAdmin(admin.ModelAdmin):
     list_display = ('type','percent','due_date','course_instance')

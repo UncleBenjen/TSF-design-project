@@ -224,3 +224,8 @@ def course(request, course_name_url):
 		pass
 
 	return render_to_response('curriculum/course.html', context_dict, context)
+
+def instance(request, course_name_url, instance_date_url):
+	context = RequestContext(request)
+	context_dict = {}
+	return render_to_response('curriculum/instance.html', context_dict, context)

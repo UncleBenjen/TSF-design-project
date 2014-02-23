@@ -80,6 +80,7 @@ class Course(models.Model):
 class CourseInstance(models.Model):
 	name = models.CharField(max_length = 6, unique = False)
 	course = models.ForeignKey(Course)
+	date = models.DateField(blank = False)
 	professors = models.ManyToManyField(UserInfo, related_name = 'teaches')
 	assistants = models.ManyToManyField(UserInfo, related_name = 'assists', blank = True)
 	textbook = models.CharField(max_length = 128, blank = True)

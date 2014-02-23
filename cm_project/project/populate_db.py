@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 #call each populate method
 def populate_db():
 	populate_departments()
-	populate_prgrm_strms()
 	populate_courses()
+	populate_prgrm_strms()
+
 
 # Function to populate the department table
 def populate_departments():
@@ -27,9 +28,10 @@ def populate_departments():
 def populate_prgrm_strms():
 	print("Populating program streams...")
 	
+    
 	add_program_strm(name="Chemical Engineering", department=Department.objects.get(name="Chemical and Biochemical Engineering"), description = "Chemical and Biochemical Engineering is a versatile discipline broadly based upon physical and life sciences. Today the world faces significant challenges due to increasing populations, air, water and soil pollution, and world-wide energy and food shortages. Chemical engineers are well positioned through their training to address and find solutions to these challenges. This program educates engineers to design, develop and operate chemical processes to make useful products such as plastics, polymers, medicines, food, fuels, fertilizers, detergents, cosmetics, and consumer goods at minimum cost in a safe and environmentally sustainable way. Chemical engineers also translate and scale-up processes developed by basic scientists into practical applications that benefit society and lead to economic development.")
 
-	add_program_strm(name="Civil Engineering", department=Department.objects.get(name="Civil and Environmental Engineering"), description = "Civil Engineering is a broad discipline that uses applied and leading-edge science to improve the quality of life by providing essential services, solving environmental problems resulting from industrialization and resource consumption, and mitigating natural disasters. The design course in final year allows you to gain practical experience working on group projects with the City of London and industry professionals. Over the years, projects have included a new grandstand for a baseball park, proposals for storm water management and bridge and tower designs.")
+	add_program_strm(name="Civil Engineering", department=Department.objects.get(name="Civil and Environmental Engineering"), description = "Civil Engineering is a broad discipline that uses applied and leading-edge science to improve the quality of life by providing essential services, solving environmental problems resulting from industrialization and resource consumption, and mitigating natural disasters. The design course in final year allows you to gain practical experience working on group projects with the City of London and industry professionals. Over the years, projects have included a new grandstand for a baseball park, proposals for storm water management and bridge and tower designs.", courses = first_year)
 
 	add_program_strm(name="Computer Engineering", department=Department.objects.get(name="Electrical and Computer Engineering"), description = "Computer Engineering studies the design of hardware elements and the building of computer systems of various levels of complexity. These systems may vary from high performance parallel supercomputers, to special servers that operate computer networks, to micro devices that will operate the next generation of home appliances.")
 
@@ -46,7 +48,7 @@ def populate_prgrm_strms():
 	add_program_strm(name="Software Engineering", department=Department.objects.get(name="Electrical and Computer Engineering"), description = "The development of software systems is now regarded among the most innovative work performed by mankind. Software engineers are trained for the specification, design, implementation, and maintenance of software systems. Western’s Software Engineering program has a core of disciplines that covers all phases of the software cycle. This program offers a solid foundation in computer hardware and computer networks, while exploring the essentials of computer science.")
 
 def populate_courses():
-	print("Populating courses...")
+	print("Populating first year courses...")
 	add_course(course_code="ES1050", name="Introductory Engineering Design and Innovation Studio", lecture_hours='3', lab_hours='4', credit='2', description="Introduction to the principles and practices of professional engineering. The design studio fosters innovative thinking, improves problem solving, and provides context. Includes elements of need recognition, conceptualization, prototyping, and engineering design to satisfy commercial specifications. Emphasis on creativity, teamwork, communication and engineering skills necessary to practice in any engineering discipline.", year="FI")
 
 	add_course(course_code="AM1413", name="Applied Mathematics for Engineers", lecture_hours='3', lab_hours='0', credit='1', description="The calculus of functions of one and more variables with emphasis on applications in Engineering.", year="FI")
