@@ -21,6 +21,11 @@ class Department(models.Model):
 	head = models.OneToOneField(UserInfo)
 	website = models.URLField(blank = True)
 	
+	@property
+	def get_url(self):
+		department_url = self.name.replace(' ', '_')
+		return department_url
+	
 	def __str__(self):
 		return self.name
 		
@@ -69,7 +74,7 @@ class Course(models.Model):
 	# Define a function that can be used within templates that will return the url for the course
 	@property
 	def get_url(self):
-		return self.course_code.replace('/','_')
+		return self.course_code.replace('/','_')		
 
 	def __str__(self):
 		return self.course_code
@@ -147,6 +152,11 @@ class ProgramStream(models.Model):
 	
 	# Program stream is made up of courses
 	courses = models.ManyToManyField(Course, related_name = 'course_list')
+	
+	@property
+	def get_url(self):
+		url = self.name.replace(' ','_')
+		return url
 	
 	def __str__(self):
 		return self.name

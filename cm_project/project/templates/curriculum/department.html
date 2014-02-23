@@ -5,13 +5,15 @@
 {% block title %}Departments{% endblock %}
 
 {% block body_block %}
-<div class = "hero-unit">
+<div class = "well hero-unit">
     <h1>{{ department_name }}</h1>
+	<hr>
+	<strong>Department Website: <a href = "{{ department.website }}">{{ department.website }}</a></strong>
 	<hr>
 	{% if program_streams %}
     {% for program_stream in program_streams %}
-		<h4>{{ program_stream.name }}</h4>
-		<p>{{ program_stream.description }}</p>
+		<h4><a href = "/curriculum/programs/{{ program_stream.get_url }}/">{{ program_stream.name }}:</a></h4>
+		<p style = "font-size:90%;">{{ program_stream.description }}</p>
 		<hr>
     {% endfor %}
 	{% else %}

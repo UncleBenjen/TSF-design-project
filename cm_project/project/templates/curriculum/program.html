@@ -3,14 +3,14 @@
 {% load static %}
 
 {% block body_block %}
-	<div class = "hero-unit">
+	<div class = "well hero-unit">
 		<div class = "row-fluid">
 			<div class = "text-center">
 				<h1>{{ program_name }}</h1>
 			</div>
 			<hr>
 			<div class = "text-center">
-				<h3>Department: {{ department }}</h3>
+				<h3>Department: <a href = "/curriculum/departments/{{ department.get_url }}/">{{ department.name }}</a></h3>
 			</div>
 			<hr>
 			<p style = "font-size:85%; line-height:125%;">{{ program.description }}</p>

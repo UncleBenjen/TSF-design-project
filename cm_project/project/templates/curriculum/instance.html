@@ -5,21 +5,22 @@
 {% block title %}Instance{% endblock %}
 
 {% block body_block %}
-<div class = "hero-unit">
+<div class = "well hero-unit">
     <div class = "row-fluid">
         <div class="span12">
+            <!-- Dispay basic info; course code and name, as well as date -->
         	<h2>Course Instance:</h2>
-            
             <hr>
         	<h3>{{ parent_course.course_code }} - {{ parent_course.name }}</h3>
             <h3>Date: {{ instance_date }}</h3>
             <hr>
             
+            <!-- If there was an instance found and passed through the context... -->
             {% if instance %}
-            
             <p><strong>Textbook:</strong> {{ instance.textbook }}</p>
             <hr>
             
+            <!-- Display Professors and Assistants -->
             <div class = "row-fluid">
                 <div class="span6">
                     <p><strong>Professors: </strong></p>
@@ -40,6 +41,116 @@
             </div>
             <hr>
             
+            <!-- display accredidtion units and course info -->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="row-fluid">
+                        <!-- course info -->
+                        <div class="span6">
+                            <h4>Course Info:</h4>
+                            <table class="table">
+                                <tr>
+                                    <td>Year:</td>
+                                    <td>{{ parent_course.year }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Semester:</td>
+                                    <td>{{ instance.semester }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Credit:</td>
+                                    <td>{{ parent_course.credit }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Lecture Hours:</td>
+                                    <td>{{ parent_course.lecture_hours }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Lab Hours:</td>
+                                    <td>{{ parent_course.lab_hours }}</td>
+                                </tr>
+                                
+                            </table>
+                            <p class="text-center"><a href="/curriculum/courses/{{ parent_course.get_url }}">View course page</a></p>
+                        </div>
+                        
+                        <!-- accredidtion units -->
+                        <div class="span6">
+                            <h4>Accreditation Unit Breakdown:</h4>
+                            <table class="table">
+                                <tr>
+                                    <td><strong>Category</strong></td>
+                                    <td><strong>(%)</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Math</td>
+                                    <td>{{ instance.acc_math }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Science</td>
+                                    <td>{{ instance.acc_science }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Engineering Science</td>
+                                    <td>{{ instance.acc_eng_science }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Engineering Design</td>
+                                    <td>{{ instance.acc_eng_design }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Complimentary Studies</td>
+                                    <td>{{ instance.acc_comp }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <hr>
+            
+            <!-- Display Learning objectives if they Exist -->
+            <h3>Learning Objectives</h3>
+            {% if objectives %}
+            {% for objective in objectives %}
+            <h5>{{ objective.name }}</h5>
+            <p>{{ objective.description }}</p>
+            {% endfor %}
+            <!-- if none were found alert the user -->
+            {% else %}
+            <p>There were no learning objectives listed under this course instance...</p>
+            {% endif %}
+            <hr>
+            
+            <!-- Display Deliverables if they Exist -->
+            <h3>Deliverables</h3>
+            {% if deliverables %}
+            <table class="table">
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td><strong>Percent</strong></td>
+                    <td><strong>Delivery Date</strong></td>
+                </tr>
+                <!-- traverse through the deliverables listing their attributes -->
+                {% for deliverable in deliverables %}
+                <tr>
+                    <td>{{ deliverable.type }}</td>
+                    <td>{{ deliverable.percent }}</td>
+                    <td>{{ deliverable.due_date }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>There were no deliverables listed under this course instance...</p>
+            {% endif %}
+            <hr>
+            
+            <!-- Display Concepts if they Exist -->
+            <h3>Concepts</h3>
+            
+            
+            <!-- if no instance was found... -->
             {% else %}
             <p>There were no course instances found for {{ parent_course.course_code }} with a date of {{ instance_date }}</p>
             {% endif %}

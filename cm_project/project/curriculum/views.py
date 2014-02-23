@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
 from curriculum.forms import UserForm, UserProfileForm
-from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance
+from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable
 
 def index(request):
 	context = RequestContext(request)
@@ -156,7 +156,7 @@ def program(request, program_name_url):
 		program = ProgramStream.objects.get(name = program_name)
 		context_dict['program'] = program
 		
-		department = program.department.name
+		department = program.department
 		context_dict['department'] = department
 		
 		# Get first year courses and the urls to their pages
@@ -207,6 +207,7 @@ def course(request, course_name_url):
 
 	return render_to_response('curriculum/course.html', context_dict, context)
 
+
 def instance(request, course_name_url, instance_date_url):
 	context = RequestContext(request)
 	
@@ -216,19 +217,24 @@ def instance(request, course_name_url, instance_date_url):
 	
 	# Get the name from the url that was passed with the request
 	course_name = course_name_url.replace('_','/')
-
+    
 	try:
 		parent_course = Course.objects.get(course_code=course_name)
 		context_dict['parent_course']=parent_course
 		try:
-			#instance = CourseInstance.objects.filter(course=parent_course).filter(date=instance_date)
 			instance = CourseInstance.objects.get(course=parent_course,date=instance_date)
 			context_dict['instance']=instance
-			#context_dict['professors']=instance.professors
+            
+			objectives = LearningObjective.objects.filter(course_instance=instance)
+			context_dict['objectives']=objectives
+            
+			deliverables = Deliverable.objects.filter(course_instance=instance)
+			context_dict['deliverables'] =deliverables
+        
 		except CourseInstance.DoesNotExist:
 			pass
-
+    
 	except Course.DoesNotExist:
 		pass
-
+    
 	return render_to_response('curriculum/instance.html', context_dict, context)

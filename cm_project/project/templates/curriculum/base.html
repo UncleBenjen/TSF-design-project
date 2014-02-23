@@ -44,8 +44,10 @@
 										<li><a href="/curriculum/departments/Civil_and_Environmental_Engineering">Civil and Environmental Engineering</a></li>
 										<li><a href="/curriculum/departments/Electrical_and_Computer_Engineering">Electrical and Computer Engineering</a></li>
 										<li><a href="/curriculum/departments/Mechanical_and_Materials_Engineering">Mechanical and Materials Engineering</a></li>
-										<li class="divider"></li>
+										<!--
+										<li class="divider"></li>										
 										<li><a href="/curriculum/departments/">View All Departments</a></li>
+										-->
 									</ul>
 								</li>
                                 
@@ -81,22 +83,57 @@
 
 					</div>
 				</div> -->
-				<div class = "span2">
-					<div class = "hero-unit">
-						{% block left_block %}
-						{% endblock %}
-					</div>
-				</div>
-				<div class = "span8">
+				<div class = "span9">					
+					<!-- content specific to the page user is on -->
 					{% block body_block %}
 					{% endblock %}
 				</div>
-				<div class = "span2">
-					<div class = "hero-unit">
+				<div class = "span3">
+					<div class = "well hero-unit" style = "padding-left:20px; padding-right:20px; padding-top:20px;">
+						<h3 class = "text-center">Available actions</h3>
+						<hr>
+						
+						<li class = "nav-header" style = "padding-left:25px; font-size:80%;">Find Course:</li>
+						<form class = "text-center">
+							<input class = "search-query span10" type = "text" name = "suggestion" value id = "suggestion">
+						</form>
+						<hr>
+						
+						<li class = "nav-header" style = "padding-left:25px; font-size:80%">Find Concept:</li>
+						<form class = "text-center">
+							<input class = "search-query span10" type = "text" name = "suggestion" value id = "suggestion">
+						</form>
+						<hr>
+						
+						{% if user.is_authenticated %}
+							<ul style = "line-height:90%;"> 						
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">Add a course instance</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">Add concept</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">View my courses</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">View course map</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">View concept map</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">Create query</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">Edit profile</a></li>
+							</ul>
+							<hr>
+						{% else %}
+							<ul>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">View concept map</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "#">View course map</a></li>
+							</ul>
+							
+							<hr>
+							<p style = "line-height:120%;">Please <a href = "/curriculum/login/">Login</a> or <a href = "/curriculum/register/">Register</a> for more options.</p>
+							<hr>
+						{% endif %}
+						
+						
+						<!-- content specific to the page user is on -->
 						{% block right_block %}
 						{% endblock %}
 					</div>
 				</div>
+	
 			</div>
 		</div> 
 		<!-- end side bar and main content window-->
