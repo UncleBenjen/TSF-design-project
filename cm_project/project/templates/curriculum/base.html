@@ -18,13 +18,14 @@
 		<div class = "navbar navbar-inverse navbar-fixed-top">
 			<div class = "navbar-inner">
 				<div class = "container"> 
-					<!--<button type = "button" class = "btn btn-navbar" data-toggle = "collapse" data-target = ".nav-collapse">
+					<button type = "button" class = "btn btn-navbar" data-toggle = "collapse" data-target = ".nav-collapse">
 						<span class = "icon-bar"></span>
 						<span class = "icon-bar"></span>
-					</button>-->
+                        <span class = "icon-bar"></span>
+					</button>
 					<a class = "brand" href = "/curriculum">Home</a>
 					
-					<div class = "nav-collapse collapse">
+					<div class = "nav-collapse 	collapse">
 						<ul class = "nav nav-pills pull-right">
 							{% if user.is_authenticated %}
 								<li class = "navbar-text" style="color:white;padding-right:20px;">Welcome, {{ user.username }}!</li>
@@ -106,9 +107,9 @@
 						<hr>
 						
 						{% if user.is_authenticated %}
-							<ul style = "line-height:90%;"> 						
-								<li style = "line-height:130%; font-size:90%;"><a href = "#">Add a course instance</a></li>
-								<li style = "line-height:130%; font-size:90%;"><a href = "#">Add concept</a></li>
+                        	<p class="text-center"><a class="btn btn-primary" href = "/curriculum/add_instance/">Add a course instance</a></p>
+                            <p class="text-center"><a class="btn btn-primary" href = "/curriculum/add_concept/">Add a concept</a></p>
+							<ul style = "line-height:90%;">
 								<li style = "line-height:130%; font-size:90%;"><a href = "#">View my courses</a></li>
 								<li style = "line-height:130%; font-size:90%;"><a href = "#">View course map</a></li>
 								<li style = "line-height:130%; font-size:90%;"><a href = "#">View concept map</a></li>

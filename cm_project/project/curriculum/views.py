@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
-from curriculum.forms import UserForm, UserProfileForm, CourseForm
+from curriculum.forms import UserForm, UserProfileForm, CourseForm, InstanceForm, ConceptForm
 from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable
 
 def index(request):
@@ -264,3 +264,39 @@ def add_course(request):
 		course_form = CourseForm()
         
 		return render_to_response('curriculum/add_course_form.html',{'course_form' : course_form},context)
+
+def add_instance(request):
+	context = RequestContext(request)
+	success = False
+	if request.method == 'POST':
+		instance_form = InstanceForm(data = request.POST)
+
+		if instance_form.is_valid():
+			instance = instance_form.save()
+			success = True
+		else:
+			print(instance_form.errors)
+
+		return render_to_response('curriculum/add_instance_form.html',{'instance_form':instance_form},context)
+	else:
+		instance_form = InstanceForm()
+
+		return render_to_response('curriculum/add_instance_form.html',{'instance_form' : instance_form},context)
+
+def add_concept(request):
+	context = RequestContext(request)
+	success = False
+	if request.method == 'POST':
+		concept_form = ConceptForm(data = request.POST)
+        
+		if concept_form.is_valid():
+			concept = concept_form.save()
+			success = True
+		else:
+			print(concept_form.errors)
+        
+		return render_to_response('curriculum/add_concept_form.html',{'concept_form':concept_form},context)
+	else:
+		concept_form = ConceptForm()
+        
+		return render_to_response('curriculum/add_concept_form.html',{'concept_form' : concept_form},context)

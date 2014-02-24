@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 
 # User model
 class UserInfo(models.Model):
@@ -82,10 +83,8 @@ class Course(models.Model):
 # Course instance model, an actualization of a course
 # Course instance(s) and a course have a many to one relationship 
 class CourseInstance(models.Model):
-	# course instances don't need names, they can get it from the parent course!
-	#name = models.CharField(max_length = 6, unique = False)
 	course = models.ForeignKey(Course)
-	date = models.DateField(blank = False)
+	date = models.DateField(blank = False, default=date.today)
 	textbook = models.CharField(max_length = 128, blank = True)
 
 	# Professors and T.A.'s require m2m relations so that multiple teachers can teacher multiple courses
@@ -93,11 +92,11 @@ class CourseInstance(models.Model):
 	assistants = models.ManyToManyField(UserInfo, related_name = 'assists', blank = True)
     
 	# Hold the percent values for accreditation categories (calculated automatically?)
-	acc_math = models.IntegerField(blank = True)
-	acc_science = models.IntegerField(blank = True)
-	acc_eng_science = models.IntegerField(blank = True)
-	acc_eng_design = models.IntegerField(blank = True)
-	acc_comp = models.IntegerField(blank = True)
+	acc_math = models.IntegerField(blank = True, default=0)
+	acc_science = models.IntegerField(blank = True, default=0)
+	acc_eng_science = models.IntegerField(blank = True, default=0)
+	acc_eng_design = models.IntegerField(blank = True, default=0)
+	acc_comp = models.IntegerField(blank = True, default=0)
 	
 	# Define options for semester course is taught in
 	SEMESTER_TYPES = (('F', 'First'), ('S', 'Second'), ('Y', 'Year'))
