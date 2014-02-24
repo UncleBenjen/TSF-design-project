@@ -72,7 +72,7 @@
                                 
                             </table>
                             
-                            <h5 class="text-center"><a class="btn btn-primary" href="/curriculum/courses/{{ parent_course.get_url }}">View course page</a></h5>
+                            <p class="text-center"><a class="btn btn-primary" href="/curriculum/courses/{{ parent_course.get_url }}">View course page</a></p>
                         </div>
                         
                         <!-- accredidtion units -->
@@ -149,8 +149,26 @@
             
             <!-- Display Concepts if they Exist -->
             <h3>Concepts</h3>
-            
-            
+                {% if instance.concepts %}
+                <table class="table">
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td><strong>Type</strong></td>
+                        <td><strong>Description</strong></td>
+                    </tr>
+                    <!-- traverse through the deliverables listing their attributes -->
+                    {% for concept in instance.concepts.all %}
+                    <tr>
+                        <td>{{ concept.name }}</td>
+                        <td>{{ concept.ceab_unit }}</td>
+                        <td>{{ concept.description }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                
+                {% else %}
+                <p>There were no concepts listed under this course instance...</p>
+                {% endif %}
             <!-- if no instance was found... -->
             {% else %}
             <p>There were no course instances found for {{ parent_course.course_code }} with a date of {{ instance_date }}</p>

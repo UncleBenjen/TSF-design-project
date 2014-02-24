@@ -98,7 +98,7 @@
 						<form class = "text-center">
 							<input class = "search-query span10" type = "text" name = "suggestion" value id = "suggestion">
 						</form>
-						<hr>
+						
 						
 						<li class = "nav-header" style = "padding-left:25px; font-size:80%">Find Concept:</li>
 						<form class = "text-center">
@@ -108,7 +108,8 @@
 						
 						{% if user.is_authenticated %}
                         	<p class="text-center"><a class="btn btn-primary" href = "/curriculum/add_instance/">Add a course instance</a></p>
-                            <p class="text-center"><a class="btn btn-primary" href = "/curriculum/add_concept/">Add a concept</a></p>
+                            <p class="text-center"><a class="btn btn-primary" href = "/curriculum/add_concept/">Create a concept</a></p>
+                            <hr>
 							<ul style = "line-height:90%;">
 								<li style = "line-height:130%; font-size:90%;"><a href = "#">View my courses</a></li>
 								<li style = "line-height:130%; font-size:90%;"><a href = "#">View course map</a></li>

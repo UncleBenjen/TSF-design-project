@@ -113,6 +113,9 @@ class CourseInstance(models.Model):
 	def get_assistants(self):
 		return self.assistants.all()
 
+	@property
+	def get_concepts():
+		return self.concepts.all()
 
 	def __str__(self):
 		return "Instance of "+self.course.name

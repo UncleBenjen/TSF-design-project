@@ -230,7 +230,7 @@ def instance(request, course_name_url, instance_date_url):
             
 			deliverables = Deliverable.objects.filter(course_instance=instance)
 			context_dict['deliverables'] =deliverables
-        
+
 		except CourseInstance.DoesNotExist:
 			pass
     
