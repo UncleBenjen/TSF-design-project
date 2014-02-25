@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
-from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, DeliverableForm, LearningObjectiveForm
-from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable
+from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, DeliverableForm, LearningObjectiveForm, CEABGradForm
+from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable, CEABGrad
 
 def index(request):
 	context = RequestContext(request)
@@ -268,6 +268,11 @@ def instance(request, course_name_url, instance_date_url):
 			deliverables = Deliverable.objects.filter(course_instance=instance)
 			context_dict['deliverables'] =deliverables
 
+			concepts = instance.concepts.all
+			context_dict['concepts']=concepts
+
+			measurements = CEABGrad.objects.filter(course = instance)
+			context_dict['measurements'] = measurements
 		except CourseInstance.DoesNotExist:
 			pass
     
@@ -382,3 +387,26 @@ def add_learning_objective(request):
 
 		return render_to_response('curriculum/add_objective_form.html',{'learning_objective_form':learning_objective_form},context)
 
+# Add CEABgrad - returns form, empty if GET, with data if POST
+def add_ceab_grad(request):
+	context = RequestContext(request)
+	success = False
+
+	if request.method == 'POST':
+		ceab_grad_form = CEABGradForm(data = request.POST)
+        
+		if ceab_grad_form.is_valid():
+			ceab_grad = ceab_grad_form.save()
+			success = True
+			# Get the picture if it was included
+			if 'measurement' in request.FILES:
+				ceab_grad.measurement = request.FILES['picture']
+		else:
+			print(ceab_grad_form.errors)
+        
+		return render_to_response('curriculum/add_ceab_grad_form.html',{'ceab_grad_form':ceab_grad_form},context)
+    
+	else:
+		ceab_grad_form = CEABGradForm()
+        
+		return render_to_response('curriculum/add_ceab_grad_form.html',{'ceab_grad_form':ceab_grad_form},context)

@@ -84,7 +84,7 @@ class Course(models.Model):
 # Course instance(s) and a course have a many to one relationship 
 class CourseInstance(models.Model):
 	course = models.ForeignKey(Course)
-	date = models.DateField(blank = False, default=date.today)
+	date = models.DateField(blank = False)
 	textbook = models.CharField(max_length = 128, blank = True)
 
 	# Professors and T.A.'s require m2m relations so that multiple teachers can teacher multiple courses
@@ -118,7 +118,7 @@ class CourseInstance(models.Model):
 		return self.concepts.all()
 
 	def __str__(self):
-		return "Instance of "+self.course.name
+		return "Instance of "+self.course.course_code
 		
 # Model for a course deliverable (Assignment, Quiz, Test, etc...)
 class Deliverable(models.Model):
@@ -176,7 +176,7 @@ class CEABUnit(models.Model):
 class CEABGrad(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
 	date = models.DateField(blank = False)
-	measurement = models.FileField(upload_to = 'ceab_files', blank = False)
+	measurement = models.FileField(upload_to = 'ceab_files', blank = True)
 	average = models.IntegerField(blank = False)
 	
 	# Attribute types

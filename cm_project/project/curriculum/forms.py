@@ -1,5 +1,5 @@
 from django import forms
-from curriculum.models import UserInfo, Course, CourseInstance, Concept, Deliverable, LearningObjective
+from curriculum.models import UserInfo, Course, CourseInstance, Concept, Deliverable, LearningObjective, CEABGrad
 from django.contrib.auth.models import User
 from django.forms.extras.widgets import SelectDateWidget
 
@@ -77,3 +77,10 @@ class LearningObjectiveForm(forms.ModelForm):
 	class Meta:
 		model = LearningObjective
 		fields=['name', 'description','related_concepts','course_instance']
+
+class CEABGradForm(forms.ModelForm):
+	date = forms.DateField(widget=SelectDateWidget())
+
+	class Meta:
+		model = CEABGrad
+		fields=['name','date','measurement','average','attribute','course']

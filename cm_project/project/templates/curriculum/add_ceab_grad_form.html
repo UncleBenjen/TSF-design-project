@@ -1,0 +1,29 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Add CEAB Graduate Attribute{% endblock %}
+
+{% block body_block %}
+<div class = "well hero-unit">
+    <h1>Add Measurement for CEAB Graduate Attribute</h1>
+    <hr>
+    <div class = "container">
+        {% if success %}
+        <h4>Measurement Added!</h4>
+        <hr>
+        
+        {% else %}
+        
+        <form class = "span12" id = "ceab_grad_form" method = "post" action = "/curriculum/add_ceab_measurement/" enctype = "multipart/form-data">
+            {% csrf_token %}
+            {{ ceab_grad_form.as_p }}
+            
+            
+            <br />
+            <input class = "btn btn-primary" type = "submit" name = "submit" value = "Add CEAB Attribute Measurement"/>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

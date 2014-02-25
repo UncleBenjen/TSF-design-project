@@ -11,11 +11,11 @@
             <!-- Dispay basic info; course code and name, as well as date -->
         	<h2>Course Instance:</h2>
             <hr>
-        	<h3>{{ parent_course.course_code }} - {{ parent_course.name }}</h3>
-            <h3>Date: {{ instance_date }}</h3>
+        	<h3><a href="/curriculum/courses/{{ parent_course.get_url }}">{{ parent_course.course_code }}</a> - {{ parent_course.name }}</h3>
             <hr>
             
             <!-- If there was an instance found and passed through the context... -->
+            <p><strong>Date:</strong> {{ instance_date }}</p>
             {% if instance %}
             <p><strong>Textbook:</strong> {{ instance.textbook }}</p>
             <hr>
@@ -122,7 +122,7 @@
             {% else %}
             <p>There were no learning objectives listed under this course instance...</p>
             {% endif %}
-            <p><a class="btn btn-primary" href="curriculum/add_objective/">Add Learning Objective</a></p>
+            <p><a class="btn btn-primary" href="/curriculum/add_objective">Add Learning Objective</a></p>
             <hr>
             
             <!-- Display Deliverables if they Exist -->
@@ -146,12 +146,12 @@
             {% else %}
             <p>There were no deliverables listed under this course instance...</p>
             {% endif %}
-            <p><a class="btn btn-primary" href="curriculum/add_deliverable/">Add Deliverable</a></p>
+            <p><a class="btn btn-primary" href="/curriculum/add_deliverable">Add Deliverable</a></p>
             <hr>
             
             <!-- Display Concepts if they Exist -->
             <h3>Concepts</h3>
-                {% if instance.concepts %}
+                {% if concepts %}
                 <table class="table">
                     <tr>
                         <td><strong>Name</strong></td>
@@ -159,7 +159,7 @@
                         <td><strong>Description</strong></td>
                     </tr>
                     <!-- traverse through the deliverables listing their attributes -->
-                    {% for concept in instance.concepts.all %}
+                    {% for concept in concepts %}
                     <tr>
                         <td>{{ concept.name }}</td>
                         <td>{{ concept.ceab_unit }}</td>
@@ -171,12 +171,56 @@
                 {% else %}
                 <p>There were no concepts listed under this course instance...</p>
                 {% endif %}
-                <p><a class="btn btn-primary" href="curriculum/add_concept/">Add Concept</a></p>
+                
             <!-- if no instance was found... -->
             {% else %}
             <p>There were no course instances found for {{ parent_course.course_code }} with a date of {{ instance_date }}</p>
             {% endif %}
+            <p><a class="btn btn-primary" href="/curriculum/add_concept">Add Concept</a></p>
+            <hr>
             
+            <!--display ceab grad measurements if they exist-->
+            <h3>CEAB Graduate Attribute Measurements</h3>
+            {% if measurements %}
+            	{% for measurement in measurements %}
+            	<div class="row-fluid">
+                    <div class="span12">
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <table class="table">
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td>{{ measurement.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date:</td>
+                                        <td>{{ measurement.date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Attribute:</td>
+                                        <td>{{ measurement.attribute }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Average:</td>
+                                        <td>{{ measurement.average }}</td>
+                                    </tr>
+                                </table>
+                                
+                            </div>
+                            <div class="span6">
+                                <!-- put example display of measurement file here? -->
+                                <p>Example of the measurement file could go here?</p>
+                            </div>
+                        </div>
+                    </div>
+            	</div>
+                
+                {% endfor %}
+            {% else %}
+            	<p>There were no ceab graduate attributes listed under this course instance...</p>
+            {% endif %}
+            <p><a class="btn btn-primary" href="/curriculum/add_ceab_measurement">Add CEAB Graduate Attribute</a></p>
+            </h3>
         </div>
     </div>
 </div>
