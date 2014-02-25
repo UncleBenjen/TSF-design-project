@@ -1,0 +1,25 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body_block %}
+<div class = "well hero-unit">
+    <h1>Edit Profile</h1>
+    <hr>
+    <div class = "container">
+       
+        <form class = "form-signin span12" id = "edit_profile_form" method = "post" action = "/curriculum/edit_profile/" enctype = "multipart/form-data">
+            {% csrf_token %}
+            {{ edit_user_form.as_p }}
+            {{ edit_userInfo_form.as_p }}
+            
+            
+            <br />
+            <input class = "btn btn-primary" type = "submit" name = "submit" value = "Save Changes"/>
+        </form>
+        
+    </div>
+</div>
+{% endblock %}

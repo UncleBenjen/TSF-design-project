@@ -1,0 +1,40 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Add Deliverable{% endblock %}
+
+{% block body_block %}
+<div class="well hero-unit">
+    
+	<h1>Add Deliverable</h1>
+	<hr>
+	
+	{% if user.is_authenticated%}
+    
+    {% if success %}
+    <p><strong>Deliverable was successfully created... </strong></p>
+    {% else %}
+    
+    <strong>Please enter the following information... </strong>
+    <br />
+    <div class="row-fluid">
+        <div class="span12">
+        	
+            <form id = "deliverable_form" method = "post" action = "/curriculum/add_deliverable/" enctype = "multipart/form-data">
+                {% csrf_token %}
+                {{ deliverable_form.as_p }}
+                
+                <input class = "btn btn-primary" type = "submit" name = "submit" value = "add deliverable"/>
+            </form>
+        	
+        </div>
+    </div>
+    {% endif %}
+	{% else %}
+	
+	
+    
+	{% endif %}
+</div>
+{% endblock %}

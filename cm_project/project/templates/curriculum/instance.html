@@ -122,6 +122,7 @@
             {% else %}
             <p>There were no learning objectives listed under this course instance...</p>
             {% endif %}
+            <p><a class="btn btn-primary" href="curriculum/add_objective/">Add Learning Objective</a></p>
             <hr>
             
             <!-- Display Deliverables if they Exist -->
@@ -145,6 +146,7 @@
             {% else %}
             <p>There were no deliverables listed under this course instance...</p>
             {% endif %}
+            <p><a class="btn btn-primary" href="curriculum/add_deliverable/">Add Deliverable</a></p>
             <hr>
             
             <!-- Display Concepts if they Exist -->
@@ -169,6 +171,7 @@
                 {% else %}
                 <p>There were no concepts listed under this course instance...</p>
                 {% endif %}
+                <p><a class="btn btn-primary" href="curriculum/add_concept/">Add Concept</a></p>
             <!-- if no instance was found... -->
             {% else %}
             <p>There were no course instances found for {{ parent_course.course_code }} with a date of {{ instance_date }}</p>

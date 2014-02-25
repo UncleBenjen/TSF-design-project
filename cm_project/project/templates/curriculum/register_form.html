@@ -1,0 +1,30 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block body_block %}
+	<div class = "well hero-unit">
+		<h1>Register Here</h1>
+		<hr>
+		<div class = "container">
+			{% if registered %}
+				<h4>Thanks for joining up!<small> You are now logged in...
+                </small></h4>
+				<hr>
+				<p><a class="btn btn-primary" href = "/curriculum/edit_profile/">Edit your profile</a></p>
+			{% else %}
+				
+				<form class = "form-signin span12" = "user_form" method = "post" action = "/curriculum/register/" enctype = "multipart/form-data">
+					{% csrf_token %}
+					{{ register_form.as_p }}
+					
+					
+					<br />
+					<input class = "btn btn-primary" type = "submit" name = "submit" value = "Register Account"/>
+				</form>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

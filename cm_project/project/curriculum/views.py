@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
-from curriculum.forms import UserForm, UserProfileForm, CourseForm, InstanceForm, ConceptForm
+from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, DeliverableForm, LearningObjectiveForm
 from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable
 
 def index(request):
@@ -44,12 +44,12 @@ def register(request):
 	# If HTTP = POST, we are inserting / processing a record
 	if request.method == 'POST':
 		# Get information from form
-		user_form = UserForm(data = request.POST)
-		profile_form = UserProfileForm(data = request.POST)
+		register_form = RegisterForm(data = request.POST)
+		#profile_form = UserProfileForm(data = request.POST)
 		
 		# If forms are valid
-		if user_form.is_valid() and profile_form.is_valid():
-			user = user_form.save()
+		if register_form.is_valid(): #and profile_form.is_valid():
+			user = register_form.save()
 			
 			# Hash the users password
 			user.set_password(user.password)
@@ -57,33 +57,70 @@ def register(request):
 			
 			# Sort out user profile instance
 			# Do not commit since we need to save the user attribute ourselves
-			profile = profile_form.save(commit = False)
+			#profile = profile_form.save(commit = False)
+			profile = UserInfo()
 			profile.user = user
 			profile.save()
-			
+
+			user= authenticate(username=request.POST['username'],
+                   password=request.POST['password'])
+			login(request, user)
 			# Get the picture if it was included
-			if 'picture' in request.FILES:
-				profile.picture = request.FILES['picture']
+			#if 'picture' in request.FILES:
+				#profile.picture = request.FILES['picture']
 			
 			# Registration was successful
 			registered = True
-			
+			return render_to_response('curriculum/register_form.html',{'register_form' : register_form,  'registered' : registered},context)
 		# Something went wrong....dude....shiiiiieetttt
 		else:
-			print(user_form.errors)
-			print(profile_form.errors)
+			print(register_form.errors)
+                #print(profile_form.errors)
 	
 	# Not an HTTP POST
 	# Render blank forms
 	else:
-		user_form = UserForm()
-		profile_form = UserProfileForm()
+		register_form = RegisterForm()
+		#profile_form = UserProfileForm()
 		
 	return render_to_response(
-			'curriculum/register.html',
-			{'user_form' : user_form, 'profile_form' : profile_form, 'registered' : registered},
+			'curriculum/register_form.html',
+			{'register_form' : register_form,  'registered' : registered},
 			context)
-			
+
+@login_required
+def edit_profile(request):
+	context=RequestContext(request)
+    
+	#if the request was a post, do some shieet
+	if request.method=='POST':
+		#get form info for UserInfor and User
+		edit_userInfo_form = UserInfoForm(data = request.POST)
+		edit_user_form = UserForm(data = request.POST)
+        
+		#if the form is valid, save info and redirect
+		if edit_userInfo_form.is_valid and edit_user_form.is_valid:
+			user = edit_user_form.save()
+			userInfo = edit_userInfo_form.save(commit=False)
+			userInfo.user = user
+			# Get the picture if it was included
+			if 'picture' in request.FILES:
+				userInfo.picture = request.FILES['picture']
+			userInfo.save()
+			return HttpResponseRedirect('/curriculum/profile/')
+		#else, print errors
+		else:
+			print(edit_userInfo_form.errors)
+			print(edit_user_form.errors)
+    
+	#otherwise it was a GET, return html template
+	else:
+		#make the form to be sent in the context_dict be an empty one
+		edit_userInfo_form = UserInfoForm()
+		edit_user_form = UserForm()
+    
+	return render_to_response('curriculum/edit_profile_form.html',{'edit_userInfo_form':edit_userInfo_form, 'edit_user_form':edit_user_form},context)
+
 def user_login(request):
 	context = RequestContext(request)
 	
@@ -240,7 +277,8 @@ def instance(request, course_name_url, instance_date_url):
 	return render_to_response('curriculum/instance.html', context_dict, context)
 
 
-# Views for forms
+# Views for object creation forms
+# Add course control - returns form, empty if GET, with data if POST
 def add_course(request):
 	context = RequestContext(request)
 	success = False
@@ -265,6 +303,7 @@ def add_course(request):
         
 		return render_to_response('curriculum/add_course_form.html',{'course_form' : course_form},context)
 
+# Add course instance - returns form, empty if GET, with data if POST
 def add_instance(request):
 	context = RequestContext(request)
 	success = False
@@ -283,6 +322,7 @@ def add_instance(request):
 
 		return render_to_response('curriculum/add_instance_form.html',{'instance_form' : instance_form},context)
 
+# Add Concept - returns form, empty if GET, with data if POST
 def add_concept(request):
 	context = RequestContext(request)
 	success = False
@@ -300,3 +340,45 @@ def add_concept(request):
 		concept_form = ConceptForm()
         
 		return render_to_response('curriculum/add_concept_form.html',{'concept_form' : concept_form},context)
+
+# Add Deliverable - returns form, empty if GET, with data if POST
+def add_deliverable(request):
+	context = RequestContext(request)
+	success = False
+
+	if request.method == 'POST':
+		deliverable_form = DeliverableForm(data = request.POST)
+
+		if deliverable_form.is_valid():
+			deliverable = deliverable_form.save()
+			success = True
+		else:
+			print(deliverable_form.errors)
+
+		return render_to_response('curriculum/add_deliverable_form.html',{'deliverable_form':deliverable_form},context)
+	else:
+		deliverable_form = DeliverableForm()
+
+		return render_to_response('curriculum/add_deliverable_form.html',{'deliverable_form':deliverable_form},context)
+
+# Add learning objective - returns form, empty if GET, with data if POST
+def add_learning_objective(request):
+	context = RequestContext(request)
+	success = False
+
+	if request.method == 'POST':
+		learning_objective_form = LearningObjectiveForm(data = request.POST)
+    
+		if learning_objective_form.is_valid():
+			learning_objective = learning_objective_form.save()
+			success = True
+		else:
+			print(learning_objective_form.errors)
+    
+		return render_to_response('curriculum/add_objective_form.html',{'learning_objective_form':learning_objective_form},context)
+
+	else:
+		learning_objective_form = LearningObjectiveForm()
+
+		return render_to_response('curriculum/add_objective_form.html',{'learning_objective_form':learning_objective_form},context)
+

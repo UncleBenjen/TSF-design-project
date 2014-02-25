@@ -15,4 +15,7 @@ urlpatterns = patterns('',
         url(r'^add_course/$',views.add_course, name = 'add_course'),
 		url(r'^add_instance/$',views.add_instance, name = 'add_instance'),
         url(r'^add_concept/$',views.add_concept, name = 'add_concept'),
+		url(r'^add_deliverable/$',views.add_deliverable, name = 'add_deliverable'),
+		url(r'^add_objective/$',views.add_learning_objective, name = 'add_learning_objective'),
+		url(r'^edit_profile/$', views.edit_profile, name='edit_profile'),
 		)
