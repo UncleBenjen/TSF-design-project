@@ -1,0 +1,17 @@
+<ul class="nav nav-list">
+	{% if course_list %}
+		<div style = "margin-left:10%;">
+			{% for course in course_list %}
+				<li style = "line-height:100%; font-size:70%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></li>
+			{% endfor %}
+		</div>
+	{% endif %}
+	
+	{% if concept_list %}
+		<div style = "margin-left:10%;">
+			{% for concept in concept_list %}
+				<li style = "line-height:100%; font-size:70%;"><a href = "#">{{ concept.name }}</a></li>
+			{% endfor %}
+		</div>
+	{% endif %}
+</ul>

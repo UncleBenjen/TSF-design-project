@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, DeliverableForm, LearningObjectiveForm, CEABGradForm
 from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable, CEABGrad
 
+
 def index(request):
 	context = RequestContext(request)
 	
@@ -410,3 +411,78 @@ def add_ceab_grad(request):
 		ceab_grad_form = CEABGradForm()
         
 		return render_to_response('curriculum/add_ceab_grad_form.html',{'ceab_grad_form':ceab_grad_form},context)
+		
+# This is to aid the functionality of searching for a course
+def get_course_list(max_results=0, starts_with=''):
+	course_list = []
+	
+	if starts_with:
+		course_list = Course.objects.filter(course_code__istartswith=starts_with)
+	else:
+		course_list = []
+
+	if max_results > 0:
+		if len(course_list) > max_results:
+			course_list = course_list[:max_results]
+			
+	return course_list
+	
+# Used the get_course_list function to get the top 5 matches
+def suggest_course(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['course_suggestion']
+			
+		course_list = get_course_list(5, starts_with)
+		
+		return render_to_response('curriculum/search_list.html', {'course_list' : course_list}, context)
+	
+# Used by the get_concept_list function to get the query results
+def get_concept_list(max_results=0, starts_with=''):
+	concept_list = []
+	
+	if starts_with:
+		concept_list = Concept.objects.filter(name__istartswith=starts_with)
+	else:
+		concept_list = []
+	
+	if max_results > 0:
+		if len(concept_list) > max_results:
+			concept_list = concept_list[:max_results]
+			
+	return concept_list
+	
+# Used to get the top 5 results of the concept search
+def suggest_concept(request):
+	context = RequestContext(request)
+	concept_list = []
+	starts_with = ''
+	
+	if request.method == 'GET':
+		starts_with = request.GET['concept_suggestion']
+		
+	concept_list = get_concept_list(5, starts_with)
+	
+	return render_to_response('curriculum/search_list.html', {'concept_list' : concept_list}, context)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+
+
+
