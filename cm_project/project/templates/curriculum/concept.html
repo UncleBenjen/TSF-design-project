@@ -1,0 +1,29 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Concept{% endblock %}
+
+{% block body_block %}
+<div class = "well hero-unit">
+	<div class = "row-fluid">
+		<div class = "span12">
+			<h1>Concept Page</h1>
+			<hr>
+			<h2>Name: {{ concept_name }}</h2>
+			<hr>
+			<h3>Description:</h3>
+			<p>{{ description }}</p>
+			<hr>
+			<p>Ceab Measurement Unit: {{ ceab_unit }}</p>
+			<hr>
+			<p>Highschool concept? {{ highschool }}</p>
+			<hr>
+			<p>Courses Instances:</p>
+			{% for c in courses %}
+				<p><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}">{{ c.course }} - {{ c.date }}</a></p>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}

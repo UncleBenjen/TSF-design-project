@@ -1,0 +1,26 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ option_name }}{% endblock %}
+
+{% block body_block %}
+<div class = "well hero-unit">
+    <div class = "row-fluid">
+        <!-- if an option was passed -->
+        {% if option %}
+        
+        <h2>{{ option.name }}</h2>
+        <hr>
+        <h3>Program: <a href="/curriculum/programs/{{ option.program_stream.get_url }}/">{{option.program_stream.name}}</a   ></h3>
+        <hr>
+        <!-- display courses -->
+        <h3>Course Progression: </h3>
+        
+        <!-- else display note to viewer -->
+        {% else %}
+        <p>No option was found...</p>
+        {% endif %}
+	</div>
+</div>
+{% endblock %}

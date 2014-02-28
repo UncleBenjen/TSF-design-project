@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import date
+from datetime import date, datetime, time
 
 # User model
 class UserInfo(models.Model):
@@ -45,6 +45,10 @@ class Concept(models.Model):
 	# Relate concepts to to themselves
 	related_concepts = models.ManyToManyField('self',blank = True)
 	
+	def get_url(self):
+		concept_url = self.name.replace(' ', '_')
+		return concept_url
+		
 	def __str__(self):
 		return self.name
 		
@@ -105,6 +109,15 @@ class CourseInstance(models.Model):
 	# Define concepts covered in this course
 	concepts = models.ManyToManyField(Concept, blank = True)
 
+	
+	@property
+	def get_date(self):
+		DATE_FORMAT = "%Y-%m-%d" 
+		date_url = self.date
+		d = date_url.strftime(DATE_FORMAT)
+		d = d.replace('-', '_')
+		return d
+	
 	@property
 	def get_professors(self):
 		return self.professors.all()
@@ -114,11 +127,11 @@ class CourseInstance(models.Model):
 		return self.assistants.all()
 
 	@property
-	def get_concepts():
+	def get_concepts(self):
 		return self.concepts.all()
 
 	def __str__(self):
-		return "Instance of "+self.course.course_code
+		return "Instance of "+self.course.course_code+" ("+self.get_date+")"
 		
 # Model for a course deliverable (Assignment, Quiz, Test, etc...)
 class Deliverable(models.Model):
@@ -157,9 +170,30 @@ class ProgramStream(models.Model):
 	
 	@property
 	def get_url(self):
-		url = self.name.replace(' ','_')
-		return url
+		return self.name.replace(' ','_')
+
 	
+	def __str__(self):
+		return self.name
+
+# Option Model
+class Option(models.Model):
+	name = models.CharField(max_length=128, unique=True)
+	# Linked to Program Stream through Foreign Key
+	program_stream = models.ForeignKey(ProgramStream)
+	#m2m relation with courses to be added to program, and removed from program
+	added_courses = models.ManyToManyField(Course, related_name='courses_added', blank=True)
+	removed_courses = models.ManyToManyField(Course,related_name='courses_removed', blank=True)
+
+	@property
+	def get_url(self):
+		return self.name.replace(' ','_')
+
+	#use this function to get the courses from the program_stream, add the added_courses, remove the removed_courses, and return the resultant list
+	@property
+	def get_courses(self):
+		return
+
 	def __str__(self):
 		return self.name
 

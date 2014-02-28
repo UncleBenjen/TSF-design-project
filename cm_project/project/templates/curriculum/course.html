@@ -61,6 +61,7 @@
                     {% else %}
                     <p style = "font-size:85%; line-height:125%;">No pre-requisites are listed under this course...</p>
                     {% endif %}
+					<p style = "font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Add Pre-Requisite</a></p>
                 </div>
                 <div class="span4">
                     <h4>Co-Requisites: </h3>
@@ -73,6 +74,7 @@
                     {% else %}
                     <p style = "font-size:85%; line-height:125%;">No co-requisites are listed under this course...</p>
                     {% endif %}
+					<p style = "font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Add Co-Requisite</a></p>
                 </div>
                 <div class="span4">
                     <h4>Anti-Requisites: </h3>
@@ -85,10 +87,25 @@
                     {% else %}
                     <p style = "font-size:85%; line-height:125%;">No anti-requisites are listed under this course...</p>
                     {% endif %}
+					<p style = "font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Add Anti-Requisite</a></p>
                 </div>
             </div>
         </div>
     </div>
+	<hr>
+	<div class = "row-fluid">
+		<div class = "span12">
+		<h3>Instances of this course:</h3>
+			<div class = "row-fluid">
+				<div class = "span6">
+					{% for c in instances %}
+						<p style = "line-height:110%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+	
     
     <hr>
     

@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% block title %}{{ program_name }}{% endblock %}
+
 {% block body_block %}
 	<div class = "well hero-unit">
 		<div class = "row-fluid">
@@ -15,12 +17,26 @@
 			<hr>
 			<p style = "font-size:85%; line-height:125%;">{{ program.description }}</p>
 			<hr>
-			
+            
+			<!-- Display options associated with program stream as links to said options -->
+            <h3>Available Options:</h3>
+            {% if options %}
+            <ul>
+            	{% for option in options %}
+                <li><a href="/curriculum/options/{{ option.get_url }}/">{{ option.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>There were no options associated with this program stream...</p>
+            {% endif %}
+            <hr>
+            
 			<div class = "text-center">
-				<h2>Courses</h2>
+				<h2>Base Courses</h2>
 				<hr>
 			</div>
-			
+            
+			<!-- Loop through and display courses passed through context -->
 			<div class = "row-fluid">
 				<div class = "span12">
 					<div class = "row-fluid">

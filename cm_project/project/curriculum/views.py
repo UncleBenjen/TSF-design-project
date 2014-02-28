@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
 from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, DeliverableForm, LearningObjectiveForm, CEABGradForm
-from curriculum.models import UserInfo, Department, ProgramStream, Course, CourseInstance, Concept, LearningObjective, Deliverable, CEABGrad
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Deliverable, CEABGrad
 
 
 def index(request):
@@ -196,7 +196,11 @@ def program(request, program_name_url):
 		
 		department = program.department
 		context_dict['department'] = department
-		
+
+		#Get Options associated with this program and pass in context
+		options = Option.objects.filter(program_stream = program)
+		context_dict['options'] = options
+
 		# Get first year courses and the urls to their pages
 		courses1 = program.courses.filter(year = 'FI')
 		context_dict['courses1'] = courses1
@@ -218,12 +222,29 @@ def program(request, program_name_url):
 		
 	return render_to_response('curriculum/program.html', context_dict, context)
 
+def option(request, option_name_url):
+	context = RequestContext(request)
+
+	option_name = option_name_url.replace('_',' ')
+	context_dict={'option_name':option_name}
+	try:
+		option = Option.objects.get(name = option_name)
+		context_dict['option']=option
+
+	except Option.DoesNotExist:
+		pass
+
+	return render_to_response('curriculum/option.html',context_dict,context)
+
 def course(request, course_name_url):
 	context = RequestContext(request)
 
 	# Get the name from the url that was passed with the request
 	course_name = course_name_url.replace('_','/')
 	context_dict={'course_name':course_name}
+	
+	course_instances = CourseInstance.objects.filter(course__course_code = course_name)
+	context_dict['instances'] = course_instances
 	
 	try:
 		# Get the course object from the database and add it to the context dict
@@ -245,7 +266,29 @@ def course(request, course_name_url):
 
 	return render_to_response('curriculum/course.html', context_dict, context)
 
-
+# Simple view for displaying a concept
+def concept(request, concept_name_url):
+	context = RequestContext(request)
+	concept_name = concept_name_url.replace('_', ' ')
+	
+	concept = Concept.objects.get(name=concept_name)
+	concept_name = concept.name
+	description = concept.description
+	ceab_unit = concept.ceab_unit
+	highschool = concept.highscool
+	#course_instances = CourseInstance.objects.filter(concepts__name = concept_name)
+	courses = CourseInstance.objects.filter(concepts__name = concept_name)
+	
+	
+	context_dict = {'concept_name' : concept_name}
+	context_dict['description'] = description
+	context_dict['ceab_unit'] = ceab_unit
+	context_dict['highschool'] = highschool
+	context_dict['courses'] = courses
+	
+	return render_to_response('curriculum/concept.html', context_dict, context)
+	
+	
 def instance(request, course_name_url, instance_date_url):
 	context = RequestContext(request)
 	
