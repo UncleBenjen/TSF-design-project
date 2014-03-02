@@ -1,12 +1,13 @@
 import os
 from django.contrib.auth.models import User
-from curriculum.models import UserInfo, Department, ProgramStream, Course
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course
 
 #call each populate method in correct order
 def populate_db():
 	populate_departments()
 	populate_courses()
 	populate_prgrm_strms()
+	populate_options()
 	connect_courses()
 
 # Function to populate the department table
@@ -47,6 +48,111 @@ def populate_prgrm_strms():
 
 	add_program_strm(name="Software Engineering", department=Department.objects.get(name="Electrical and Computer Engineering"), description = "The development of software systems is now regarded among the most innovative work performed by mankind. Software engineers are trained for the specification, design, implementation, and maintenance of software systems. Western’s Software Engineering program has a core of disciplines that covers all phases of the software cycle. This program offers a solid foundation in computer hardware and computer networks, while exploring the essentials of computer science.")
 
+#populate the options
+def populate_options():
+	print("Populating Options")
+
+	#Try to find the chemical program and create the options associated with it, else print fail-message
+	try:
+		chem_eng = ProgramStream.objects.get(name = "Chemical Engineering")
+		add_option(name="Chemical Engineering Option", program_stream=chem_eng)
+		add_option(name="Biochemical and Environmental Engineering Option", program_stream=chem_eng)
+		add_option(name="Chemical Engineering and Management Option", program_stream=chem_eng)
+		add_option(name="Chemical Engineering and Law Option", program_stream=chem_eng)
+		print(" - Successfully populated chemical engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate chemical engineering options...")
+
+	#Try to find the civil program and create the options associated with it, else print fail-message
+	try:
+		civil_eng = ProgramStream.objects.get(name = "Civil Engineering")
+		add_option(name="Civil and Structural Engineering Option", program_stream=civil_eng)
+		add_option(name="Environmental Engineering Option", program_stream=civil_eng)
+		add_option(name="Civil Engineering and Law Option", program_stream=civil_eng)
+		add_option(name="Civil Engineering and Medicine Option", program_stream=civil_eng)
+		add_option(name="Environmental Engineering with International Development Option", program_stream=civil_eng)
+		add_option(name="Structural Engineering with International Development Option", program_stream=civil_eng)
+		print(" - Successfully populated civil engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate civil engineering options...")
+
+	#Try to find the computer program and create the options associated with it, else print fail-message
+	try:
+		comp_eng = ProgramStream.objects.get(name = "Computer Engineering")
+		add_option(name="Computer Engineering Option", program_stream=comp_eng)
+		print(" - Successfully populated civil engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate computer engineering options...")
+
+	#Try to find the electrical program and create the options associated with it, else print fail-message
+	try:
+		elec_eng = ProgramStream.objects.get(name = "Electrical Engineering")
+		add_option(name="Electrical Engineering Option", program_stream=elec_eng)
+		add_option(name="Electrical Engineering and Management Option", program_stream=elec_eng)
+		add_option(name="Electrical Engineering and Wireless Communication Option", program_stream=elec_eng)
+		add_option(name="Electrical Engineering and Law Option", program_stream=elec_eng)
+		add_option(name="Electrical Engineering Power Systems Engineering Option", program_stream=elec_eng)
+		add_option(name="Electrical Engineering and Medicine Option", program_stream=elec_eng)
+		add_option(name="Electrical Engineering Biomedical Signals and Systems Option", program_stream=elec_eng)
+		print(" - Successfully populated electrical engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate electrical engineering options...")
+
+	#Try to find the green process program and create the options associated with it, else print fail-message
+	try:
+		green_eng = ProgramStream.objects.get(name = "Green Process Engineering")
+		add_option(name="Green Process Engineering Option", program_stream=green_eng)
+		add_option(name="Green Process Engineering with Management Option", program_stream=green_eng)
+		add_option(name="Green Process Engineering with Law Option", program_stream=green_eng)
+		print(" - Successfully populated green process engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate green process engineering options...")
+
+	#Try to find the integrated program and create the options associated with it, else print fail-message
+	try:
+		integrated_eng = ProgramStream.objects.get(name = "Integrated Engineering")
+		add_option(name="Integrated Engineering Option", program_stream=integrated_eng)
+		add_option(name="Integrated Engineering and Management Option", program_stream=integrated_eng)
+		add_option(name="Integrated Engineering and Medicine Option", program_stream=integrated_eng)
+		add_option(name="Integrated Engineering and Law Option", program_stream=integrated_eng)
+		print(" - Successfully populated integrated engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate green process engineering options...")
+
+	#Try to find the mechanical program and create the options associated with it, else print fail-message
+	try:
+		mech_eng = ProgramStream.objects.get(name = "Mechanical Engineering")
+		add_option(name="Mechanical Engineering Option", program_stream=mech_eng)
+		add_option(name="Mechanical Engineering and Law Option", program_stream=mech_eng)
+		add_option(name="Mechanical Engineering and Medicine Option", program_stream=mech_eng)
+		add_option(name="Mechanical Engineering and Business Option", program_stream=mech_eng)
+		print(" - Successfully populated mechanical engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate mechanical engineering options...")
+
+	#Try to find the mechatronic systems program and create the options associated with it, else print fail-message
+	try:
+		mechatronic_eng = ProgramStream.objects.get(name = "Mechatronic Systems Engineering")
+		add_option(name="Mechatronic Systems Engineering Option", program_stream=mechatronic_eng)
+		add_option(name="Mechatronic Systems Engineering and Management Option", program_stream=mechatronic_eng)
+		add_option(name="Mechatronic Systems Engineering and Law Option", program_stream=mechatronic_eng)
+		print(" - Successfully populated mechatronic systems engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate mechatronic systems engineering options...")
+
+	#Try to find the software program and create the options associated with it, else print fail-message
+	try:
+		soft_eng = ProgramStream.objects.get(name = "Software Engineering")
+		add_option(name="Software Engineering Option", program_stream=soft_eng)
+		add_option(name="Software Engineering and Management Option", program_stream=soft_eng)
+		add_option(name="Software Engineering and Law Option", program_stream=soft_eng)
+		add_option(name="Software Engineering Embedded Systems Option", program_stream=soft_eng)
+		add_option(name="Software Engineering Health Informatics Option", program_stream=soft_eng)
+		add_option(name="Software Engineering and Medicine Option", program_stream=soft_eng)
+		print(" - Successfully populated software engineering options...")
+	except ProgramStream.DoesNotExist:
+		print(" ~ Could not populate software engineering options...")
+
 #populate first year courses
 def populate_courses():
 	print("Populating first year courses...")
@@ -77,6 +183,7 @@ def connect_courses():
 		streams = ProgramStream.objects.all()
 		first_year_courses = Course.objects.filter(year='FI')
 
+		#loop through the streams, and add the common first year courses to each one
 		for stream in streams:
 			for course in first_year_courses:
 				stream.courses.add(course)
@@ -97,6 +204,10 @@ def add_department(name, head, website):
 def add_program_strm(name, department, description):
 	ps = ProgramStream.objects.get_or_create(name=name, department=department, description=description)[0]
 	return ps
+
+def add_option(name, program_stream):
+	o = Option.objects.get_or_create(name = name, program_stream=program_stream)
+	return o
 
 def add_course(course_code, name, lecture_hours, lab_hours, credit, description, year):
 	c = Course.objects.get_or_create(course_code=course_code, name=name, lecture_hours=lecture_hours, lab_hours=lab_hours, credit=credit, description=description, year=year)[0]

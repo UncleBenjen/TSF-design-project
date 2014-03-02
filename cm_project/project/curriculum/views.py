@@ -108,7 +108,7 @@ def edit_profile(request):
 			if 'picture' in request.FILES:
 				userInfo.picture = request.FILES['picture']
 			userInfo.save()
-			return HttpResponseRedirect('/curriculum/profile/')
+			return render_to_response('curriculum/edit_profile_form.html',{'edit_userInfo_form' : edit_userInfo_form,  'edit_user_form' : edit_user_form},context)
 		#else, print errors
 		else:
 			print(edit_userInfo_form.errors)
