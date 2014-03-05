@@ -1,0 +1,112 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}All Courses{% endblock %}
+
+{% block body_block %}
+	<div class = "well hero-unit">
+		<div class = "row-fluid">
+			<div class = "text-center">
+				<h1>Engineering Courses</h1>				
+			</div>
+			<hr>
+			
+			<div class = "row-fluid">
+				<div class = "span12">
+					<div class = "row-fluid">
+						<div class = "span3">
+							<p>Engineering Science</p>
+							{% if ES %}
+								{% for course in ES %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<p>Currently Empty</p>
+							{% endif %}
+						</div>
+						<div class = "span3">
+							<p>Chemical and Biochemical</p>
+							{% if CBE %}
+								{% for course in CBE %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+						<div class = "span3">
+							<p>Civil and Enivronmental</p>
+							{% if CEE %}
+								{% for course in CEE %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+						<div class = "span3">
+							<p>Electrical and Computer</p>
+							{% if ECE %}
+								{% for course in ECE %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div class = "row-fluid">
+				<div class = "span12">
+					<div class = "row-fluid">
+						<div class = "span3">
+							<p>Green Process</p>
+							{% if GPE %}
+								{% for course in GPE %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+						<div class = "span3">
+							<p>Mechanical and Materials</p>
+							{% if MME %}
+								{% for course in MME %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+						<div class = "span3">
+							<p>Mechatronic Systems</p>
+							{% if MSE %}
+								{% for course in MSE %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+						<div class = "span3">
+							<p>Software</p>
+							{% if SE %}
+								{% for course in SE %}
+									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+								{% endfor %}
+							{% else %}
+								<strong>Currently Empty</strong>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr>
+			
+		</div>
+	</div>
+{% endblock %}

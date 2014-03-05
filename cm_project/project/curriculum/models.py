@@ -48,7 +48,7 @@ class Concept(models.Model):
 	def get_url(self):
 		concept_url = self.name.replace(' ', '_')
 		return concept_url
-
+		
 	def __str__(self):
 		return self.name
 		

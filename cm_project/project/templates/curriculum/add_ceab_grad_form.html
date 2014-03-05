@@ -15,7 +15,7 @@
         
         {% else %}
         
-        <form class = "span12" id = "ceab_grad_form" method = "post" action = "/curriculum/add_ceab_measurement/" enctype = "multipart/form-data">
+        <form class = "span12" id = "ceab_grad_form" method = "post" action = "/curriculum/add_ceab_measurement/{{ course_url }}/{{ date_url }}/" enctype = "multipart/form-data">
             {% csrf_token %}
             {{ ceab_grad_form.as_p }}
             

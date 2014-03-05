@@ -70,17 +70,17 @@ class DeliverableForm(forms.ModelForm):
 
 	class Meta:
 		model = Deliverable
-		fields=['type','percent','due_date','course_instance']
+		fields=['type','percent','due_date']
 
 class LearningObjectiveForm(forms.ModelForm):
 	description=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = LearningObjective
-		fields=['name', 'description','related_concepts','course_instance']
+		fields=['name', 'description','related_concepts']
 
 class CEABGradForm(forms.ModelForm):
 	date = forms.DateField(widget=SelectDateWidget())
 
 	class Meta:
 		model = CEABGrad
-		fields=['name','date','measurement','average','attribute','course']
+		fields=['name','date','measurement','average','attribute']

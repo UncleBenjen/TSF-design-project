@@ -124,7 +124,7 @@
             {% else %}
             <p>There were no learning objectives listed under this course instance...</p>
             {% endif %}
-            <p><a class="btn btn-primary" href="/curriculum/add_objective">Add Learning Objective</a></p>
+            <p><a class="btn btn-primary" href="/curriculum/add_objective/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add Learning Objective</a></p>
             <hr>
             
             <!-- Display Deliverables if they Exist -->
@@ -148,7 +148,7 @@
             {% else %}
             <p>There were no deliverables listed under this course instance...</p>
             {% endif %}
-            <p><a class="btn btn-primary" href="/curriculum/add_deliverable">Add Deliverable</a></p>
+            <p><a class="btn btn-primary" href="/curriculum/add_deliverable/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add Deliverable</a></p>
             <hr>
             
             <!-- Display Concepts if they Exist -->
@@ -221,7 +221,7 @@
             {% else %}
             	<p>There were no ceab graduate attributes listed under this course instance...</p>
             {% endif %}
-            <p><a class="btn btn-primary" href="/curriculum/add_ceab_measurement">Add CEAB Graduate Attribute</a></p>
+            <p><a class="btn btn-primary" href="/curriculum/add_ceab_measurement/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add CEAB Graduate Attribute</a></p>
             </h3>
         </div>
     </div>

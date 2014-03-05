@@ -108,7 +108,7 @@ def edit_profile(request):
 			if 'picture' in request.FILES:
 				userInfo.picture = request.FILES['picture']
 			userInfo.save()
-			return render_to_response('curriculum/edit_profile_form.html',{'edit_userInfo_form' : edit_userInfo_form,  'edit_user_form' : edit_user_form},context)
+			return HttpResponseRedirect('/curriculum/profile/')
 		#else, print errors
 		else:
 			print(edit_userInfo_form.errors)
@@ -222,6 +222,36 @@ def program(request, program_name_url):
 		
 	return render_to_response('curriculum/program.html', context_dict, context)
 
+def all_courses(request):
+	context = RequestContext(request)
+	
+	courses_es = Course.objects.filter(course_code__istartswith='ES')
+	context_dict = {'ES' : courses_es}
+	
+	courses_cbe = Course.objects.filter(course_code__istartswith='CBE')
+	context_dict['CBE'] = courses_cbe
+	
+	courses_cee = Course.objects.filter(course_code__istartswith='CEE')
+	context_dict['CEE'] = courses_cee
+	
+	courses_ece = Course.objects.filter(course_code__istartswith='ECE')
+	context_dict['ECE'] = courses_ece
+	
+	courses_gpe = Course.objects.filter(course_code__istartswith='GPE')
+	context_dict['GPE'] = courses_gpe
+	
+	courses_mme = Course.objects.filter(course_code__istartswith='MME')
+	context_dict['MME'] = courses_mme
+	
+	courses_mse = Course.objects.filter(course_code__istartswith='MSE')
+	context_dict['MSE'] = courses_mse
+	
+	courses_se = Course.objects.filter(course_code__istartswith='SE')
+	context_dict['SE'] = courses_se
+	
+	return render_to_response('curriculum/all_courses.html', context_dict, context)
+
+	
 def option(request, option_name_url):
 	context = RequestContext(request)
 
@@ -344,7 +374,6 @@ def add_course(request):
 		else:
 			print(course_form.errors)
 
-
 		return render_to_response('curriculum/add_course_form.html',{'course_form' : course_form, 'success':success},context)
 	else:
 		
@@ -362,6 +391,7 @@ def add_instance(request):
 		if instance_form.is_valid():
 			instance = instance_form.save()
 			success = True
+			return HttpResponseRedirect('/curriculum/instances/'+instance.course.get_url+'/'+instance.get_date+'/', context)
 		else:
 			print(instance_form.errors)
 
@@ -375,85 +405,160 @@ def add_instance(request):
 def add_concept(request):
 	context = RequestContext(request)
 	success = False
+	
 	if request.method == 'POST':
 		concept_form = ConceptForm(data = request.POST)
         
 		if concept_form.is_valid():
 			concept = concept_form.save()
 			success = True
+			
+			return HttpResponseRedirect('/curriculum/concepts/'+concept.name+'/', context)
 		else:
 			print(concept_form.errors)
         
-		return render_to_response('curriculum/add_concept_form.html',{'concept_form':concept_form},context)
+		
+		return render_to_response('curriculum/add_concept_form.html',{'concept_form':concept_form} ,context)
 	else:
 		concept_form = ConceptForm()
         
 		return render_to_response('curriculum/add_concept_form.html',{'concept_form' : concept_form},context)
 
 # Add Deliverable - returns form, empty if GET, with data if POST
-def add_deliverable(request):
+def add_deliverable(request, course_url, date_url):
 	context = RequestContext(request)
 	success = False
+    
+	context_dict = {'course_url':course_url}
+	context_dict['date_url']=date_url
+    
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course']=course
+		try:
+			instance = CourseInstance.objects.get(course = course, date = date)
+			context_dict['instance']=instance
+		except CourseInstance.DoesNotExist:
+			pass
+            
+	except Course.DoesNotExist:
+		pass
 
 	if request.method == 'POST':
 		deliverable_form = DeliverableForm(data = request.POST)
+		context_dict['deliverable_form']=deliverable_form
 
 		if deliverable_form.is_valid():
-			deliverable = deliverable_form.save()
+			deliverable = deliverable_form.save(commit=False)
+			deliverable.course_instance=instance
+			deliverable.save()
 			success = True
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 		else:
 			print(deliverable_form.errors)
+			return render_to_response('curriculum/add_deliverable_form.html',context_dict,context)
 
-		return render_to_response('curriculum/add_deliverable_form.html',{'deliverable_form':deliverable_form},context)
+
 	else:
 		deliverable_form = DeliverableForm()
+		context_dict['deliverable_form']=deliverable_form
 
-		return render_to_response('curriculum/add_deliverable_form.html',{'deliverable_form':deliverable_form},context)
+		return render_to_response('curriculum/add_deliverable_form.html',context_dict,context)
 
 # Add learning objective - returns form, empty if GET, with data if POST
-def add_learning_objective(request):
+def add_learning_objective(request,course_url,date_url):
 	context = RequestContext(request)
 	success = False
+
+	context_dict = {'course_url':course_url}
+	context_dict['date_url']=date_url
+
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course']=course
+		try:
+			instance = CourseInstance.objects.get(course = course, date = date)
+			context_dict['instance']=instance
+		except CourseInstance.DoesNotExist:
+			pass
+
+	except Course.DoesNotExist:
+		pass
+
 
 	if request.method == 'POST':
 		learning_objective_form = LearningObjectiveForm(data = request.POST)
-    
+		context_dict['learning_objective_form']=learning_objective_form
+
 		if learning_objective_form.is_valid():
-			learning_objective = learning_objective_form.save()
+			learning_objective = learning_objective_form.save(commit=False)
+			learning_objective.course_instance = instance
+			learning_objective.save()
 			success = True
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 		else:
 			print(learning_objective_form.errors)
     
-		return render_to_response('curriculum/add_objective_form.html',{'learning_objective_form':learning_objective_form},context)
+		return render_to_response('curriculum/add_objective_form.html',context_dict,context)
 
 	else:
 		learning_objective_form = LearningObjectiveForm()
+		context_dict['learning_objective_form']=learning_objective_form
 
-		return render_to_response('curriculum/add_objective_form.html',{'learning_objective_form':learning_objective_form},context)
+		return render_to_response('curriculum/add_objective_form.html',context_dict,context)
 
 # Add CEABgrad - returns form, empty if GET, with data if POST
-def add_ceab_grad(request):
+def add_ceab_grad(request,course_url,date_url):
 	context = RequestContext(request)
 	success = False
 
+	context_dict = {'course_url':course_url}
+	context_dict['date_url']=date_url
+
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course']=course
+		try:
+			instance = CourseInstance.objects.get(course = course, date = date)
+			context_dict['instance']=instance
+		except CourseInstance.DoesNotExist:
+			pass
+
+	except Course.DoesNotExist:
+		pass
+
 	if request.method == 'POST':
 		ceab_grad_form = CEABGradForm(data = request.POST)
-        
+		context_dict['ceab_grad_form']=ceab_grad_form
+
 		if ceab_grad_form.is_valid():
-			ceab_grad = ceab_grad_form.save()
-			success = True
+			ceab_grad = ceab_grad_form.save(commit=False)
+			ceab_grad.course = instance
 			# Get the picture if it was included
 			if 'measurement' in request.FILES:
 				ceab_grad.measurement = request.FILES['picture']
+			ceab_grad.save()
+			success = True
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 		else:
 			print(ceab_grad_form.errors)
         
-		return render_to_response('curriculum/add_ceab_grad_form.html',{'ceab_grad_form':ceab_grad_form},context)
+		return render_to_response('curriculum/add_ceab_grad_form.html',context_dict,context)
     
 	else:
 		ceab_grad_form = CEABGradForm()
-        
-		return render_to_response('curriculum/add_ceab_grad_form.html',{'ceab_grad_form':ceab_grad_form},context)
+		context_dict['ceab_grad_form']=ceab_grad_form
+
+		return render_to_response('curriculum/add_ceab_grad_form.html',context_dict,context)
 		
 # This is to aid the functionality of searching for a course
 def get_course_list(max_results=0, starts_with=''):

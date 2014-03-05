@@ -21,7 +21,7 @@
     <div class="row-fluid">
         <div class="span12">
         	
-            <form id = "add_objective_form" method = "post" action = "/curriculum/add_objective/" enctype = "multipart/form-data">
+            <form id = "add_objective_form" method = "post" action = "/curriculum/add_objective/{{ course_url }}/{{ date_url }}/" enctype = "multipart/form-data">
                 {% csrf_token %}
                 {{ learning_objective_form.as_p }}
                 

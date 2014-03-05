@@ -9,6 +9,7 @@ def populate_db():
 	populate_prgrm_strms()
 	populate_options()
 	connect_courses()
+	populate_mechanical()
 
 # Function to populate the department table
 def populate_departments():
@@ -191,6 +192,48 @@ def connect_courses():
 	except:
 		print("Connecting courses failed... ")
 		pass
+
+def populate_mechanical():
+	try:
+		mech_eng = ProgramStream.objects.get(name = "Mechanical Engineering")
+		print("Creating second year courses for mechanical program...")
+
+		#create and add 2nd year courses to mech program
+		mech_eng.courses.add(add_course(course_code="AM2413",name="Applied Mathematical and Numerical Methods for Mechanical Engineering",lecture_hours='3', lab_hours='1.5',credit='1.0',description="Topics include: Introduction to Matlab; numerical differentiation and integration; numerical linear algebra; ordinary differential equations including higher order systems and numerical solutions; interpolation and approximation; multiple integrals and vector integral theorems.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2202A/B",name="Mechanics of Materials",lecture_hours='3', lab_hours='3.5',credit='0.5',description="Stress and strain, Mohr's stress circle, behaviour of structures, axial loading of columns and struts, torsion of shafts, bending of beams, buckling of columns and combined loading of components", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2204A/B",name="Thermodynamics I",lecture_hours='3', lab_hours='2.5',credit='0.5',description="Properties of a pure substance, first law of thermodynamics, processes in open and closed systems, second law of thermodynamics; ideal gases, compressors and energy conversion systems.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2259A/B",name="Product Design and Development",lecture_hours='3', lab_hours='3',credit='0.5',description="Introduction to the engineering design and structured design methods. Topics include: mechanical design process; concept generation and evaluation; embodiment design; design for manufacture and assembly; design for product safety; principles of life-cycle engineering.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2260A/B",name="Industrial Materials",lecture_hours='3', lab_hours='3',credit='0.5',description="The principles and practice of shaping and strengthening industrial materials.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2200Q/Y",name="Engineering Shop Safety Training",lecture_hours='0', lab_hours='0',credit='0.0',description="This course will provide mechanical engineering undergraduate students with uniform training in the safe use of Engineering student shops.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="ES2211F/G",name="Engineering Communications",lecture_hours='1', lab_hours='2',credit='0.5',description="This course is concerned with the communication of concepts and ideas by written, oral and graphical means. Practical work is emphasized.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2213A/B",name="Engineering Dynamics",lecture_hours='3', lab_hours='2',credit='0.5',description="Topics include: rectilinear, angular and curvilinear motion; kinetics of a particle, a translating rigid body and a rigid body in pure rotation; definitions of different energies and energy balance: power and efficiency; and linear impulse and momentum.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2273A/B",name="Heat Transfer and Dynamics",lecture_hours='3', lab_hours='2.5',credit='0.5',description="To provide the student with an understanding of the basic concepts of heat transfer and the dynamics of particles and rigid bodies.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="MME2285A/B",name="Engineering Experimentation",lecture_hours='3', lab_hours='2.5',credit='0.5',description="Measurement of physical quantities; experiment planning and design; characteristics of measurement systems; calibration, linearity, accuracy, bias and sensitivity; data acquisition systems; sampling theorem; signal conditioning; sources of errors; uncertainty analysis; data analysis techniques; systems for the measurement of displacement; velocity; acceleration; force, strain, pressure, temperature, flow rate, etc.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="SS2143A/B",name="Applied Statistics and Data Analysis for Engineers",lecture_hours='3', lab_hours='1',credit='0.5',description="A data-driven introduction to statistics intended primarily for students in Chemical and Mechanical Engineering. Exploratory data analysis, probability, the Binomial, Poisson, Normal, Chi-Square and F distributions. Estimation, correlation and regression (model building and parameter estimation), analysis of variance, design of experiments. Cannot be taken for credit in any module in Statistics, Actuarial Science, or Financial Modelling.", year='SE'))
+		mech_eng.courses.add(add_course(course_code="ECE2247A/B",name="Electric Circuits and Electromechanics",lecture_hours='3', lab_hours='1.5',credit='0.5',description="This course studies the principles of electrical circuits and components including common electric motors employed in mechanical engineering systems. The course also uses a series of laboratories to introduce the students to common measurement tools used to assess and troubleshoot electrical circuits. The foundations from this course are expanded on in the subsequent course which focuses on electronic components and their application.", year='SE'))
+
+		#create and add third year courses to mech program
+		print("Creating third year courses for the mechanical program...")
+		mech_eng.courses.add(add_course(course_code="AM3413A/B",name="Applied Mathematics for Mechanical Engineers",lecture_hours='3',lab_hours='0',credit='0.5',description="Topics include: Fourier series, integrals and transforms; boundary value problems in cartesian coordinates; separation of variables; Fourier and Laplace methods of solution.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3303A/B",name="Fluid Mechanics II",lecture_hours='3',lab_hours='2.5',credit='0.5',description="Rigid-body motion and rotation, control volume method of analysis, conservation of mass, linear and angular momentum, centrifugal pumps, potential flow, dimensional analysis, viscous flow in channels and ducts, open channel flow, laminar and turbulent boundary layers, statistical description of turbulence",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3379A/B",name="Materials Selection",lecture_hours='3',lab_hours='1.5',credit='0.5',description="Application of computer databases to materials selection. Identification of the composite property for a particular application. Case studies of materials selection using variable property emphases. ",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3381A/B",name="Kinematics and Dynamics of Machines",lecture_hours='3',lab_hours='2.5',credit='0.5',description="Displacement, velocity and acceleration analysis of linkage mechanisms; inertia force analysis of mechanisms; balancing of reciprocating and rotating masses; introduction to vibration analysis of single-degree-of-freedom systems.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="ECE3374A/B",name="Introduction to Electronics for Mechanical Engineering",lecture_hours='3',lab_hours='1.5',credit='0.5',description="This course is an introduction to the electronics used to collect data and analyse and control mechanical and electrical systems. The first half of the course introduces basic electronic components, while the second half focuses on higher-level hardware used in data acquisition, sensor integration and motor control applications.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3307A/B",name="Heat Transfer II",lecture_hours='3',lab_hours='2.5',credit='0.5',description="Transient heat conduction. Forced and natural convection heat transfer. Advanced radiation heat transfer, including surface properties and shape factor. Condensation and boiling heat transfer. Heat exchanger design, applications of heat transfer in Engineering Systems.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3334A/B",name="Thermodynamics II",lecture_hours='3',lab_hours='2.5',credit='0.5',description="This course emphasizes the application of thermodynamic principles to engineering systems and problem solving. Topics covered include: sonic velocity and compressible flow through nozzles, reciprocating and rotary compressors, availability and irreversibility in systems and processes, cycles, psychometry of air conditioning, thermodynamic relations and the generalized compressiblity charts, chemical reactions and equilibrium.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3350A/B",name="System Modelling and Control",lecture_hours='3',lab_hours='2.5',credit='0.5',description="Basic analytical techniques for modeling and control of dynamic systems. Solve for response as well as design controllers to shape response of systems. Applications to vibratory, thermo-fluidic, hydraulic, pneumatic and electro-mechanical systems.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3360A/B",name="Finite Element Methods in Mechanical Engineering",lecture_hours='3',lab_hours='4',credit='0.5',description="Linear finite element analysis using the direct equilibrium method and the principle of minimum potential energy. Focus on structural mechanics using spring and bar elements (including two-dimensional trusses), beam elements, two-dimensional plane stress/strain elements, axisymmetric elements, and isoparametric formulation. Concepts of heat transfer, fluid flow, and thermal stress also introduced.",year='TH'))
+		mech_eng.courses.add(add_course(course_code="MME3380A/B",name="Mechanical Components Design",lecture_hours='3',lab_hours='3',credit='0.5',description="The objective of this course is to consider the stress analysis and design of various components of a machine, e.g. an automobile. ",year='TH'))
+
+	except ProgramStream.DoesNotExist:
+		print("Populating the mechanical program failed.")
+		pass
+
+def populate_mechatronics():
+	try:
+		print("Populating mechatronics program...")
+	except:
+		print("Populating the mechatronics program failed")
 
 # Methods to add objects to the database:
 def add_user(user, type):
