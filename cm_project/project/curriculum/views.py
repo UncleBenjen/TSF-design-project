@@ -25,16 +25,16 @@ def about(request):
 @login_required	
 def profile(request):
 	context = RequestContext(request)
-	u = User.objects.get(username = request.user)	
+	u = User.objects.get(username = request.user)
 
 	try:
 		up = UserInfo.objects.get(user=u)
 	except:
 		up = u
 
-	context_dict = {'userprofile' : up}	
-	
-	return render_to_response('curriculum/profile.html',context_dict, context) 
+	context_dict = {'userprofile' : up}
+	context_dict['user']=u
+	return render_to_response('curriculum/profile.html',context_dict, context)
 
 def register(request):
 	context = RequestContext(request)
@@ -46,7 +46,7 @@ def register(request):
 	if request.method == 'POST':
 		# Get information from form
 		register_form = RegisterForm(data = request.POST)
-		#profile_form = UserProfileForm(data = request.POST)
+		profile_form = UserInfoForm(data = request.POST)
 		
 		# If forms are valid
 		if register_form.is_valid(): #and profile_form.is_valid():
@@ -58,36 +58,34 @@ def register(request):
 			
 			# Sort out user profile instance
 			# Do not commit since we need to save the user attribute ourselves
-			#profile = profile_form.save(commit = False)
-			profile = UserInfo()
+			profile = profile_form.save(commit = False)
+			#profile = UserInfo()
 			profile.user = user
-			profile.save()
-
-			user= authenticate(username=request.POST['username'],
-                   password=request.POST['password'])
+			user = authenticate(username=request.POST['username'], password=request.POST['password'])
 			login(request, user)
 			# Get the picture if it was included
-			#if 'picture' in request.FILES:
-				#profile.picture = request.FILES['picture']
-			
-			# Registration was successful
-			registered = True
-			return render_to_response('curriculum/register_form.html',{'register_form' : register_form,  'registered' : registered},context)
+			if 'picture' in request.FILES:
+				profile.picture = request.FILES['picture']
+				profile.save()
+				# Registration was successful
+				registered = True
+			return HttpResponseRedirect('/curriculum/',context)
 		# Something went wrong....dude....shiiiiieetttt
 		else:
 			print(register_form.errors)
-                #print(profile_form.errors)
-	
+			print(profile_form.errors)
+
 	# Not an HTTP POST
 	# Render blank forms
 	else:
 		register_form = RegisterForm()
-		#profile_form = UserProfileForm()
-		
+		profile_form = UserInfoForm()
+
 	return render_to_response(
-			'curriculum/register_form.html',
-			{'register_form' : register_form,  'registered' : registered},
-			context)
+                          'curriculum/register_form.html',
+                          {'register_form' : register_form, 'profile_form':profile_form, 'registered' : registered},
+                          context)
+
 
 @login_required
 def edit_profile(request):
@@ -145,8 +143,7 @@ def user_login(request):
 				return HttpResponse("Damn Son! Your account strait busted!")
 		else:
 			# Bad login details were provided
-			print("Login Details were Invalid: {0}, {1}.".format(username, password))
-			return HttpResponse("FOOL! IT WAS ALL WRONG!")
+			return render_to_response('curriculum/login.html', {'failure_msg':"Incorrect username/password; please try again..."}, context)
 			
 	# Must have been a HTTP GET
 	# Display empty login form
@@ -412,8 +409,9 @@ def add_concept(request):
 		if concept_form.is_valid():
 			concept = concept_form.save()
 			success = True
-			
-			return HttpResponseRedirect('/curriculum/concepts/'+concept.name+'/', context)
+			concept_url = concept.name
+			concept_url = concept_url.replace(' ', '_')
+			return HttpResponseRedirect('/curriculum/concepts/'+concept_url+'/', context)
 		else:
 			print(concept_form.errors)
         
@@ -423,6 +421,50 @@ def add_concept(request):
 		concept_form = ConceptForm()
         
 		return render_to_response('curriculum/add_concept_form.html',{'concept_form' : concept_form},context)
+		
+def add_concept_to_instance(request, course_url, date_url):
+	context = RequestContext(request)
+	success = False
+	
+	context_dict = {'course_url' : course_url}
+	context_dict['date_url'] = date_url
+	
+	course_code = course_url.replace('_', '/')
+	date = date_url.replace('_', '-')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course'] = course		
+		try:
+			instance = CourseInstance.objects.get(course=course, date=date)
+			context_dict['instance'] = instance		
+		except CourseInstance.DoesNotExist:
+			pass		
+	except Course.DoesNotExist:
+			pass
+			
+	if request.method == 'POST':
+		concept_form = ConceptForm(data = request.POST)
+		context_dict['concept_form'] = concept_form
+		
+		if concept_form.is_valid():
+			concept = concept_form.save()
+						
+			instance.concepts.add(concept)
+			instance.textbook = 'FARTS'	
+			instance.save()
+			success = True 	
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
+		else:
+			print(concept_form.errors)
+			return render_to_response('curriculum/add_concept_form.html',context_dict,context)
+	
+	else:
+		concept_form = ConceptForm()
+		context_dict['concept_form']=concept_form
+	
+	return render_to_response('curriculum/add_concept_form.html', context_dict, context)
+
 
 # Add Deliverable - returns form, empty if GET, with data if POST
 def add_deliverable(request, course_url, date_url):
@@ -616,8 +658,68 @@ def suggest_concept(request):
 	
 	return render_to_response('curriculum/search_list.html', {'concept_list' : concept_list}, context)
 	
+# Get concept search results and send them to the template	
+def suggest_concept_add(request):
+	context = RequestContext(request)
+	concept_list = []
+	starts_with = ''
 	
+	if request.method == 'GET':
+		starts_with = request.GET['link_concept']
+		
+	concept_list = get_concept_list(10, starts_with)
 	
+	return render_to_response('curriculum/concept_search_list.html', {'concept_list' : concept_list}, context)
+	
+# implements the search functionality for adding concepts to a course instance	
+def add_concept_search(request, course_url, date_url):
+		context = RequestContext(request)
+
+		context_dict = {'course_url' : course_url}
+		context_dict['date_url'] = date_url
+		
+		course_code = course_url.replace('_', '/')
+		date = date_url.replace('_', '-')
+		
+		context_dict['course_code'] = course_code
+		context_dict['course_date'] = date
+		
+		try:
+			course = Course.objects.get(course_code=course_code)
+			try:
+				instance = CourseInstance.objects.get(course=course, date=date)
+				context_dict['instance'] = instance		
+			except CourseInstance.DoesNotExist:
+				pass		
+		except Course.DoesNotExist:
+			pass
+			
+		concepts = instance.concepts.all()
+		context_dict['concepts'] = concepts
+		
+		return render_to_response('curriculum/add_concept_search.html', context_dict, context)
+		
+def link_concept(request, course_url, date_url, name_url):
+		context = RequestContext(request)
+		
+		name = name_url.replace('_',' ')
+		date = date_url.replace('_','-')
+		course_code = course_url.replace('_','/')
+		
+		context_dict = {'name' : name}
+		context_dict['date'] = date
+		context_dict['course_code'] = course_code
+		
+		try:
+			course = Course.objects.get(course=course_code)
+			try:
+				instance = CourseInstance.objects.get(course=course, date=date)
+			except CourseInstance.DoesNotexist:
+				pass
+		except Course.DoesNotExist:
+			pass
+		
+		return render_to_response('curriculum/add_concept_search.html', context_dict, context)
 	
 	
 	

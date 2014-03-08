@@ -7,12 +7,13 @@ class RegisterForm(forms.ModelForm):
 	username = forms.CharField(max_length=25)
 	password = forms.CharField(widget = forms.PasswordInput())
 	confirm_password = forms.CharField(widget = forms.PasswordInput())
-	
+	first_name  = forms.CharField(max_length = 25, required= True)
+	last_name = forms.CharField(max_length = 25, required=True)
 	
 	class Meta:
 		model = User
-		fields = ['username', 'password', 'confirm_password']
-
+		fields = ['username', 'password', 'confirm_password','first_name','last_name','email']
+    
 	def clean(self):
 		cleaned_data = self.cleaned_data
 		# individual field's clean methods have already been called
@@ -20,7 +21,7 @@ class RegisterForm(forms.ModelForm):
 		confirm_password = cleaned_data.get("confirm_password")
 		if password != confirm_password:
 			raise forms.ValidationError("Passwords must be identical.")
-	
+
 		return cleaned_data
 
 class UserForm(forms.ModelForm):

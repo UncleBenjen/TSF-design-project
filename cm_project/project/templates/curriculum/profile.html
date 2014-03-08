@@ -5,28 +5,53 @@
 {% block title %}Your Profile{% endblock %}
 
 {% block body_block %}
-	<div class = "well hero-unit">
-		<div class = "text-center">
-			<h1>{{ user.username }}</h1>
-			<br />
-			
-			{% if userprofile.picture %}
-				<img src = "{{ userprofile.picture.url }}" style = "max-width:200px;height:auto;border:1px solid;"/>
-				<br />
-			{% endif %}
-			
-			<br />
-		</div>
-		<div>
-			<strong>Email: {{ user.email }}</strong>
-			<br />
-		</div>
-		{% if userprofile %}
-			<div>
-				<strong>Website: <a href = "{{ userprofile.website }}">{{ userprofile.website }}</a></strong>
-				<br />
-				<strong>Type: {{ userprofile.type }}</strong>
-			</div>
-		{% endif %}		
-	</div>
+<div class = "well hero-unit">
+    <div class = "text-center">
+        <h1>{{ user.username }}</h1>
+    </div>
+    <hr>
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>User Info:</h3>
+            <div class = "row-fluid">
+                <div class="span6">
+                    <table class="table">
+                        <tr>
+                            <td>First Name: </td>
+                            <td>{{ user.first_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name: </td>
+                            <td>{{ user.last_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email: </td>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        {% if userprofile %}
+                        <tr>
+                            <td>Website: </td>
+                            <td><a href = "{{ userprofile.website }}">{{ userprofile.website }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>Type: </td>
+                            <td>{{ userprofile.type }}</td>
+                        </tr>
+                        {% else %}
+                        {% endif %}
+                    </table>
+                </div>
+                <div class = "span6">
+                    <div class = "text-center">
+                        {% if userprofile.picture %}
+                        <img src = "{{ userprofile.picture.url }}" style = "max-width:200px;height:auto;border:1px solid;"/>
+                        <br />
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
 {% endblock %}

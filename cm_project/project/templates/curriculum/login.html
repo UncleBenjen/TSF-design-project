@@ -7,13 +7,17 @@
 {% block body_block %}
 	<div class = "hero-unit">
 		<h1>Login Here</h1>
-		
+		<hr>
 		<div class = "container">		
 			<form class = "form-signin span4" id = "login_form" method = "post" action = "/curriculum/login/">
-				<h3 class = "form-signin-heading">Enter your username and password</h3>
+				{% if failure_msg %}
+                <h4>{{ failure_msg }}</h4>
+                {% else %}
+                <h3 class = "form-signin-heading">Enter your username and password</h3>
+                {% endif %}
 				
 				{% csrf_token %}
-					
+				
 				Username: <input type = "text" class = "input-block-level" placeholder = "Username" name = "username" value = "" size = "50"/>
 				<br />
 				Password: <input type = "password" class = "input-block-level" placeholder = "Password" name = "password" value = "" size = "50"/>

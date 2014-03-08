@@ -108,7 +108,7 @@
 						<hr>
 						<li class = "nav-header" style = "padding-left:25px; font-size:80%">Find Concept:</li>
 						<form class = "text-center">
-							<input class = "search-query span10" type="text" name ="concept_suggestion" value="" id ="concept_suggestion">
+							<input class = "search-query span10" type="text" name ="concept_suggestion" value="" id ="concept_suggestion" autocomplete="off">
 						</form>
 						<div id = "concepts">
 							{% include 'curriculum/search_list.html' with concept_list=concept_list %}

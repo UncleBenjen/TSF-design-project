@@ -26,7 +26,11 @@
                     <p><strong>Professors: </strong></p>
                     <ul>
                     {% for teacher in instance.get_professors %}
+                        {% if teacher.user.first_name and teacher.user.last_name%}
+                        <li>{{ teacher.user.first_name }} {{ teacher.user.last_name}}</li>
+                        {% else %}
                         <li>{{ teacher.user.username }}</li>
+                        {% endif %}
                     {% endfor %}
                     </ul>
                 </div>
@@ -34,7 +38,11 @@
                     <p><strong>Assistants: </strong></p>
                     <ul>
                     {% for assistant in instance.get_assistants %}
+                        {% if assistant.user.first_name and assistant.user.last_name%}
+                        <li>{{ assistant.user.first_name }} {{ assistant.user.last_name}}</li>
+                        {% else %}
                         <li>{{ assistant.user.username }}</li>
+                        {% endif %}
                     {% endfor %}
                     </ul>
                 </div>
@@ -178,7 +186,13 @@
             {% else %}
             <p>There were no course instances found for {{ parent_course.course_code }} with a date of {{ instance_date }}</p>
             {% endif %}
-            <p><a class="btn btn-primary" href="/curriculum/add_concept">Add Concept</a></p>
+			
+			<div class = "row-fluid">
+				<div class = "span3">
+					<p><a class="btn btn-primary btn-block" href="/curriculum/add_concept/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add New Concept</a></p>
+					<p><a class="btn btn-primary btn-block" href="/curriculum/add_concept_search/{{ parent_course.get_url }}/{{ instance.get_date }}/">Link Existing Concept</a></p>
+				</div>
+			</div>
             <hr>
             
             <!--display ceab grad measurements if they exist-->

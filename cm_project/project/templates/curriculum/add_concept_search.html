@@ -1,0 +1,41 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Add concept{% endblock %}
+
+{% block body_block %}
+	<div class = "well hero-unit">
+		<div class = "text-center">
+			<h1>Link Exisiting Concepts</h1>
+		</div>
+		<hr>
+		<div class = "text-center">
+			<p>To course instance: <a href = "/curriculum/instances/{{ course_url }}/{{ date_url }}/">{{ course_code }}, {{ course_date }}</a></p>
+		</div>
+		<hr>
+
+
+		<li class = "nav-header text-center" style = "padding-left:25px; font-size:80%">Find Concept:</li>
+		<form class = "text-center">
+			<input class = "search-query span10" type="text" name ="link_concept" value="" id ="link_concept" autocomplete="off">
+		</form>
+		
+		<div id="results">
+			{% include 'curriculum/concept_search_list.html' with concept_list=concept_list  %}
+		</div>	
+		
+		
+		<hr>
+		
+		<div class = "text-center">
+			<h2>Concepts in instance</h2>
+		</div>
+		{% if concepts %}
+			{% for concept in concepts %}
+				<p><a href = "/curriculum/concepts/{{ concept.get_url }}/" >{{ concept.name }}</a></p>
+			{% endfor %}
+		{% endif %}
+	</div>
+{% endblock %}
+
