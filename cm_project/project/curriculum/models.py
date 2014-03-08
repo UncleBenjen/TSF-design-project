@@ -59,6 +59,7 @@ class Course(models.Model):
     
 	lecture_hours = models.FloatField(default=0.0, blank = False)
 	lab_hours = models.FloatField(default=0.0, blank = False)
+	tut_houts = models.FloatField(default = 0.0, blank = False)
 	credit = models.FloatField(blank = False)
     
 	description = models.CharField(max_length = 500, blank = True)
@@ -75,6 +76,17 @@ class Course(models.Model):
 	pre_requisites = models.ManyToManyField('self', symmetrical = False, related_name='pre', blank = True)
 	anti_requisites = models.ManyToManyField('self', symmetrical = False, related_name='anti', blank = True)
 	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co', blank = True)
+	
+	# Definte a function to get the combined lab and tutorial hours
+	@property
+	def get_contact_value(self):
+		hours = self.lab_hours + self.tut_hours
+		hours = hours * 0.5
+		hours = hours + self.lecture_hours
+		weeks = 12.6 * self.credit * 2
+		hours = hours * weeks
+
+		return hours
 	
 	# Define a function that can be used within templates that will return the url for the course
 	@property
@@ -108,8 +120,11 @@ class CourseInstance(models.Model):
 	
 	# Define concepts covered in this course
 	concepts = models.ManyToManyField(Concept, blank = True)
-
 	
+	# concept timeline of when concepts are taught
+	concept_timeline = list()
+	
+	# Define contact hours for each accreditation unit
 	@property
 	def get_date(self):
 		DATE_FORMAT = "%Y-%m-%d" 
@@ -160,7 +175,7 @@ class LearningObjective(models.Model):
 # Program Stream model
 class ProgramStream(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
-	description = models.CharField(max_length= 850, blank = True)
+	description = models.TextField(max_length= 850, blank = True)
 	
 	# Department is the parent of a program stream
 	department = models.ForeignKey(Department)
@@ -199,19 +214,43 @@ class Option(models.Model):
 
 # CEAB Accreditation Units
 # ~~ Still not sure if we need this... might come in handy ~~
-class CEABUnit(models.Model):
-	name = models.CharField(max_length = 128, unique = True)
-	description = models.CharField(max_length = 128, blank = True)
+class ContactHours(models.Model):
+	instance = models.ForeignKey(CourseInstance)
+	
+	contact_es = models.FloatField(blank = True, default = 0.0)
+	contact_ed = models.FloatField(blank = True, default = 0.0)
+	contact_ma = models.FloatField(blank = True, default = 0.0)
+	contact_sc = models.FloatField(blank = True, default = 0.0)
+	contact_co = models.FloatField(blank = True, default = 0.0)
+	
+	def save(self, *args, **kwargs):
+		contact_coefficient = self.instance.course.get_contact_value()
+		self.contact_es = self.instance.acc_eng_science * contact_coefficient
+		self.contact_ed = self.instance.acc_eng_design * contact_coefficient
+		self.contact_ma = self.instance.acc_math * contact_coefficient
+		self.contact_sc = self.instance.acc_science * contact_coefficient
+		self.contact_co = self.instance.acc_eng_comp * contact_coefficient
+		super(Model, self).save(*args, **kwargs)
 	
 	def __str__(self):
-		return self.name
+		return self.instance.name+"contact hours"
 		
 # CEAB Graduate Attributes
 class CEABGrad(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
 	date = models.DateField(blank = False)
-	measurement = models.FileField(upload_to = 'ceab_files', blank = True)
-	average = models.IntegerField(blank = False)
+	measurement_text = models.TextField(max_length = 500, blank = True)
+	measurement_file = models.FileField(upload_to = 'ceab_files', blank = True)
+	rubrik = models.FileField(upload_to = 'rubrik_files', blank = True)
+	average = models.FloatField(blank = True)
+	median = models.FloatField(blank = True)
+	low = models.FloatField(blank = True)
+	high = models.FloatField(blank = True)
+	num_students = models.IntegerField(blank = True)
+	level1 = models.IntegerField(default = 0)
+	level2 = models.IntegerField(default = 0)
+	level3 = models.IntegerField(default = 0)
+	level4 = models.IntegerField(default = 0)
 	
 	# Attribute types
 	ATTRIBUTE_TYPES = (('KB', 'Knowledge Base'), ('PA', 'Problem Analysis'), ('IV','Investigation'), ('DE','Design'), ('ET','Engineering Tools'),
