@@ -51,7 +51,7 @@ class CourseForm(forms.ModelForm):
 
 	class Meta:
 		model = Course
-		fields = ('course_code','name','lecture_hours','lab_hours','credit','description','website','year','pre_requisites','anti_requisites','co_requisites')
+		fields = ('course_code','name','lecture_hours','lab_hours','tut_hours','credit','description','website','year','pre_requisites','anti_requisites','co_requisites')
 
 class InstanceForm(forms.ModelForm):
 	date = forms.DateField(widget = SelectDateWidget())
@@ -81,7 +81,9 @@ class LearningObjectiveForm(forms.ModelForm):
 
 class CEABGradForm(forms.ModelForm):
 	date = forms.DateField(widget=SelectDateWidget())
-
+	measurement_file = forms.FileField()
+	rubrik = forms.FileField()
+	measurement_text=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = CEABGrad
-		fields=['name','date','measurement','average','attribute']
+		fields=['name', 'date', 'measurement_text','measurement_file','rubrik', 'average','median','low','high','num_students','level1','level2','level3','level4', 'attribute', 'course']

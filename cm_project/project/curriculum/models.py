@@ -59,7 +59,7 @@ class Course(models.Model):
     
 	lecture_hours = models.FloatField(default=0.0, blank = False)
 	lab_hours = models.FloatField(default=0.0, blank = False)
-	tut_houts = models.FloatField(default = 0.0, blank = False)
+	tut_hours = models.FloatField(default = 0.0, blank = False)
 	credit = models.FloatField(blank = False)
     
 	description = models.CharField(max_length = 500, blank = True)
@@ -217,23 +217,23 @@ class Option(models.Model):
 class ContactHours(models.Model):
 	instance = models.ForeignKey(CourseInstance)
 	
-	contact_es = models.FloatField(blank = True, default = 0.0)
-	contact_ed = models.FloatField(blank = True, default = 0.0)
-	contact_ma = models.FloatField(blank = True, default = 0.0)
-	contact_sc = models.FloatField(blank = True, default = 0.0)
-	contact_co = models.FloatField(blank = True, default = 0.0)
+	contact_es = models.FloatField(blank = True, default = 0.0,editable=False)
+	contact_ed = models.FloatField(blank = True, default = 0.0,editable=False)
+	contact_ma = models.FloatField(blank = True, default = 0.0,editable=False)
+	contact_sc = models.FloatField(blank = True, default = 0.0,editable=False)
+	contact_co = models.FloatField(blank = True, default = 0.0,editable=False)
 	
 	def save(self, *args, **kwargs):
-		contact_coefficient = self.instance.course.get_contact_value()
-		self.contact_es = self.instance.acc_eng_science * contact_coefficient
-		self.contact_ed = self.instance.acc_eng_design * contact_coefficient
-		self.contact_ma = self.instance.acc_math * contact_coefficient
-		self.contact_sc = self.instance.acc_science * contact_coefficient
-		self.contact_co = self.instance.acc_eng_comp * contact_coefficient
-		super(Model, self).save(*args, **kwargs)
+		contact_coefficient = self.instance.course.get_contact_value
+		self.contact_es = (self.instance.acc_eng_science)/100 * contact_coefficient
+		self.contact_ed = (self.instance.acc_eng_design)/100 * contact_coefficient
+		self.contact_ma = (self.instance.acc_math)/100 * contact_coefficient
+		self.contact_sc = (self.instance.acc_science)/100 * contact_coefficient
+		self.contact_co = (self.instance.acc_comp)/100 * contact_coefficient
+		super(ContactHours, self).save(*args, **kwargs)
 	
 	def __str__(self):
-		return self.instance.name+"contact hours"
+		return self.instance.course.name+" contact hours"
 		
 # CEAB Graduate Attributes
 class CEABGrad(models.Model):

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from curriculum.models import UserInfo
-from curriculum.models import Department, Concept, Course, CourseInstance,Deliverable, LearningObjective, ProgramStream, Option, CEABUnit, CEABGrad
+from curriculum.models import Department, Concept, Course, CourseInstance,Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad
 
 # Defining classes to customize admin interface
 class UserAdmin(admin.ModelAdmin):
@@ -13,7 +13,7 @@ class ConceptAdmin(admin.ModelAdmin):
     list_display = ('name','description','ceab_unit')
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('course_code','name','lecture_hours','lab_hours','credit','description','website','year')
+    list_display = ('course_code','name','lecture_hours','lab_hours','tut_hours','credit','description','website','year')
 
 class CourseInstanceAdmin(admin.ModelAdmin):
     list_display = ('course', 'date','textbook','semester','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp')
@@ -31,10 +31,10 @@ class OptionAdmin(admin.ModelAdmin):
 	list_display= ('name', 'program_stream')
 
 class CEABGradAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date', 'measurement', 'average', 'attribute', 'course')
+    list_display = ('name', 'date', 'measurement_text','measurement_file','rubrik', 'average','median','low','high','num_students','level1','level2','level3','level4', 'attribute', 'course')
 
-class CEABUnitAdmin(admin.ModelAdmin):
-    list_display = ('name','description')
+class ContactHoursAdmin(admin.ModelAdmin):
+    list_display = ('instance','contact_es','contact_ed','contact_ma','contact_sc','contact_co')
 
 # Registering the models for the admin interface
 admin.site.register(UserInfo, UserAdmin)
@@ -47,4 +47,4 @@ admin.site.register(LearningObjective, LearningObjAdmin)
 admin.site.register(ProgramStream, ProgramStreamAdmin)
 admin.site.register(Option, OptionAdmin)
 admin.site.register(CEABGrad, CEABGradAdmin)
-admin.site.register(CEABUnit, CEABUnitAdmin)
+admin.site.register(ContactHours,ContactHoursAdmin)
