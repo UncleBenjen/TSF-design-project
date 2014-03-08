@@ -18,7 +18,9 @@
 
 		<li class = "nav-header text-center" style = "padding-left:25px; font-size:80%">Find Concept:</li>
 		<form class = "text-center">
-			<input class = "search-query span10" type="text" name ="link_concept" value="" id ="link_concept" autocomplete="off">
+			<input class = "search-query span10" type="text" value="" autocomplete="off" name ="link_concept" id ="link_concept">
+			<input type = "hidden" value="{{ course_url }}" name ="hidden-input1" id ="hidden-input1">
+			<input type = "hidden" value="{{ date_url }}" name ="hidden-input2" id ="hidden-input2">
 		</form>
 		
 		<div id="results">

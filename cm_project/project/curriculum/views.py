@@ -666,10 +666,15 @@ def suggest_concept_add(request):
 	
 	if request.method == 'GET':
 		starts_with = request.GET['link_concept']
+		course_url = request.GET['arg1']
+		date_url = request.GET['arg2']
 		
 	concept_list = get_concept_list(10, starts_with)
+	context_dict = {'concept_list' : concept_list}
+	context_dict['course_url'] = course_url
+	context_dict['date_url'] = date_url
 	
-	return render_to_response('curriculum/concept_search_list.html', {'concept_list' : concept_list}, context)
+	return render_to_response('curriculum/concept_search_list.html', context_dict, context)
 	
 # implements the search functionality for adding concepts to a course instance	
 def add_concept_search(request, course_url, date_url):
@@ -711,15 +716,22 @@ def link_concept(request, course_url, date_url, name_url):
 		context_dict['course_code'] = course_code
 		
 		try:
-			course = Course.objects.get(course=course_code)
+			course = Course.objects.get(course_code=course_code)
 			try:
 				instance = CourseInstance.objects.get(course=course, date=date)
 			except CourseInstance.DoesNotexist:
 				pass
 		except Course.DoesNotExist:
 			pass
+			
+		try:
+			concept = Concept.objects.get(name=name)
+		except Concept.DoesNotExist:
+			pass
+			
+		instance.concepts.add(concept)
 		
-		return render_to_response('curriculum/add_concept_search.html', context_dict, context)
+		return HttpResponseRedirect('/curriculum/add_concept_search/'+course_url+'/'+date_url+'/', context)
 	
 	
 	

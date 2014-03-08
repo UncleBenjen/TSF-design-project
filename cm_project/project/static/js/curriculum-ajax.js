@@ -19,7 +19,9 @@ $(document).ready(function() {
 		$('#link_concept').keyup(function(){
 		var query;
 		query = $(this).val();
-		$.get('/curriculum/suggest_concept_add/', {link_concept: query}, function(data){
+		var1 = $("#hidden-input1").val();
+		var2 = $("#hidden-input2").val();
+		$.get('/curriculum/suggest_concept_add/', {link_concept: query, arg1: var1, arg2: var2}, function(data){
                  $('#results').html(data);
 		});
 	});
