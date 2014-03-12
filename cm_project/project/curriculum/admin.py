@@ -1,6 +1,6 @@
 from django.contrib import admin
 from curriculum.models import UserInfo
-from curriculum.models import Department, Concept, Course, CourseInstance,Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad
+from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad
 
 # Defining classes to customize admin interface
 class UserAdmin(admin.ModelAdmin):
@@ -16,7 +16,10 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ('course_code','name','lecture_hours','lab_hours','tut_hours','credit','description','website','year')
 
 class CourseInstanceAdmin(admin.ModelAdmin):
-    list_display = ('course', 'date','textbook','semester','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp')
+    list_display = ('course', 'date','semester','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp')
+
+class TextbookAdmin(admin.ModelAdmin):
+    list_display = ('name','required','isbn','instance')
 
 class DeliverableAdmin(admin.ModelAdmin):
     list_display = ('type','percent','due_date','course_instance')
@@ -42,6 +45,7 @@ admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Concept, ConceptAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(CourseInstance, CourseInstanceAdmin)
+admin.site.register(Textbook, TextbookAdmin)
 admin.site.register(Deliverable, DeliverableAdmin)
 admin.site.register(LearningObjective, LearningObjAdmin)
 admin.site.register(ProgramStream, ProgramStreamAdmin)

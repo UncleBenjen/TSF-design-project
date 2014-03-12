@@ -5,15 +5,56 @@
 {% block title %}Home{% endblock %}
 
 {% block body_block %}
-	<div class = "well hero-unit text-center">
-		<h1>Curriculum Map</h1>
-		<p>Curriculum creation, modification, analysis, and more</p>
-		<!-- Dont need this any more 
-		<strong>{{ boldmessage }}<strong>
-		<a href = "/curriculum/about/">About</a><br/>
-		-->
-		<img src = "{% static "tesseract.jpg" %}" alt = "HEY" />
-		<br />
+	<div class = "well hero-unit">
+		<div class="jumbotron">
+            {% if user.first_name %}
+            <h1>Welcome {{ user.first_name }}!</h1>
+            {% else %}
+            <h1>Welcome!</h1>
+            {% endif %}
+            <hr>
+            <p>This application offers a range of features and functionalitites that will allow professors and T.A's to input information on the courses they teach. The tracking and analysis of this information will facilitate the accredidation process, allowing CEAB reports to be conducted in a streamlined and effecient manner.</p>
+            <p>
+            
+            <a href="/curriculum/about/" class="btn btn-primary btn-large">
+                Learn more...
+            </a>
+            </p>
+            <hr>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class = "span4">
+                        <h3>Constructing the curriculum map...</h3>
+                        <ul>
+                            <li>Create and add new courses to the available programs.</li>
+                            <li>Link the courses together by defininng pre, co, and anti-requisites.</li>
+                            <li>Create concepts and define their CEAB accredidation unit.</li>
+                        </ul>
+                        
+                    </div>
+                    <div class = "span4">
+                        <h3>Inputting course data...</h3>
+                        <ul>
+                            <li>Create a 'course instance' when you teach/assist in teaching a course.</li>
+                            <li>Define course related data.</li>
+                            <li>Upload graduate attribute measurements, and their respective rubriks.</li>
+                        </ul>
+                        
+                    </div>
+                    <div class = "span4">
+                        <h3>CEAB reporting and syllabus generation..</h3>
+                        <ul>
+                            <li>Create CEAB reports across courses and programs</li>
+                            <li>Easily view AU breakdowns.</li>
+                            <li>Generate a syllabus with the push of a button.</li>
+                        </ul>
+                        
+                    </div>
+            	</div>
+            </div>
+        </div>
 	</div>
 
 

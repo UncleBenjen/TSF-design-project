@@ -1,0 +1,44 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ program_name }}{% endblock %}
+
+{% block body_block %}
+	<div class="well hero-unit">
+		<h1>Contact Hours</h1>
+		<hr>
+		<h4>{{ cohort.program }}</h4>
+		<h4>Date: {{ cohort.date_start }} to {{ cohort.date_end }}</h4>
+		
+		<hr>
+		
+		<table class = "table">
+			<tr>
+				<td><strong>Accreditation Unit</strong></td>
+				<td><strong>Contact Hours</strong></td>
+			</tr>
+			<tr>
+				<td>Math</td>
+				<td>0.0</td>
+			</tr>
+			<tr>
+				<td>Science</td>
+				<td>0.0</td>
+			</tr>
+			<tr>
+				<td>Engineering Science</td>
+				<td>0.0</td>
+			</tr>
+			<tr>
+				<td>Engineering Design</td>
+				<td>0.0</td>
+			</tr>
+			<tr>
+				<td>Complimentary Studies</td>
+				<td>0.0</td>
+			</tr>
+		</table>
+		<hr>
+	</div>
+{% endblock %}

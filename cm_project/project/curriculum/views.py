@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
-from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, DeliverableForm, LearningObjectiveForm, CEABGradForm
-from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Deliverable, CEABGrad
+from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, TextbookForm, DeliverableForm, LearningObjectiveForm, CEABGradForm, ConceptRelationForm, ContactHoursCohortForm
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Textbook, Deliverable, CEABGrad, ConceptRelation, ContactHours, ContactHoursCohort
 
 
 def index(request):
@@ -29,12 +29,35 @@ def profile(request):
 
 	try:
 		up = UserInfo.objects.get(user=u)
-	except:
+	except UserInfo.DoesNotExist:
 		up = u
 
 	context_dict = {'userprofile' : up}
-	context_dict['user']=u
+	context_dict['user']=u	
+		
+	try:
+		contact_hours_cohorts = ContactHoursCohort.objects.filter(user=up)
+		context_dict['cohorts'] = contact_hours_cohorts
+	except ContactHoursCohort.DoesNotExist:
+		pass	
+		
+	except ProgramStream.DoesNotExist:	
+		pass
+		
 	return render_to_response('curriculum/profile.html',context_dict, context)
+	
+def contact_hours_cohort(request, id_url):
+	context = RequestContext(request)
+	context_dict = {'id_url' : id_url}
+	
+	try:
+		cohort = ContactHoursCohort.objects.get(id=id_url)
+		context_dict['cohort'] = cohort
+	except ContactHoursCohort.DoesNotExist:
+		pass
+		
+	return render_to_response('curriculum/contact_hours_cohort.html', context_dict, context)	
+		
 
 def register(request):
 	context = RequestContext(request)
@@ -186,7 +209,16 @@ def program(request, program_name_url):
 	
 	program_name = program_name_url.replace('_',' ')
 	context_dict = {'program_name' : program_name}
+	context_dict['program_name_url'] = program_name_url
 	
+	u = User.objects.get(username = request.user)
+	try:
+		user_info = UserInfo.objects.get(user = u)
+		user_name_url = user_info.get_user_name
+		context_dict['user_name_url'] = user_name_url
+	except UserInfo.DoesNotExist:
+		pass
+				
 	try:
 		program = ProgramStream.objects.get(name = program_name)
 		context_dict['program'] = program
@@ -198,6 +230,8 @@ def program(request, program_name_url):
 		options = Option.objects.filter(program_stream = program)
 		context_dict['options'] = options
 
+		courses = program.courses.all().order_by('year')
+		context_dict['courses']=courses
 		# Get first year courses and the urls to their pages
 		courses1 = program.courses.filter(year = 'FI')
 		context_dict['courses1'] = courses1
@@ -245,10 +279,12 @@ def all_courses(request):
 	
 	courses_se = Course.objects.filter(course_code__istartswith='SE')
 	context_dict['SE'] = courses_se
+
+	courses_rest = Course.objects.exclude(course_code__istartswith='ES').exclude(course_code__istartswith='CBE').exclude(course_code__istartswith='CEE').exclude(course_code__istartswith='ECE').exclude(course_code__istartswith='GPE').exclude(course_code__istartswith='MME').exclude(course_code__istartswith='MSE').exclude(course_code__istartswith='SE')
+	context_dict['other'] = courses_rest
 	
 	return render_to_response('curriculum/all_courses.html', context_dict, context)
 
-	
 def option(request, option_name_url):
 	context = RequestContext(request)
 
@@ -257,12 +293,35 @@ def option(request, option_name_url):
 	try:
 		option = Option.objects.get(name = option_name)
 		context_dict['option']=option
+		courses =option.get_courses()
+		context_dict['courses']=courses
+		
+		year1 = set()
+		year2 = set()
+		year3 = set()
+		year4 = set()
+        
+		for c in courses:
+			if c.year == 'FI':
+				year1.add(c)
+			elif c.year == 'SE':
+				year2.add(c)
+			elif c.year == 'TH':
+				year3.add(c)
+			elif c.year == 'FO' or c.year == 'GR':
+				year4.add(c)
+
+		context_dict['year1']=year1
+		context_dict['year2']=year2
+		context_dict['year3']=year3
+		context_dict['year4']=year4
 
 	except Option.DoesNotExist:
 		pass
 
 	return render_to_response('curriculum/option.html',context_dict,context)
 
+# Simple view to display a course	
 def course(request, course_name_url):
 	context = RequestContext(request)
 
@@ -287,6 +346,12 @@ def course(request, course_name_url):
 
 		anti_courses = course.anti_requisites.all()
 		context_dict['anti_requisites']=anti_courses
+		
+		concepts = set()
+		for c in course_instances:
+			concepts.add(c.concepts.all())
+			
+		context_dict['concepts'] = concepts
 
 	except Course.DoesNotExist:
 		pass
@@ -315,7 +380,7 @@ def concept(request, concept_name_url):
 	
 	return render_to_response('curriculum/concept.html', context_dict, context)
 	
-	
+# Simple view to display an instance of a course	
 def instance(request, course_name_url, instance_date_url):
 	context = RequestContext(request)
 	
@@ -332,7 +397,10 @@ def instance(request, course_name_url, instance_date_url):
 		try:
 			instance = CourseInstance.objects.get(course=parent_course,date=instance_date)
 			context_dict['instance']=instance
-            
+
+			textbooks = Textbook.objects.filter(instance=instance)
+			context_dict['textbooks']=textbooks
+
 			objectives = LearningObjective.objects.filter(course_instance=instance)
 			context_dict['objectives']=objectives
             
@@ -344,14 +412,24 @@ def instance(request, course_name_url, instance_date_url):
 
 			measurements = CEABGrad.objects.filter(course = instance)
 			context_dict['measurements'] = measurements
+			
+			concept_relations = ConceptRelation.objects.filter(course_instance = instance)
+			context_dict['concept_relations'] = concept_relations
+        
+			try:
+				contact_hours = ContactHours.objects.get(instance=instance)
+				context_dict['contact_hours'] = contact_hours
+			except ContactHours.DoesNotExist:
+				pass
+
 		except CourseInstance.DoesNotExist:
 			pass
-    
 	except Course.DoesNotExist:
-		pass
-    
-	return render_to_response('curriculum/instance.html', context_dict, context)
+		pass		
+	
 
+        
+	return render_to_response('curriculum/instance.html', context_dict, context)
 
 # Views for object creation forms
 # Add course control - returns form, empty if GET, with data if POST
@@ -387,6 +465,9 @@ def add_instance(request):
 
 		if instance_form.is_valid():
 			instance = instance_form.save()
+			contact_hours = ContactHours(instance=instance)
+			contact_hours.save()
+			instance.save()
 			success = True
 			return HttpResponseRedirect('/curriculum/instances/'+instance.course.get_url+'/'+instance.get_date+'/', context)
 		else:
@@ -422,6 +503,88 @@ def add_concept(request):
         
 		return render_to_response('curriculum/add_concept_form.html',{'concept_form' : concept_form},context)
 		
+		
+def add_cohort(request, program_stream_url, user_name_url):
+	context = RequestContext(request)
+	context_dict = {'user_name_url' : user_name_url}
+	context_dict['program_stream_url'] = program_stream_url
+	program_name = program_stream_url.replace('_', ' ')
+	user_name = user_name_url.replace('_', ' ')
+	
+	context_dict['program_name'] = program_name
+	
+	
+	if request.method == 'POST':
+		cohort_form = ContactHoursCohortForm(data = request.POST)
+		context_dict['cohort_form'] = cohort_form
+		
+		if cohort_form.is_valid():
+			contact_hours_cohort = cohort_form.save(commit = False)
+			contact_hours_cohort.program = program_name
+			program = ProgramStream.objects.get(name=program_name)
+			user = UserInfo.objects.get(user__username = user_name)
+			contact_hours_cohort.user = user
+			program.cohorts = contact_hours_cohort
+			program.save()
+			contact_hours_cohort.save()		
+			
+			#return render_to_response('/curriculum/profile/', context)
+			
+		else:
+			print(cohort_form.errors)
+			
+		return render_to_response('curriculum/contact_hours_cohort_template.html', context_dict, context)
+	
+	else:
+		cohort_form = ContactHoursCohortForm()
+		context_dict['cohort_form'] = cohort_form
+				
+		return render_to_response('curriculum/contact_hours_cohort_template.html', context_dict, context)
+	
+# Allow user to edit the number of lectures taught per course
+def edit_concept_relation(request, course_url, date_url, concept_url):
+	context = RequestContext(request)
+	success = False
+	
+	course_code = course_url.replace('_', '/')
+	date = date_url.replace('_', '-')
+	concept_name = concept_url.replace('_', ' ')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		try:
+			instance = CourseInstance.objects.get(course=course, date=date)
+		except CourseInstance.DoesNotExist:
+			pass
+	except Course.DoesNotExist:
+		pass
+		
+	try:
+		concept = Concept.objects.get(name=concept_name)
+	except Concept.DoesNotExist:
+		pass
+	
+	relation = ConceptRelation.objects.get(course_instance=instance, concept=concept)
+	
+	form = ConceptRelationForm(request.POST or None, instance=relation)
+	
+	context_dict = {'form' : form}
+	context_dict['course_url'] = course_url
+	context_dict['date_url'] = date_url
+	context_dict['concept_url'] = concept_url
+	
+	if form.is_valid():
+		relation = form.save()
+		Success = True
+		
+		return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context_dict, context)
+	else:
+		print(form.errors)
+		
+	return render_to_response('curriculum/edit_concept_relation_form.html', context_dict, context)
+	
+# Let's you create a concept and simultaneously add it to a course instance
+# Prety neat		
 def add_concept_to_instance(request, course_url, date_url):
 	context = RequestContext(request)
 	success = False
@@ -450,9 +613,10 @@ def add_concept_to_instance(request, course_url, date_url):
 		if concept_form.is_valid():
 			concept = concept_form.save()
 						
-			instance.concepts.add(concept)
-			instance.textbook = 'FARTS'	
-			instance.save()
+			#instance.concepts.add(concept)
+			membership = ConceptRelation(concept=concept, course_instance=instance, lectures=0)
+			#instance.save()
+			membership.save()
 			success = True 	
 			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 		else:
@@ -464,7 +628,6 @@ def add_concept_to_instance(request, course_url, date_url):
 		context_dict['concept_form']=concept_form
 	
 	return render_to_response('curriculum/add_concept_form.html', context_dict, context)
-
 
 # Add Deliverable - returns form, empty if GET, with data if POST
 def add_deliverable(request, course_url, date_url):
@@ -703,7 +866,8 @@ def add_concept_search(request, course_url, date_url):
 		context_dict['concepts'] = concepts
 		
 		return render_to_response('curriculum/add_concept_search.html', context_dict, context)
-		
+	
+# Allows user to select an existing concept and add it to a course	
 def link_concept(request, course_url, date_url, name_url):
 		context = RequestContext(request)
 		
@@ -719,7 +883,7 @@ def link_concept(request, course_url, date_url, name_url):
 			course = Course.objects.get(course_code=course_code)
 			try:
 				instance = CourseInstance.objects.get(course=course, date=date)
-			except CourseInstance.DoesNotexist:
+			except CourseInstance.DoesNotExist:
 				pass
 		except Course.DoesNotExist:
 			pass
@@ -729,11 +893,89 @@ def link_concept(request, course_url, date_url, name_url):
 		except Concept.DoesNotExist:
 			pass
 			
-		instance.concepts.add(concept)
+		#instance.concepts.add(concept)
+		membership = ConceptRelation(concept=concept, course_instance = instance, lectures=0.0)
+		membership.save()
 		
 		return HttpResponseRedirect('/curriculum/add_concept_search/'+course_url+'/'+date_url+'/', context)
 	
+# Calculate the % of each accreditation unit based on the number of lectures for each course
+def calculate_accreditation_units(request, course_url, date_url):
+	context = RequestContext(request)
 	
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		try:
+			instance = CourseInstance.objects.get(course=course, date=date)
+			try:
+				relations = ConceptRelation.objects.filter(course_instance=instance)
+			except ConceptRelation.DoesNotExist:
+				pass
+		except CourseInstance.DoesNotExist:
+			pass
+	except Course.DoesNotExist:
+		pass
+
+	total_lectures = 0.0
+	unit_ma = 0.0
+	unit_sc = 0.0
+	unit_es = 0.0
+	unit_ed = 0.0
+	unit_co = 0.0
+	
+    # if there are any 'relations' i.e. concept-course relations, loop through them and track their hours
+	if relations:
+		for relation in relations:
+			total_lectures += relation.lectures
+			unit = relation.concept.ceab_unit
+			
+			if unit == 'MA':
+				unit_ma += relation.lectures
+			elif unit == 'SC':
+				unit_sc += relation.lectures
+			elif unit == 'ES':
+				unit_es += relation.lectures
+			elif unit == 'ED':
+				unit_ed += relation.lectures
+			elif unit == 'CO':
+				unit_co += relation.lectures
+
+	# calculate unit percentages
+		unit_ma = (unit_ma/total_lectures)*100
+		unit_sc = (unit_sc/total_lectures)*100
+		unit_es = (unit_es/total_lectures)*100
+		unit_ed = (unit_ed/total_lectures)*100
+		unit_co = (unit_co/total_lectures)*100
+
+	# set new unit percentages in instance, save
+		instance.acc_math = unit_ma
+		instance.acc_science = unit_sc
+		instance.acc_eng_science = unit_es
+		instance.acc_eng_design = unit_ed
+		instance.acc_comp = unit_co
+	
+		instance.save()
+	
+	# Get contact hours object associated with instance, set new values, save.
+		contact_hours = ContactHours.objects.get(instance=instance)
+		contact_hours.contact_es = unit_es
+		contact_hours.contact_ed = unit_ed
+		contact_hours.contact_ma = unit_ma
+		contact_hours.contact_sc = unit_sc
+		contact_hours.contact_co = unit_co
+	
+		contact_hours.save()
+
+	# Redirect back to original instance page
+	return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
+	
+
+		
+		
+
 	
 	
 	

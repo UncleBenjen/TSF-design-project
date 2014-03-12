@@ -20,7 +20,7 @@
                     <table class="table">
                         <tr>
                             <td><p><strong>Year: </strong></p></td>
-                            <td><p>{{ course.year }}</p></td>
+                            <td><p>{{ course.get_year_display }}</p></td>
                         </tr>
                         <tr>
                             <td><p><strong>Credit: </strong></p></td>
@@ -99,19 +99,42 @@
 	<hr>
 	<div class = "row-fluid">
 		<div class = "span12">
-		<h3>Instances of this course:</h3>
 			<div class = "row-fluid">
-				<div class = "span6">
-					{% for c in instances %}
-						<p style = "line-height:110%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
-					{% endfor %}
+				<div class = "span4">
+					<h4>Instances of this course:</h4>
+					<div class = "row-fluid">
+						<div class = "span6">
+						{% if instances %}
+							{% for c in instances %}
+								<p style = "line-height:90%;font-size:90%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
+							{% endfor %}
+						{% else %}
+							<p>No instances yet</p>
+						{% endif %}
+						</div>
+					</div>
 				</div>
-			</div>
+				
+				<div class = "span4">
+					<h4>Typical concepts:</h4>
+					{% if concepts %}
+						{% for c in concepts %}
+							{% for p in c %}
+								<p style = "line-height:90%; font-size:90%"><a href = "/curriculum/concepts/{{ p.get_url }}/">{{ p.name }}</a></p>
+							{% endfor %}
+						{% endfor %}
+					{% else %}
+						<p>No concepts yet</p>
+					{% endif %}
+				</div>
+			</div>	
 		</div>
 	</div>
-	
-    
     <hr>
+	
+	<div class = "row-fluid">
+
+	</div>
     
 	{% else %}
 	<p>There was no course found under this name...</p>

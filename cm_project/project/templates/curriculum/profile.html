@@ -37,6 +37,14 @@
                             <td>Type: </td>
                             <td>{{ userprofile.type }}</td>
                         </tr>
+						<tr>
+							<td>Tracking:</td>
+							<td>
+							{% for c in cohorts %}
+								<p>{{ c.program }}, {{ c.date_start }}, {{ c.date_end }} - <a href = "/curriculum/contact_hours_cohort/{{ c.id }}/">view</a></p>
+							{% endfor %}
+							</td>
+						</tr>
                         {% else %}
                         {% endif %}
                     </table>

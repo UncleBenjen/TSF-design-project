@@ -1,5 +1,5 @@
 from django import forms
-from curriculum.models import UserInfo, Course, CourseInstance, Concept, Deliverable, LearningObjective, CEABGrad
+from curriculum.models import UserInfo, Course, CourseInstance, Concept, Textbook, Deliverable, LearningObjective, CEABGrad, ConceptRelation, ContactHoursCohort
 from django.contrib.auth.models import User
 from django.forms.extras.widgets import SelectDateWidget
 
@@ -31,6 +31,13 @@ class UserForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields=['first_name','last_name','email']
+		
+class ContactHoursCohortForm(forms.ModelForm):
+	date_start = forms.DateField(widget = SelectDateWidget())
+	date_end = forms.DateField(widget = SelectDateWidget())
+	class Meta:
+		model = ContactHoursCohort
+		fields=['date_start', 'date_end', 'public']
 
 class UserInfoForm(forms.ModelForm):
 	website=forms.URLInput()
@@ -58,13 +65,23 @@ class InstanceForm(forms.ModelForm):
 
 	class Meta:
 		model = CourseInstance
-		fields = ['course','date','textbook','professors','assistants','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester','concepts']
+		fields = ['course','date','professors','assistants','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester']
 
 class ConceptForm(forms.ModelForm):
 	description=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = Concept
 		fields = ['name','description','ceab_unit','related_concepts']
+		
+class ConceptRelationForm(forms.ModelForm):
+	class Meta:
+		model = ConceptRelation
+		fields = ['lectures']
+
+class TextbookForm(forms.ModelForm):
+	class Meta:
+		model = Textbook
+		fields=['name','required','isbn']
 
 class DeliverableForm(forms.ModelForm):
 	due_date = forms.DateField(widget=SelectDateWidget())

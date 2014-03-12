@@ -1,20 +1,56 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date, datetime, time
+from django.core.exceptions import ValidationError
 
 # User model
 class UserInfo(models.Model):
 	# One to one field implies inheritance from User class
 	user = models.OneToOneField(User)
+
 	website = models.URLField(blank = True)
 	picture = models.ImageField(upload_to = 'profile_images', blank = True)
+
 	
 	# Define different user types
 	USER_TYPES = (('PR','Professor'), ('TA', 'Teaching Assistant'), ('GN','General'), ('SP', 'Special'))
 	type = models.CharField(max_length = 2, choices = USER_TYPES, default = 'GN')
 	
+	def get_user_name(self):
+		user_name_url = self.user.username
+		user_name_url = user_name_url.replace(' ', '_')
+		return user_name_url
+	
 	def __str__(self):
 		return self.user.username
+		
+# Track information for a particular program stream, over a certain period of time
+class ContactHoursCohort(models.Model):
+	user = models.ForeignKey(UserInfo)
+	
+	date_start = models.DateField(blank=False)
+	date_end = models.DateField(blank=False)
+	public = models.BooleanField(default = False, blank = False)
+	program = models.CharField(max_length = 400, blank=True)
+	
+	@property
+	def get_date_start(self):
+		DATE_FORMAT = "%Y-%m-%d" 
+		date_url = self.date_start
+		d = date_url.strftime(DATE_FORMAT)
+		d = d.replace('-', '_')
+		return d
+		
+	@property	
+	def get_date_end(self):
+		DATE_FORMAT = "%Y-%m-%d" 
+		date_url = self.date_end
+		d = date_url.strftime(DATE_FORMAT)
+		d = d.replace('-', '_')
+		return d	
+	
+	def __str__(self):
+		return self.user.user.username
 
 # Department model
 class Department(models.Model):
@@ -77,7 +113,7 @@ class Course(models.Model):
 	anti_requisites = models.ManyToManyField('self', symmetrical = False, related_name='anti', blank = True)
 	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co', blank = True)
 	
-	# Definte a function to get the combined lab and tutorial hours
+	# Definte a function to get half the combined lab and tutorial hours + lecture hours, all times weeks per semester. Multiply that by credit value
 	@property
 	def get_contact_value(self):
 		hours = self.lab_hours + self.tut_hours
@@ -99,9 +135,9 @@ class Course(models.Model):
 # Course instance model, an actualization of a course
 # Course instance(s) and a course have a many to one relationship 
 class CourseInstance(models.Model):
-	course = models.ForeignKey(Course)
-	date = models.DateField(blank = False)
-	textbook = models.CharField(max_length = 128, blank = True)
+	course = models.ForeignKey(Course, related_name='instance_set')
+	date = models.DateField(unique = True, blank = False)
+	#textbook = models.CharField(max_length = 128, blank = True)
 
 	# Professors and T.A.'s require m2m relations so that multiple teachers can teacher multiple courses
 	professors = models.ManyToManyField(UserInfo, related_name = 'teaches')
@@ -119,10 +155,7 @@ class CourseInstance(models.Model):
 	semester = models.CharField(max_length = 1, choices = SEMESTER_TYPES, blank = False)
 	
 	# Define concepts covered in this course
-	concepts = models.ManyToManyField(Concept, blank = True)
-	
-	# concept timeline of when concepts are taught
-	concept_timeline = list()
+	concepts = models.ManyToManyField(Concept, through = 'ConceptRelation', blank = True)
 	
 	# Define contact hours for each accreditation unit
 	@property
@@ -145,9 +178,34 @@ class CourseInstance(models.Model):
 	def get_concepts(self):
 		return self.concepts.all()
 
+	def clean(self):
+		# If the total of the CEAB units are not 100 (or 0 i.e. left blank), raise a validation error
+		if (self.acc_math + self.acc_science + self.acc_eng_science + self.acc_eng_design + self.acc_comp) == 100 or (self.acc_math + self.acc_science + self.acc_eng_science + self.acc_eng_design + self.acc_comp) == 0:
+			pass
+		else:
+			raise ValidationError('Total of CEAB unit percentages must equal 100, or be left blank for future calculation.')
+
 	def __str__(self):
 		return "Instance of "+self.course.course_code+" ("+self.get_date+")"
 		
+class ConceptRelation(models.Model):
+	concept = models.ForeignKey(Concept)
+	course_instance = models.ForeignKey(CourseInstance)
+	lectures = models.FloatField(blank = True)
+	
+	def __str__(self):
+		return "Relationship between "+self.concept.name+" concept, and course "+self.course_instance
+
+class Textbook(models.Model):
+	name = models.CharField(unique=False,max_length=75,blank=False)
+	required=models.BooleanField(default=False, blank=False)
+	isbn = models.CharField(max_length=25,blank=True)
+
+	instance = models.ForeignKey(CourseInstance)
+
+	def __str__(self):
+		return self.name
+
 # Model for a course deliverable (Assignment, Quiz, Test, etc...)
 class Deliverable(models.Model):
 	DELIVERABLE_TYPES = (('A', 'Assignment'),('Q', 'Quiz'), ('T', 'Test'), ('M', 'Midterm'), ('F', 'Final Exam'))
@@ -155,7 +213,7 @@ class Deliverable(models.Model):
 	percent = models.IntegerField(blank = False)
 	due_date = models.DateField(blank = True)
 	course_instance = models.ForeignKey(CourseInstance)
-	
+		
 	def __str__(self):
 		return self.type
 		
@@ -180,6 +238,9 @@ class ProgramStream(models.Model):
 	# Department is the parent of a program stream
 	department = models.ForeignKey(Department)
 	
+	# Link this program stream to a cohort, 1 to many 
+	#cohorts = models.ForeignKey(ContactHoursCohort, blank = True, null = True)
+	
 	# Program stream is made up of courses
 	courses = models.ManyToManyField(Course, related_name = 'course_list')
 	
@@ -199,15 +260,33 @@ class Option(models.Model):
 	#m2m relation with courses to be added to program, and removed from program
 	added_courses = models.ManyToManyField(Course, related_name='courses_added', blank=True)
 	removed_courses = models.ManyToManyField(Course,related_name='courses_removed', blank=True)
-
+    
 	@property
 	def get_url(self):
 		return self.name.replace(' ','_')
 
 	#use this function to get the courses from the program_stream, add the added_courses, remove the removed_courses, and return the resultant list
-	@property
+	#@property
 	def get_courses(self):
-		return
+		courses = set()
+		try:
+			for c in self.program_stream.courses.all():
+				courses.add(c)
+
+			added = set()
+			for c in self.added_courses.all():
+				added.add(c)
+			courses = courses.union(added)
+
+			removed = set()
+			for c in self.removed_courses.all():
+				removed.add(c)
+			courses = courses.difference(removed)
+
+			return courses
+		except:
+			return courses
+
 
 	def __str__(self):
 		return self.name

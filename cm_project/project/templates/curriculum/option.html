@@ -16,7 +16,53 @@
         <hr>
         <!-- display courses -->
         <h3>Course Progression: </h3>
+        <div class="span12">
+        <div class="row-fluid">
+        <div class="span3">
+            <p><strong>1st Year:</p></strong>
+            <table class="table">
+                {% for course in year1 %}
+                <tr>
+                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         
+        <div class="span3">
+            <p><strong>2nd Year:</strong/></p>
+            <table class="table">
+                {% for course in year2 %}
+                <tr>
+                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="span3">
+            <p><strong>3rd Year:</p></strong>
+            <table class="table">
+                {% for course in year3 %}
+                <tr>
+                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="span3">
+            <p><strong>4th Year:</p></strong>
+            <table class="table">
+                {% for course in year4 %}
+                <tr>
+                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        </div>
+        </div>
         <!-- else display note to viewer -->
         {% else %}
         <p>No option was found...</p>

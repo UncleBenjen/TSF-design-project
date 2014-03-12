@@ -13,7 +13,7 @@
 		<title>Curriculum Map - {% block title %}{% endblock %}</title>
 	</head>
 	
-	<body>		
+	<body>
 		<!-- Top menubar -->
 		<div class = "navbar navbar-inverse navbar-fixed-top">
 			<div class = "navbar-inner">
@@ -89,6 +89,8 @@
 					<!-- content specific to the page user is on -->
 					{% block body_block %}
 					{% endblock %}
+                    
+                   
 				</div>
 				<div class = "span3">
 					<div class = "well hero-unit" style = "padding-left:20px; padding-right:20px; padding-top:20px;">
@@ -168,5 +170,7 @@
 		<script src = "{% static 'js/jquery-2.1.0.min.js' %}"></script>
 		<script src = "{% static 'js/bootstrap.min.js' %}"></script>
 		<script src = "{% static 'js/curriculum-ajax.js' %}"></script>
+		<script src = "{% static 'js/Chart.js' %}"></script>
+		{% block script %}{% endblock %}
 	</body>	
 </html>

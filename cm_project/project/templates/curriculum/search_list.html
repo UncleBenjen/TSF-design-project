@@ -1,17 +1,23 @@
 <ul class="nav nav-list">
 	{% if course_list %}
-		<div style = "margin-left:10%;">
+		
+            <table class="table">
 			{% for course in course_list %}
-				<li style = "line-height:100%; font-size:70%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></li>
-			{% endfor %}
-		</div>
+            
+				<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></div></td></tr>
+			
+            {% endfor %}
+            </table>
+		
 	{% endif %}
 	
 	{% if concept_list %}
-		<div style = "margin-left:10%;">
+		
+            <table class="table">
 			{% for concept in concept_list %}
-				<li style = "line-height:100%; font-size:70%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{ concept.name }}</a></li>
+				<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{ concept.name }}</a></div></td></tr>
 			{% endfor %}
-		</div>
+            </table>
+	
 	{% endif %}
 </ul>

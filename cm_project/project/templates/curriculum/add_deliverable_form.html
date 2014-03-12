@@ -21,7 +21,7 @@
     <div class="row-fluid">
         <div class="span12">
         	
-            <form id = "deliverable_form" method = "post" action = "/curriculum/add_deliverable/{{ course_url }}/{{ date_url }}/" enctype = "multipart/form-data">
+            <form id = "deliverable_form" method = "post" action = "/curriculum/add_deliverable/{{ course_url }}/{{ date_url }}/{{ concept_url }}" enctype = "multipart/form-data">
                 {% csrf_token %}
                 {{ deliverable_form.as_p }}
                 

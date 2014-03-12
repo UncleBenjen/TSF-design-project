@@ -11,11 +11,11 @@
 				<h1>{{ program_name }}</h1>
 			</div>
 			<hr>
-			<div class = "text-center">
+			<div>
 				<h3>Department: <a href = "/curriculum/departments/{{ department.get_url }}/">{{ department.name }}</a></h3>
 			</div>
 			<hr>
-			<p style = "font-size:85%; line-height:125%;">{{ program.description }}</p>
+			<p style = "font-size:95%; line-height:135%;">{{ program.description }}</p>
 			<hr>
             
 			<!-- Display options associated with program stream as links to said options -->
@@ -31,16 +31,15 @@
             {% endif %}
             <hr>
             
-			<div class = "text-center">
-				<h2>Base Courses</h2>
-				<hr>
+			<div>
+				<h3>Core Courses:</h3>
 			</div>
             
 			<!-- Loop through and display courses passed through context -->
 			<div class = "row-fluid">
 				<div class = "span12">
 					<div class = "row-fluid">
-			
+                        <!--
 						<div class = "span3">
                             <strong>First year:</strong>
 							{% if courses1 %}
@@ -92,9 +91,35 @@
 								<p>No courses</p>
 							{% endif %}
 						</div>
+                         -->
+                        <table class="table">
+                            <p style = "font-size:95%; line-height:135%;">The following list constitutes the core courses that appear in the majority options available under the {{ program_name }} program. Depending on the particular option chosen, courses will be added or removed to reach specific curriculum standards.
+                            </p>
+
+                            <tr>
+                                <td><strong>Year:</strong></td>
+                                
+                                <td><strong>Course Code:</strong></td>
+                                <td><strong>Course Name:</strong></td>
+                            </tr>
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{course.get_year_display }}</td>
+
+                                <td style = "font-size:85%; line-height:130%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+                                <td>{{course.name}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
 					</div>
 				</div>
 			
+			</div>
+			
+			<hr>
+			
+			<div class = "text-center">
+				<a class = "btn btn-primary" href ="/curriculum/add_cohort/{{ program_name_url }}/{{ user_name_url }}/">Track Program Contact Hours</a>
 			</div>
 			
 		</div>
