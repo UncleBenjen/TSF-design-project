@@ -34,7 +34,8 @@ class OptionAdmin(admin.ModelAdmin):
 	list_display= ('name', 'program_stream')
 
 class CEABGradAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date', 'measurement_text','measurement_file','rubrik','attribute', 'course')
+	list_display = ('name', 'date', 'measurement_text','measurement_file','rubrik','attribute', 'course')
+	filter_horizontal = ('student_groups',)
 
 class MeasurementAdmin(admin.ModelAdmin):
 	list_display = ('ceab_grad','students','level1','level2','level3','level4','average')

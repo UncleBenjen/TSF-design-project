@@ -37,4 +37,5 @@ urlpatterns = patterns('',
 		url(r'^calculate_units/(?P<course_url>\w+)/(?P<date_url>\w+)/$', views.calculate_accreditation_units, name='calculate_accreditation_units'),
 		url(r'^add_cohort/(?P<program_stream_url>\w+)/(?P<user_name_url>\w+)/$', views.add_cohort, name='add_cohort'),
 		url(r'^contact_hours_cohort/(?P<id_url>\w+)/$', views.contact_hours_cohort, name='contact_hours_cohort'),
+		url(r'^ceab_grad/(?P<course_url>\w+)/(?P<date_url>\w+)/(?P<ceab_url>\w+)/$', views.ceab_grad, name='ceab_grad'),
 		)

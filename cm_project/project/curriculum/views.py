@@ -387,6 +387,8 @@ def instance(request, course_name_url, instance_date_url):
 	# Get the date from the url that was passed
 	instance_date = instance_date_url.replace('_','-')
 	context_dict={'instance_date':instance_date}
+	context_dict['course_url'] = course_name_url
+	context_dict['date_url'] = instance_date_url
 	
 	# Get the name from the url that was passed with the request
 	course_name = course_name_url.replace('_','/')
@@ -415,17 +417,25 @@ def instance(request, course_name_url, instance_date_url):
 
 			ceab_grads = CEABGrad.objects.filter(course = instance)
 			context_dict['ceab_grads'] = ceab_grads
-
+			
 			measurements = set()
 			for ceab_grad in ceab_grads:
 				ceab_measurement=set()
+
 				for student_group in students:
 					try:
-						ceab_measurement.add(Measurement.objects.get(ceab_grad=ceab_grad,students=student_group))
+						#ceab_measurement.add(Measurement.objects.get(ceab_grad=ceab_grad,students=student_group))
+						measurement = Measurement.objects.get(ceab_grad=ceab_grad, students=student_group)
+						ceab_measurement.add(measurement)
+						
 					except Measurement.DoesNotExist:
 						 pass
+						 
+				#measurements.add(ceab_measurement)
 				name = ceab_grad.get_url+"_measurements"
 				context_dict[name]=ceab_measurement
+				
+			context_dict['measurements'] = measurements
 
 			concept_relations = ConceptRelation.objects.filter(course_instance = instance)
 			context_dict['concept_relations'] = concept_relations
@@ -440,10 +450,34 @@ def instance(request, course_name_url, instance_date_url):
 			pass
 	except Course.DoesNotExist:
 		pass		
-	
-
         
 	return render_to_response('curriculum/instance.html', context_dict, context)
+	
+def ceab_grad(request, course_url, date_url, ceab_url):
+	context = RequestContext(request)
+	
+	course_code = course_url.replace('-', '/')
+	date = date_url.replace('_', '-')
+	
+	context_dict = {'course_code' : course_code}
+	context_dict['date'] = date
+	context_dict['course_url'] = course_url
+	context_dict['date_url'] = date_url
+	
+	ceab = CEABGrad.objects.get(id=ceab_url)
+	context_dict['ceab'] = ceab
+	
+	measurements = Measurement.objects.filter(ceab_grad=ceab)
+	
+	num_students = 0
+	
+	for m in measurements:
+		num_students += m.students.size
+		
+	context_dict['num_students'] = num_students
+	
+	
+	return render_to_response('curriculum/ceab_grad.html', context_dict, context)
 
 # Views for object creation forms
 # Add course control - returns form, empty if GET, with data if POST

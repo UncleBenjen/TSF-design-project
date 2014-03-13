@@ -159,6 +159,8 @@ class CourseInstance(models.Model):
 	concepts = models.ManyToManyField(Concept, through = 'ConceptRelation', blank = True)
 	
 	# Define contact hours for each accreditation unit
+	
+	
 	@property
 	def get_date(self):
 		DATE_FORMAT = "%Y-%m-%d" 
@@ -252,7 +254,7 @@ class ProgramStream(models.Model):
 	department = models.ForeignKey(Department)
 	
 	# Link this program stream to a cohort, 1 to many 
-	#cohorts = models.ForeignKey(ContactHoursCohort, blank = True, null = True)
+	cohorts = models.ForeignKey(ContactHoursCohort, blank = True, null = True)
 	
 	# Program stream is made up of courses
 	courses = models.ManyToManyField(Course, related_name = 'course_list')
@@ -343,10 +345,16 @@ class CEABGrad(models.Model):
 	
 	# Link this Graduate Attribute measurement to a course_instance
 	course = models.ForeignKey(CourseInstance)
+	
+	student_groups = models.ManyToManyField(StudentGroup, through = 'Measurement', blank = True)
 
 	@property
 	def get_url(self):
 		return self.name.replace(' ','_')
+		
+	@property
+	def get_id(self):
+		return self.id
 
 	def __str__(self):
 		return self.name
