@@ -1,6 +1,6 @@
 from django.contrib import admin
 from curriculum.models import UserInfo
-from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad
+from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad, Measurement, StudentGroup
 
 # Defining classes to customize admin interface
 class UserAdmin(admin.ModelAdmin):
@@ -34,7 +34,13 @@ class OptionAdmin(admin.ModelAdmin):
 	list_display= ('name', 'program_stream')
 
 class CEABGradAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date', 'measurement_text','measurement_file','rubrik', 'average','median','low','high','num_students','level1','level2','level3','level4', 'attribute', 'course')
+    list_display = ('name', 'date', 'measurement_text','measurement_file','rubrik','attribute', 'course')
+
+class MeasurementAdmin(admin.ModelAdmin):
+	list_display = ('ceab_grad','students','level1','level2','level3','level4','average')
+
+class StudentGroupAdmin(admin.ModelAdmin):
+	list_display = ('instance','size','type')
 
 class ContactHoursAdmin(admin.ModelAdmin):
     list_display = ('instance','contact_es','contact_ed','contact_ma','contact_sc','contact_co')
@@ -51,4 +57,6 @@ admin.site.register(LearningObjective, LearningObjAdmin)
 admin.site.register(ProgramStream, ProgramStreamAdmin)
 admin.site.register(Option, OptionAdmin)
 admin.site.register(CEABGrad, CEABGradAdmin)
+admin.site.register( StudentGroup, StudentGroupAdmin)
+admin.site.register( Measurement, MeasurementAdmin)
 admin.site.register(ContactHours,ContactHoursAdmin)

@@ -10,7 +10,8 @@ class UserInfo(models.Model):
 
 	website = models.URLField(blank = True)
 	picture = models.ImageField(upload_to = 'profile_images', blank = True)
-
+	office = models.CharField(max_length="30",blank=True)
+	is_peng = models.BooleanField(default=False)
 	
 	# Define different user types
 	USER_TYPES = (('PR','Professor'), ('TA', 'Teaching Assistant'), ('GN','General'), ('SP', 'Special'))
@@ -144,11 +145,11 @@ class CourseInstance(models.Model):
 	assistants = models.ManyToManyField(UserInfo, related_name = 'assists', blank = True)
     
 	# Hold the percent values for accreditation categories (calculated automatically?)
-	acc_math = models.IntegerField(blank = True, default=0)
-	acc_science = models.IntegerField(blank = True, default=0)
-	acc_eng_science = models.IntegerField(blank = True, default=0)
-	acc_eng_design = models.IntegerField(blank = True, default=0)
-	acc_comp = models.IntegerField(blank = True, default=0)
+	acc_math = models.PositiveIntegerField(blank = True, default=0)
+	acc_science = models.PositiveIntegerField(blank = True, default=0)
+	acc_eng_science = models.PositiveIntegerField(blank = True, default=0)
+	acc_eng_design = models.PositiveIntegerField(blank = True, default=0)
+	acc_comp = models.PositiveIntegerField(blank = True, default=0)
 	
 	# Define options for semester course is taught in
 	SEMESTER_TYPES = (('F', 'First'), ('S', 'Second'), ('Y', 'Year'))
@@ -196,6 +197,7 @@ class ConceptRelation(models.Model):
 	def __str__(self):
 		return "Relationship between "+self.concept.name+" concept, and course "+self.course_instance
 
+# Simple textbook model to accomodate having multiple textbooks/keeping a record
 class Textbook(models.Model):
 	name = models.CharField(unique=False,max_length=75,blank=False)
 	required=models.BooleanField(default=False, blank=False)
@@ -206,11 +208,22 @@ class Textbook(models.Model):
 	def __str__(self):
 		return self.name
 
+# Group of students; each instance will containt multiple groups of students which constitue the class (i.e. 10 software 3 computer and 5 electrical make a class of 18.)
+class StudentGroup(models.Model):
+	instance = models.ForeignKey(CourseInstance)
+	size = models.PositiveIntegerField(blank=False)
+
+	STUDENT_TYPES = (('che', 'Chemical'),('civ', 'Civil'), ('com', 'Computer'), ('ele', 'Electrical'), ('gre', 'Green Process'),('int','Integrated'),('mec','Mechanical'),('mse','Mechatronic'),('sof','Software'))
+	type = models.CharField(max_length = 3  , choices = STUDENT_TYPES)
+
+	def __str__(self):
+		return self.get_type_display() +" students for " + str(self.instance)
+
 # Model for a course deliverable (Assignment, Quiz, Test, etc...)
 class Deliverable(models.Model):
 	DELIVERABLE_TYPES = (('A', 'Assignment'),('Q', 'Quiz'), ('T', 'Test'), ('M', 'Midterm'), ('F', 'Final Exam'))
 	type = models.CharField(max_length = 1, choices = DELIVERABLE_TYPES)
-	percent = models.IntegerField(blank = False)
+	percent = models.PositiveIntegerField(blank = False)
 	due_date = models.DateField(blank = True)
 	course_instance = models.ForeignKey(CourseInstance)
 		
@@ -321,15 +334,6 @@ class CEABGrad(models.Model):
 	measurement_text = models.TextField(max_length = 500, blank = True)
 	measurement_file = models.FileField(upload_to = 'ceab_files', blank = True)
 	rubrik = models.FileField(upload_to = 'rubrik_files', blank = True)
-	average = models.FloatField(blank = True)
-	median = models.FloatField(blank = True)
-	low = models.FloatField(blank = True)
-	high = models.FloatField(blank = True)
-	num_students = models.IntegerField(blank = True)
-	level1 = models.IntegerField(default = 0)
-	level2 = models.IntegerField(default = 0)
-	level3 = models.IntegerField(default = 0)
-	level4 = models.IntegerField(default = 0)
 	
 	# Attribute types
 	ATTRIBUTE_TYPES = (('KB', 'Knowledge Base'), ('PA', 'Problem Analysis'), ('IV','Investigation'), ('DE','Design'), ('ET','Engineering Tools'),
@@ -339,9 +343,40 @@ class CEABGrad(models.Model):
 	
 	# Link this Graduate Attribute measurement to a course_instance
 	course = models.ForeignKey(CourseInstance)
-	
+
+	@property
+	def get_url(self):
+		return self.name.replace(' ','_')
+
 	def __str__(self):
 		return self.name
-		
 
-		
+# Measurement class foreign key's to a ceab grad attribute, and a group of students. It tracks the scores for a student group
+class Measurement(models.Model):
+	ceab_grad = models.ForeignKey(CEABGrad)
+	students = models.ForeignKey(StudentGroup)
+	
+	level1 = models.PositiveIntegerField(default = 0)
+	level2 = models.PositiveIntegerField(default = 0)
+	level3 = models.PositiveIntegerField(default = 0)
+	level4 = models.PositiveIntegerField(default = 0)
+
+	average = models.FloatField(blank = True, editable=False)
+
+    # method to check if total = total defined be the chosen student group, throw's error if not
+	def clean(self):
+		if (self.level1 + self.level2 + self.level3 + self.level4) != self.students.size:
+			err_msg = "The number of scorse must equal "+str(self.students.size)
+			raise ValidationError(err_msg)
+
+	# overwrite save to auto-calculate the average field
+	def save(self, *args, **kwargs):
+		total = (self.level1 + self.level2 + self.level3 + self.level4)
+		if total != 0:
+			self.average = ((self.level1*1 + self.level2*2 + self.level3*3 + self.level4*4))/total
+		else:
+			self.average = 0.0
+		super(Measurement, self).save(*args, **kwargs)
+
+	def __str__(self):
+		return "Measurement of " + self.ceab_grad.name +" for "+self.students.get_type_display() +" students"

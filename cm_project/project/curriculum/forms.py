@@ -1,5 +1,5 @@
 from django import forms
-from curriculum.models import UserInfo, Course, CourseInstance, Concept, Textbook, Deliverable, LearningObjective, CEABGrad, ConceptRelation, ContactHoursCohort
+from curriculum.models import UserInfo, Course, CourseInstance, Concept, Textbook, Deliverable, LearningObjective, CEABGrad, ConceptRelation, ContactHoursCohort, StudentGroup, Measurement
 from django.contrib.auth.models import User
 from django.forms.extras.widgets import SelectDateWidget
 
@@ -13,7 +13,8 @@ class RegisterForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['username', 'password', 'confirm_password','first_name','last_name','email']
-    
+
+	# overwrite the clean function (called before saving data) to check passwords
 	def clean(self):
 		cleaned_data = self.cleaned_data
 		# individual field's clean methods have already been called
@@ -31,8 +32,10 @@ class UserForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields=['first_name','last_name','email']
-		
+
+
 class ContactHoursCohortForm(forms.ModelForm):
+	# specify custom widgets for form fields
 	date_start = forms.DateField(widget = SelectDateWidget())
 	date_end = forms.DateField(widget = SelectDateWidget())
 	class Meta:
@@ -43,7 +46,7 @@ class UserInfoForm(forms.ModelForm):
 	website=forms.URLInput()
 	class Meta:
 		model = UserInfo
-		fields = ['website', 'picture', 'type']
+		fields = ['website', 'picture', 'office','is_peng','type']
     
 	#override clean to put
 	def clean(self):
@@ -103,4 +106,22 @@ class CEABGradForm(forms.ModelForm):
 	measurement_text=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = CEABGrad
-		fields=['name', 'date', 'measurement_text','measurement_file','rubrik', 'average','median','low','high','num_students','level1','level2','level3','level4', 'attribute', 'course']
+		fields=['name', 'date', 'measurement_text','measurement_file','rubrik', 'attribute']
+
+class StudentGroupForm(forms.ModelForm):
+	class Meta:
+		model = StudentGroup
+		fields=['size', 'type']
+
+class MeasurementForm(forms.ModelForm):
+	class Meta:
+		model = Measurement
+		fields=['students','level1','level2','level3','level4']
+
+	# Overwrite init function with extra arg 'course_instance'. Use it to filter students field
+	def __init__(self, course_instance, *args, **kwargs):
+		super(MeasurementForm, self).__init__(*args, **kwargs)
+		if course_instance:
+			self.fields['students'].queryset = StudentGroup.objects.filter(instance = course_instance)
+
+

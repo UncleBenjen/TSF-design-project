@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 #
-from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, TextbookForm, DeliverableForm, LearningObjectiveForm, CEABGradForm, ConceptRelationForm, ContactHoursCohortForm
-from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Textbook, Deliverable, CEABGrad, ConceptRelation, ContactHours, ContactHoursCohort
+from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, TextbookForm,StudentGroupForm, DeliverableForm, LearningObjectiveForm, CEABGradForm, MeasurementForm, ConceptRelationForm, ContactHoursCohortForm
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Textbook, StudentGroup, Deliverable, CEABGrad, Measurement, ConceptRelation, ContactHours, ContactHoursCohort
 
 
 def index(request):
@@ -401,6 +401,9 @@ def instance(request, course_name_url, instance_date_url):
 			textbooks = Textbook.objects.filter(instance=instance)
 			context_dict['textbooks']=textbooks
 
+			students = StudentGroup.objects.filter(instance=instance)
+			context_dict['students']=students
+
 			objectives = LearningObjective.objects.filter(course_instance=instance)
 			context_dict['objectives']=objectives
             
@@ -410,9 +413,20 @@ def instance(request, course_name_url, instance_date_url):
 			concepts = instance.concepts.all
 			context_dict['concepts']=concepts
 
-			measurements = CEABGrad.objects.filter(course = instance)
-			context_dict['measurements'] = measurements
-			
+			ceab_grads = CEABGrad.objects.filter(course = instance)
+			context_dict['ceab_grads'] = ceab_grads
+
+			measurements = set()
+			for ceab_grad in ceab_grads:
+				ceab_measurement=set()
+				for student_group in students:
+					try:
+						ceab_measurement.add(Measurement.objects.get(ceab_grad=ceab_grad,students=student_group))
+					except Measurement.DoesNotExist:
+						 pass
+				name = ceab_grad.get_url+"_measurements"
+				context_dict[name]=ceab_measurement
+
 			concept_relations = ConceptRelation.objects.filter(course_instance = instance)
 			context_dict['concept_relations'] = concept_relations
         
@@ -629,6 +643,90 @@ def add_concept_to_instance(request, course_url, date_url):
 	
 	return render_to_response('curriculum/add_concept_form.html', context_dict, context)
 
+def add_textbook(request, course_url, date_url):
+	context = RequestContext(request)
+	success=False
+
+	# Add the date and course url to the context_dict, parse them to get the course_code and date
+	context_dict = {'course_url':course_url}
+	context_dict['date_url']=date_url
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course']=course
+		try:
+			instance = CourseInstance.objects.get(course = course, date = date)
+			context_dict['instance']=instance
+		except CourseInstance.DoesNotExist:
+			pass
+
+	except Course.DoesNotExist:
+		pass
+
+	if request.method == 'POST':
+		textbook_form = TextbookForm(data = request.POST)
+		context_dict['textbook_form']=textbook_form
+		if textbook_form.is_valid():
+			textbook = textbook_form.save(commit=False)
+			textbook.instance=instance
+			textbook.save()
+			success=True
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/',context)
+		else:
+			print(textbook_form.errors)
+			return render_to_response('curriculum/add_deliverable_form.html',context_dict,context)
+	else:
+		textbook_form = TextbookForm()
+		context_dict['textbook_form']=textbook_form
+		return render_to_response('curriculum/add_textbook_form.html',context_dict,context)
+
+def add_student_group(request, course_url, date_url):
+	context = RequestContext(request)
+	success=False
+    
+	# Add the date and course url to the context_dict, parse them to get the course_code and date
+	context_dict = {'course_url':course_url}
+	context_dict['date_url']=date_url
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+    
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course']=course
+		try:
+			instance = CourseInstance.objects.get(course = course, date = date)
+			context_dict['instance']=instance
+		except CourseInstance.DoesNotExist:
+			pass
+    
+	except Course.DoesNotExist:
+		pass
+    
+	if request.method == 'POST':
+		student_group_form = StudentGroupForm(data = request.POST)
+		context_dict['student_group_form']=student_group_form
+		if student_group_form.is_valid():
+			student_group = student_group_form.save(commit=False)
+			student_group.instance=instance
+			student_group.save()
+			success=True
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/',context)
+		else:
+			print(student_group_form.errors)
+			return render_to_response('curriculum/add_student_group_form.html',context_dict,context)
+	else:
+		student_group_form = StudentGroupForm()
+		context_dict['student_group_form']=student_group_form
+		return render_to_response('curriculum/add_student_group_form.html',context_dict,context)
+
+# space to implement view to call/pass context to user search/link?
+def add_professor(request, course_url, date_url):
+    return
+def add_assistant(request, course_url, date_url):
+    return
+
 # Add Deliverable - returns form, empty if GET, with data if POST
 def add_deliverable(request, course_url, date_url):
 	context = RequestContext(request)
@@ -749,22 +847,70 @@ def add_ceab_grad(request,course_url,date_url):
 			ceab_grad = ceab_grad_form.save(commit=False)
 			ceab_grad.course = instance
 			# Get the picture if it was included
-			if 'measurement' in request.FILES:
-				ceab_grad.measurement = request.FILES['picture']
+			if 'measurement_file' in request.FILES:
+				ceab_grad.measurement_file = request.FILES['measurement_file']
+			if 'rubrik' in request.FILES:
+				ceab_grad.rubrik = request.FILES['rubrik']
 			ceab_grad.save()
 			success = True
 			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 		else:
 			print(ceab_grad_form.errors)
         
-		return render_to_response('curriculum/add_ceab_grad_form.html',context_dict,context)
+			return render_to_response('curriculum/add_ceab_grad_form.html',context_dict,context)
     
 	else:
 		ceab_grad_form = CEABGradForm()
 		context_dict['ceab_grad_form']=ceab_grad_form
 
 		return render_to_response('curriculum/add_ceab_grad_form.html',context_dict,context)
-		
+
+def add_measurement(request, course_url, date_url, ceab_url):
+	context = RequestContext(request)
+	success=False
+    
+	# Add the date and course url to the context_dict, parse them to get the course_code and date
+	context_dict = {'course_url':course_url}
+	context_dict['date_url']=date_url
+	context_dict['ceab_url']=ceab_url
+	course_code = course_url.replace('_','/')
+	date = date_url.replace('_','-')
+	ceab = ceab_url.replace('_',' ')
+
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course']=course
+		try:
+			instance = CourseInstance.objects.get(course = course, date = date)
+			context_dict['instance']=instance
+			try:
+				ceab_grad = CEABGrad.objects.get(course=instance, name=ceab)
+				context_dict['ceab_grad']=ceab_grad
+			except CEABGrad.DoesNotExist:
+				pass
+		except CourseInstance.DoesNotExist:
+			pass
+	except Course.DoesNotExist:
+		pass
+    
+	if request.method == 'POST':
+		measurement_form = MeasurementForm(ceab_grad, data = request.POST)
+		context_dict['measurement_form']=measurement_form
+		if measurement_form.is_valid():
+			measurement = measurement_form.save(commit=False)
+			measurement.course=instance
+			measurement.ceab_grad = ceab_grad
+			measurement.save()
+			success=True
+			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/',context)
+		else:
+			print(measurement_form.errors)
+			return render_to_response('curriculum/add_measurement_form.html',context_dict,context)
+	else:
+		measurement_form = MeasurementForm(instance)
+		context_dict['measurement_form']=measurement_form
+		return render_to_response('curriculum/add_measurement_form.html',context_dict,context)
+
 # This is to aid the functionality of searching for a course
 def get_course_list(max_results=0, starts_with=''):
 	course_list = []
