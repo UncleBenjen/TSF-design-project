@@ -2,43 +2,586 @@
 
 {% load static %}
 
-{% block title %}{{ program_name }}{% endblock %}
+{% block title %}{{ program }}{% endblock %}
 
 {% block body_block %}
 	<div class="well hero-unit">
-		<h1>Contact Hours</h1>
+		<h1>Accreditation Units</h1>
 		<hr>
-		<h4>{{ cohort.program }}</h4>
-		<h4>Date: {{ cohort.date_start }} to {{ cohort.date_end }}</h4>
+		<h2><a href = "/curriculum/programs/{{ program_url }}">{{ program }}</a></h2>
+		<h4>Graduating Year: {{ year }}</h4>
 		
-		<hr>
+		<div class="tabbable"> <!-- Only required for left/right tabs -->
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab1" data-toggle="tab">Total</a></li>
+				<li><a href="#tab2" data-toggle="tab">Year 1</a></li>
+				<li><a href="#tab3" data-toggle="tab">Year 2</a></li>
+				<li><a href="#tab4" data-toggle="tab">Year 3</a></li>
+				<li><a href="#tab5" data-toggle="tab">Year 4</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab1">
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="span8">
+									<table class="table">
+										<tr>
+											<td></td>
+											<td><strong>Accreditation Unit</strong></td>
+											<td><strong>Value</strong></td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#35324F; width:20px; height:20px;"></div></td>
+											<td>ES</td>
+											<td>{{ es_total }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#7D0541; width:20px; height:20px;"></div></td>
+											<td>ED</td>
+											<td>{{ ed_total }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#8EC0FF; width:20px; height:20px;"></div></td>
+											<td>MA</td>
+											<td>{{ ma_total }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#617992; width:20px; height:20px;"></div></td>
+											<td>SC</td>
+											<td>{{ sc_total }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#FFA62F; width:20px; height:20px;"></div></td>
+											<td>CO</td>
+											<td>{{ co_total }}</td>
+										</tr>
+									</table>
+						
+									<p><strong>Total: </strong>{{ contact_total }}</p>
+								</div>
+								
+								<div class="span4 text-center">
+									<canvas id="pieChartTotal" width="200%" height="280%"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane active" id="tab1">
+					
+				</div>
+				<div class="tab-pane" id="tab2">
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="span8">
+									<table class="table">
+										<tr>
+											<td></td>
+											<td><strong>Accreditation Unit</strong></td>
+											<td><strong>Value</strong></td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#35324F; width:20px; height:20px;"></div></td>
+											<td>ES</td>
+											<td>{{ es_first }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#7D0541; width:20px; height:20px;"></div></td>
+											<td>ED</td>
+											<td>{{ ed_first }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#8EC0FF; width:20px; height:20px;"></div></td>
+											<td>MA</td>
+											<td>{{ ma_first }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#617992; width:20px; height:20px;"></div></td>
+											<td>SC</td>
+											<td>{{ sc_first }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#FFA62F; width:20px; height:20px;"></div></td>
+											<td>CO</td>
+											<td>{{ co_first }}</td>
+										</tr>
+									</table>
+						
+									<p><strong>Total: </strong>{{ total_first }}</p>
+								</div>
+								
+								<div class="span4 text-center">
+									<canvas id="pieChartFirst" width="200%" height="280%"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="tab3">
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="span8">
+									<table class="table">
+										<tr>
+											<td></td>
+											<td><strong>Accreditation Unit</strong></td>
+											<td><strong>Value</strong></td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#35324F; width:20px; height:20px;"></div></td>
+											<td>ES</td>
+											<td>{{ es_second }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#7D0541; width:20px; height:20px;"></div></td>
+											<td>ED</td>
+											<td>{{ ed_second }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#8EC0FF; width:20px; height:20px;"></div></td>
+											<td>MA</td>
+											<td>{{ ma_second }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#617992; width:20px; height:20px;"></div></td>
+											<td>SC</td>
+											<td>{{ sc_second }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#FFA62F; width:20px; height:20px;"></div></td>
+											<td>CO</td>
+											<td>{{ co_second }}</td>
+										</tr>
+									</table>
+						
+									<p><strong>Total: </strong>{{ total_second }}</p>
+								</div>
+								
+								<div class="span4 text-center">
+									<canvas id="pieChartSecond" width="200%" height="280%"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="tab4">
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="span8">
+									<table class="table">
+										<tr>
+											<td></td>
+											<td><strong>Accreditation Unit</strong></td>
+											<td><strong>Value</strong></td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#35324F; width:20px; height:20px;"></div></td>
+											<td>ES</td>
+											<td>{{ es_third }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#7D0541; width:20px; height:20px;"></div></td>
+											<td>ED</td>
+											<td>{{ ed_third }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#8EC0FF; width:20px; height:20px;"></div></td>
+											<td>MA</td>
+											<td>{{ ma_third }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#617992; width:20px; height:20px;"></div></td>
+											<td>SC</td>
+											<td>{{ sc_third }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#FFA62F; width:20px; height:20px;"></div></td>
+											<td>CO</td>
+											<td>{{ co_third }}</td>
+										</tr>
+									</table>
+						
+									<p><strong>Total: </strong>{{ total_third }}</p>
+								</div>
+								
+								<div class="span4 text-center">
+									<canvas id="pieChartThird" width="200%" height="280%"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="tab3">
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="span8">
+									<table class="table">
+										<tr>
+											<td></td>
+											<td><strong>Accreditation Unit</strong></td>
+											<td><strong>Value</strong></td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#35324F; width:20px; height:20px;"></div></td>
+											<td>ES</td>
+											<td>{{ es_fourth }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#7D0541; width:20px; height:20px;"></div></td>
+											<td>ED</td>
+											<td>{{ ed_fourth }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#8EC0FF; width:20px; height:20px;"></div></td>
+											<td>MA</td>
+											<td>{{ ma_fourth }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#617992; width:20px; height:20px;"></div></td>
+											<td>SC</td>
+											<td>{{ sc_fourth }}</td>
+										</tr>
+										<tr>
+											<td><div style="background-color:#FFA62F; width:20px; height:20px;"></div></td>
+											<td>CO</td>
+											<td>{{ co_fourth }}</td>
+										</tr>
+									</table>
+						
+									<p><strong>Total: </strong>{{ total_fourth }}</p>
+								</div>
+								
+								<div class="span4 text-center">
+									<canvas id="pieChartFourth" width="200%" height="280%"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
 		
-		<table class = "table">
-			<tr>
-				<td><strong>Accreditation Unit</strong></td>
-				<td><strong>Contact Hours</strong></td>
-			</tr>
-			<tr>
-				<td>Math</td>
-				<td>0.0</td>
-			</tr>
-			<tr>
-				<td>Science</td>
-				<td>0.0</td>
-			</tr>
-			<tr>
-				<td>Engineering Science</td>
-				<td>0.0</td>
-			</tr>
-			<tr>
-				<td>Engineering Design</td>
-				<td>0.0</td>
-			</tr>
-			<tr>
-				<td>Complimentary Studies</td>
-				<td>0.0</td>
-			</tr>
-		</table>
-		<hr>
 	</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+	$(document).ready(function(){
+					// ~~ PIECHART ~~
+					var pie_data = [
+						  {
+						  value: {{ es_total }},
+						  color:"#35324F"
+						  },
+						  {
+						  value : {{ ed_total }},
+						  color : "#7D0541"
+						  },
+						  {
+						  value : {{ ma_total }},
+						  color : "#8EC0FF"
+						  },
+						  {
+						  value : {{ sc_total }},
+						  color : "#617992"
+						  },
+						  {
+						  value : {{ co_total }},
+						  color : "#FFA62F"
+						  }
+					]
+					pie_options = {
+					//Boolean - Whether we should show a stroke on each segment
+					segmentShowStroke : true,
+					
+					//String - The colour of each segment stroke
+					segmentStrokeColor : "#fff",
+					
+					//Number - The width of each segment stroke
+					segmentStrokeWidth : 2,
+					
+					//Boolean - Whether we should animate the chart
+					animation : true,
+					
+					//Number - Amount of animation steps
+					animationSteps : 100,
+					
+					//String - Animation easing effect
+					animationEasing : "easeOutBounce",
+					
+					//Boolean - Whether we animate the rotation of the Pie
+					animateRotate : true,
+					
+					//Boolean - Whether we animate scaling the Pie from the centre
+					animateScale : false,
+					
+					//Function - Will fire on animation completion.
+					onAnimationComplete : null
+					}
+					
+					//Get the context of the canvas element we want to select
+					var pie_ctx = document.getElementById("pieChartTotal").getContext("2d");
+					var pie_chart = new Chart(pie_ctx).Pie(pie_data);
+					new Chart(pie_ctx).Pie(pie_data,pie_options);
+		   
+					  
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+					// ~~ PIECHART ~~
+					var pie_data = [
+						  {
+						  value: {{ es_first }},
+						  color:"#35324F"
+						  },
+						  {
+						  value : {{ ed_first }},
+						  color : "#7D0541"
+						  },
+						  {
+						  value : {{ ma_first }},
+						  color : "#8EC0FF"
+						  },
+						  {
+						  value : {{ sc_first }},
+						  color : "#617992"
+						  },
+						  {
+						  value : {{ co_first }},
+						  color : "#FFA62F"
+						  }
+					]
+					pie_options = {
+					//Boolean - Whether we should show a stroke on each segment
+					segmentShowStroke : true,
+					
+					//String - The colour of each segment stroke
+					segmentStrokeColor : "#fff",
+					
+					//Number - The width of each segment stroke
+					segmentStrokeWidth : 2,
+					
+					//Boolean - Whether we should animate the chart
+					animation : true,
+					
+					//Number - Amount of animation steps
+					animationSteps : 100,
+					
+					//String - Animation easing effect
+					animationEasing : "easeOutBounce",
+					
+					//Boolean - Whether we animate the rotation of the Pie
+					animateRotate : true,
+					
+					//Boolean - Whether we animate scaling the Pie from the centre
+					animateScale : false,
+					
+					//Function - Will fire on animation completion.
+					onAnimationComplete : null
+					}
+					
+					//Get the context of the canvas element we want to select
+					var pie_ctx = document.getElementById("pieChartFirst").getContext("2d");
+					var pie_chart = new Chart(pie_ctx).Pie(pie_data);
+					new Chart(pie_ctx).Pie(pie_data,pie_options);
+		   
+					  
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+					// ~~ PIECHART ~~
+					var pie_data = [
+						  {
+						  value: {{ es_second }},
+						  color:"#35324F"
+						  },
+						  {
+						  value : {{ ed_second }},
+						  color : "#7D0541"
+						  },
+						  {
+						  value : {{ ma_second }},
+						  color : "#8EC0FF"
+						  },
+						  {
+						  value : {{ sc_second }},
+						  color : "#617992"
+						  },
+						  {
+						  value : {{ co_second }},
+						  color : "#FFA62F"
+						  }
+					]
+					pie_options = {
+					//Boolean - Whether we should show a stroke on each segment
+					segmentShowStroke : true,
+					
+					//String - The colour of each segment stroke
+					segmentStrokeColor : "#fff",
+					
+					//Number - The width of each segment stroke
+					segmentStrokeWidth : 2,
+					
+					//Boolean - Whether we should animate the chart
+					animation : true,
+					
+					//Number - Amount of animation steps
+					animationSteps : 100,
+					
+					//String - Animation easing effect
+					animationEasing : "easeOutBounce",
+					
+					//Boolean - Whether we animate the rotation of the Pie
+					animateRotate : true,
+					
+					//Boolean - Whether we animate scaling the Pie from the centre
+					animateScale : false,
+					
+					//Function - Will fire on animation completion.
+					onAnimationComplete : null
+					}
+					
+					//Get the context of the canvas element we want to select
+					var pie_ctx = document.getElementById("pieChartSecond").getContext("2d");
+					var pie_chart = new Chart(pie_ctx).Pie(pie_data);
+					new Chart(pie_ctx).Pie(pie_data,pie_options);
+		   
+					  
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+					// ~~ PIECHART ~~
+					var pie_data = [
+						  {
+						  value: {{ es_third }},
+						  color:"#35324F"
+						  },
+						  {
+						  value : {{ ed_third }},
+						  color : "#7D0541"
+						  },
+						  {
+						  value : {{ ma_third }},
+						  color : "#8EC0FF"
+						  },
+						  {
+						  value : {{ sc_third }},
+						  color : "#617992"
+						  },
+						  {
+						  value : {{ co_third }},
+						  color : "#FFA62F"
+						  }
+					]
+					pie_options = {
+					//Boolean - Whether we should show a stroke on each segment
+					segmentShowStroke : true,
+					
+					//String - The colour of each segment stroke
+					segmentStrokeColor : "#fff",
+					
+					//Number - The width of each segment stroke
+					segmentStrokeWidth : 2,
+					
+					//Boolean - Whether we should animate the chart
+					animation : true,
+					
+					//Number - Amount of animation steps
+					animationSteps : 100,
+					
+					//String - Animation easing effect
+					animationEasing : "easeOutBounce",
+					
+					//Boolean - Whether we animate the rotation of the Pie
+					animateRotate : true,
+					
+					//Boolean - Whether we animate scaling the Pie from the centre
+					animateScale : false,
+					
+					//Function - Will fire on animation completion.
+					onAnimationComplete : null
+					}
+					
+					//Get the context of the canvas element we want to select
+					var pie_ctx = document.getElementById("pieChartThird").getContext("2d");
+					var pie_chart = new Chart(pie_ctx).Pie(pie_data);
+					new Chart(pie_ctx).Pie(pie_data,pie_options);
+		   
+					  
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+					// ~~ PIECHART ~~
+					var pie_data = [
+						  {
+						  value: {{ es_fourth }},
+						  color:"#35324F"
+						  },
+						  {
+						  value : {{ ed_fourth }},
+						  color : "#7D0541"
+						  },
+						  {
+						  value : {{ ma_fourth }},
+						  color : "#8EC0FF"
+						  },
+						  {
+						  value : {{ sc_fourth }},
+						  color : "#617992"
+						  },
+						  {
+						  value : {{ co_fourth }},
+						  color : "#FFA62F"
+						  }
+					]
+					pie_options = {
+					//Boolean - Whether we should show a stroke on each segment
+					segmentShowStroke : true,
+					
+					//String - The colour of each segment stroke
+					segmentStrokeColor : "#fff",
+					
+					//Number - The width of each segment stroke
+					segmentStrokeWidth : 2,
+					
+					//Boolean - Whether we should animate the chart
+					animation : true,
+					
+					//Number - Amount of animation steps
+					animationSteps : 100,
+					
+					//String - Animation easing effect
+					animationEasing : "easeOutBounce",
+					
+					//Boolean - Whether we animate the rotation of the Pie
+					animateRotate : true,
+					
+					//Boolean - Whether we animate scaling the Pie from the centre
+					animateScale : false,
+					
+					//Function - Will fire on animation completion.
+					onAnimationComplete : null
+					}
+					
+					//Get the context of the canvas element we want to select
+					var pie_ctx = document.getElementById("pieChartFourth").getContext("2d");
+					var pie_chart = new Chart(pie_ctx).Pie(pie_data);
+					new Chart(pie_ctx).Pie(pie_data,pie_options);
+		   
+					  
+	});
+</script>
 {% endblock %}

@@ -35,7 +35,9 @@ urlpatterns = patterns('',
 		url(r'^suggest_course/$', views.suggest_course, name = 'suggest_course'),
 		url(r'^suggest_concept/$', views.suggest_concept, name = 'suggest_concept'),	
 		url(r'^calculate_units/(?P<course_url>\w+)/(?P<date_url>\w+)/$', views.calculate_accreditation_units, name='calculate_accreditation_units'),
-		url(r'^add_cohort/(?P<program_stream_url>\w+)/(?P<user_name_url>\w+)/$', views.add_cohort, name='add_cohort'),
+		url(r'^add_cohort/(?P<program_stream_url>\w+)/$', views.add_cohort, name='add_cohort'),
 		url(r'^contact_hours_cohort/(?P<id_url>\w+)/$', views.contact_hours_cohort, name='contact_hours_cohort'),
 		url(r'^ceab_grad/(?P<course_url>\w+)/(?P<date_url>\w+)/(?P<ceab_url>\w+)/$', views.ceab_grad, name='ceab_grad'),
+		url(r'^AU/(?P<program_url>\w+)/(?P<year_url>\w+)/$', views.get_program_au, name='get_program_au'),
+		url(r'^select_program_for_au/$', views.get_programs, name='get_program_for_au')
 		)

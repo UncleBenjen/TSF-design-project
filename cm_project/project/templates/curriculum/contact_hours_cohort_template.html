@@ -2,13 +2,13 @@
 
 {% load static %}
 
-{% block title %}Track Contact Hours{% endblock %}
+{% block title %}Calculate Accreditation Units{% endblock %}
 
 {% block body_block %}
 <div class="well hero-unit">
     
-	<h1>Track Contact Hours</h1>
-	<h4>For program stream: <a>{{ program_name}}</a></h4>
+	<h1>Calculate Accreditation Units</h1>
+	<h4>Program stream: <a href = "/curriculum/programs/{{ program_stream_url }}">{{ program_name}}</a></h4>
 	<hr>
 	
 	{% if user.is_authenticated%}
@@ -17,12 +17,12 @@
 		<p><strong>Number of lectures successfully updated </strong></p>
 		{% else %}
 		
-		<strong>Please enter the following information... </strong>
+		<strong>For the class of: </strong>
 		<br />
 		<div class="row-fluid">
 			<div class="span12">
 				
-				<form id = "form" method = "post" action = "/curriculum/add_cohort/{{ program_stream_url }}/{{ user_name_url }}/" enctype = "multipart/form-data">
+				<form id = "form" method = "post" action = "/curriculum/add_cohort/{{ program_stream_url }}/" enctype = "multipart/form-data">
 					{% csrf_token %}
 					{{ cohort_form.as_p }}
 					

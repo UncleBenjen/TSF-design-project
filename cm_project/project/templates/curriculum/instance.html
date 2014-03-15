@@ -273,64 +273,28 @@
             <!--display ceab grad measurements if they exist-->
             <h3>CEAB Graduate Attribute Measurements</h3>
             {% if ceab_grads %}
+            <div class="row-fluid">
+                <div class="span6">
+                <table class="table">
+                <tr>
+                    <td><strong>Graduate Attribute:</strong></td>
+                    <td><strong></strong></td>
+                    <td></td>
+                </tr>
             	{% for ceab_grad in ceab_grads %}
-            	<div class="row-fluid">
-                    <div class="span12">
-                        <p><strong>{{ ceab_grad.name }}</strong></p>
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <table class="table">
-                                    <tr>
-                                        <td>Attribute:</td>
-                                        <td>{{ ceab_grad.get_attribute_display }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Date:</td>
-                                        <td>{{ ceab_grad.date }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Measurement File:</td>
-                                        <td><a href="#`">{{ ceab_grad.measurement_file }}</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rubrik File:</td>
-                                        <td><a href="#">{{ ceab_grad.measurement_file }}</a></td>
-                                    </tr>
-                					<tr>
-                                        <td>Number of students in measurement:</td>
-                                        <td>{{ num_students_sdf }}</a></td>
-                                    </tr>
-                                </table>
-                                
-                            </div>
-                            <div class="span6">
-                                <!-- histogram of measurements for this CEAB grad -->
-                                <canvas id="barChart" width="400%" height="280%"></canvas>
+                <tr>
+                    <td>{{ ceab_grad.get_attribute_display }}</td>
+                    <td>{{ ceab_grad.date }}</td>
+                    <td> <a href = "/curriculum/ceab_grad/{{ course_url }}/{{ date_url }}/{{ ceab_grad.get_id }}/">{{ ceab_grad.name }}</a></td>
 
-                            </div>
-							<div>
-								<a href = "/curriculum/ceab_grad/{{ course_url }}/{{ date_url }}/{{ ceab_grad.get_id }}/">{{ ceab_grad.get_id }}</a>
-							</div>
-                        </div>
-                    </div>
-            	</div>
-                
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="row-fluid">
-                            <div class="span4 offset4">
-                                <div class="text-center"><a class="btn btn-success" href="/curriculum/add_scores/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ ceab_grad.get_url }}/">Add Student Scores</a></div>
-                                <hr>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+                </tr>
                 {% endfor %}
-                
+                </table>
+                </div>
+            </div>
             {% else %}
             <p>There were no ceab graduate attributes listed under this course instance...</p>
+            
             {% endif %}
             <p><a class="btn btn-success" href="/curriculum/add_ceab_measurement/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add CEAB Graduate Attribute</a></p>
             
@@ -402,26 +366,7 @@
                     var pie_chart = new Chart(pie_ctx).Pie(pie_data);
                     new Chart(pie_ctx).Pie(pie_data,pie_options);
                     
-                    // ~~ BAR CHART ~~
-                    var bar_data={
-                      	labels : ["Level 1","Level 2","Level 3","Level 4"],
-                        datasets : [
-                            {
-                                fillColor : "rgba(128, 102, 255,0.3)",
-                                strokeColor : "rgba(220,220,220,1)",
-                                    data : [ {{sdf_Chemical_scores.level1 }} ,{{sdf_Chemical_scores.level2 }} , {{sdf_Chemical_scores.level3 }} ,{{sdf_Chemical_scores.level4 }}]
-                            },
-                            {
-                            fillColor : "rgba(128, 102, 0,0.3)",
-                            strokeColor : "rgba(220,220,220,1)",
-                            data : [ {{sdf_Civil_scores.level1 }} ,{{sdf_Civil_scores.level2 }} , {{sdf_Civil_scores.level3 }} ,{{sdf_Civil_scores.level4 }}]
-                            }
-                        ]
-                    }
-					//Get the context of the canvas element we want to select
-					var bar_ctx = document.getElementById("barChart").getContext("2d");
-					var bar_chart = new Chart(bar_ctx).Bar(bar_data);
-					new Chart(bar_ctx).Bar(bar_data,Bar.defaults);
+                    
                       
 	});
 </script>

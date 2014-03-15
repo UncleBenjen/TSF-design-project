@@ -36,11 +36,11 @@ class UserForm(forms.ModelForm):
 
 class ContactHoursCohortForm(forms.ModelForm):
 	# specify custom widgets for form fields
-	date_start = forms.DateField(widget = SelectDateWidget())
-	date_end = forms.DateField(widget = SelectDateWidget())
+	#date_start = forms.DateField(widget = SelectDateWidget())
+	#date_end = forms.DateField(widget = SelectDateWidget())
 	class Meta:
 		model = ContactHoursCohort
-		fields=['date_start', 'date_end', 'public']
+		fields=['graduating_year']
 
 class UserInfoForm(forms.ModelForm):
 	website=forms.URLInput()
@@ -64,8 +64,7 @@ class CourseForm(forms.ModelForm):
 		fields = ('course_code','name','lecture_hours','lab_hours','tut_hours','credit','description','website','year','pre_requisites','anti_requisites','co_requisites')
 
 class InstanceForm(forms.ModelForm):
-	date = forms.DateField(widget = SelectDateWidget())
-
+	date = forms.RegexField(r'[0-9]+',max_length=4,min_length=4)
 	class Meta:
 		model = CourseInstance
 		fields = ['course','date','professors','assistants','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester']

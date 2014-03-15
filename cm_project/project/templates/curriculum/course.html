@@ -119,9 +119,7 @@
 					<h4>Typical concepts:</h4>
 					{% if concepts %}
 						{% for c in concepts %}
-							{% for p in c %}
-								<p style = "line-height:90%; font-size:90%"><a href = "/curriculum/concepts/{{ p.get_url }}/">{{ p.name }}</a></p>
-							{% endfor %}
+							<p style="line-height:90%; font-size:90%;"><a href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
 						{% endfor %}
 					{% else %}
 						<p>No concepts yet</p>

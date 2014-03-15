@@ -92,6 +92,8 @@ def register(request):
 				profile.save()
 				# Registration was successful
 				registered = True
+			else:
+				profile.save()
 			return HttpResponseRedirect('/curriculum/',context)
 		# Something went wrong....dude....shiiiiieetttt
 		else:
@@ -213,7 +215,7 @@ def program(request, program_name_url):
 	
 	u = User.objects.get(username = request.user)
 	try:
-		user_info = UserInfo.objects.get(user = u)
+		user_info = UserInfo.objects.get(user=u)
 		user_name_url = user_info.get_user_name
 		context_dict['user_name_url'] = user_name_url
 	except UserInfo.DoesNotExist:
@@ -321,6 +323,15 @@ def option(request, option_name_url):
 
 	return render_to_response('curriculum/option.html',context_dict,context)
 
+def get_programs(request):
+		context = RequestContext(request)
+		
+		programs = ProgramStream.objects.all
+		context_dict = {'programs' : programs}
+		
+		return render_to_response('curriculum/programs_for_au.html', context_dict, context)
+		
+	
 # Simple view to display a course	
 def course(request, course_name_url):
 	context = RequestContext(request)
@@ -346,12 +357,19 @@ def course(request, course_name_url):
 
 		anti_courses = course.anti_requisites.all()
 		context_dict['anti_requisites']=anti_courses
-		
+			
 		concepts = set()
 		for c in course_instances:
-			concepts.add(c.concepts.all())
+			concepts_list = c.concepts.all()
+			for p in concepts_list:
+				concepts.add(p.name)
 			
-		context_dict['concepts'] = concepts
+		concepts_obj = set()
+		for c in concepts:
+			concept = Concept.objects.get(name=c)
+			concepts_obj.add(concept)
+			
+		context_dict['concepts'] = concepts_obj
 
 	except Course.DoesNotExist:
 		pass
@@ -453,6 +471,7 @@ def instance(request, course_name_url, instance_date_url):
         
 	return render_to_response('curriculum/instance.html', context_dict, context)
 	
+# view for a ceab graduate attribute	
 def ceab_grad(request, course_url, date_url, ceab_url):
 	context = RequestContext(request)
 	
@@ -468,14 +487,35 @@ def ceab_grad(request, course_url, date_url, ceab_url):
 	context_dict['ceab'] = ceab
 	
 	measurements = Measurement.objects.filter(ceab_grad=ceab)
-	
+	context_dict['measurements'] = measurements
+
+
 	num_students = 0
-	
+	total_average = 0
+	total_1 = 0
+	total_2 = 0
+	total_3 = 0
+	total_4 = 0
+
 	for m in measurements:
 		num_students += m.students.size
-		
+		total_1 += m.level1
+		total_2 += m.level2
+		total_3 += m.level3
+		total_4 += m.level4
+		total_average += m.average
+
+	if measurements.count() > 0:
+		total_average = total_average/measurements.count()
+	else:
+		total_average = 0
+
 	context_dict['num_students'] = num_students
-	
+	context_dict['total_average']= total_average
+	context_dict['total_1']=total_1
+	context_dict['total_2']=total_2
+	context_dict['total_3']=total_3
+	context_dict['total_4']=total_4
 	
 	return render_to_response('curriculum/ceab_grad.html', context_dict, context)
 
@@ -551,16 +591,12 @@ def add_concept(request):
         
 		return render_to_response('curriculum/add_concept_form.html',{'concept_form' : concept_form},context)
 		
-		
-def add_cohort(request, program_stream_url, user_name_url):
+# View to get the data for a program, and graduating year	
+def add_cohort(request, program_stream_url):
 	context = RequestContext(request)
-	context_dict = {'user_name_url' : user_name_url}
-	context_dict['program_stream_url'] = program_stream_url
 	program_name = program_stream_url.replace('_', ' ')
-	user_name = user_name_url.replace('_', ' ')
-	
-	context_dict['program_name'] = program_name
-	
+	context_dict = {'program_name' : program_name}
+	context_dict['program_stream_url'] = program_stream_url
 	
 	if request.method == 'POST':
 		cohort_form = ContactHoursCohortForm(data = request.POST)
@@ -570,11 +606,13 @@ def add_cohort(request, program_stream_url, user_name_url):
 			contact_hours_cohort = cohort_form.save(commit = False)
 			contact_hours_cohort.program = program_name
 			program = ProgramStream.objects.get(name=program_name)
-			user = UserInfo.objects.get(user__username = user_name)
-			contact_hours_cohort.user = user
 			program.cohorts = contact_hours_cohort
 			program.save()
-			contact_hours_cohort.save()		
+			#contact_hours_cohort.save()		
+			
+			graduating_year = contact_hours_cohort.graduating_year
+			return HttpResponseRedirect('/curriculum/AU/'+program_stream_url+'/'+graduating_year+'/', context)
+			
 			
 			#return render_to_response('/curriculum/profile/', context)
 			
@@ -588,6 +626,164 @@ def add_cohort(request, program_stream_url, user_name_url):
 		context_dict['cohort_form'] = cohort_form
 				
 		return render_to_response('curriculum/contact_hours_cohort_template.html', context_dict, context)
+	
+# Get the accreditation units for a graduating year	
+def get_program_au(request, program_url, year_url):
+	context = RequestContext(request)
+	
+	program = program_url.replace('_', ' ')
+	context_dict = {'program' : program}
+	context_dict['program_url'] = program_url
+	context_dict['year'] = year_url
+	
+	grad_year = int(year_url)
+	fourth = grad_year - 1
+	third = fourth - 1
+	second = third - 1
+	first = second - 1
+	
+	fourth = str(fourth)
+	third = str(third)
+	second = str(second)
+	first = str(first)
+	
+	context_dict['fourth'] = fourth
+	context_dict['third'] = third
+	context_dict['second'] = second
+	context_dict['first'] = first
+	
+	try:
+		program_stream = ProgramStream.objects.get(name=program)
+	except ProgramStream.DoesNotExist:
+		pass
+	
+	total = 0.0
+	total_first = 0.0
+	total_second = 0.0
+	total_third = 0.0
+	total_fourth = 0.0
+	
+	es_first = 0.0
+	es_second = 0.0
+	es_third = 0.0
+	es_fourth = 0.0
+	
+	ed_first = 0.0
+	ed_second = 0.0
+	ed_third = 0.0
+	ed_fourth = 0.0
+	
+	ma_first = 0.0
+	ma_second = 0.0
+	ma_third = 0.0
+	ma_fourth = 0.0
+	
+	sc_first = 0.0
+	sc_second = 0.0
+	sc_third = 0.0
+	sc_fourth = 0.0
+	
+	co_first = 0.0
+	co_second = 0.0
+	co_third = 0.0
+	co_fourth = 0.0
+	
+	courses_first = program_stream.courses.filter(year='FI')
+	courses_second = program_stream.courses.filter(year='SE')
+	courses_third = program_stream.courses.filter(year='TH')
+	courses_fourth = program_stream.courses.filter(year='FO')
+	
+	for course in courses_first:
+		instances = CourseInstance.objects.filter(course=course, date=first)
+		for instance in instances:
+			contact_hours = ContactHours.objects.get(instance=instance)
+			es_first += contact_hours.contact_es
+			ed_first += contact_hours.contact_ed
+			ma_first += contact_hours.contact_ma
+			sc_first += contact_hours.contact_sc
+			co_first += contact_hours.contact_co
+			
+	for course in courses_second:
+		instances = CourseInstance.objects.filter(course=course, date=second)
+		for instance in instances:
+			contact_hours = ContactHours.objects.get(instance=instance)
+			es_second += contact_hours.contact_es
+			ed_second += contact_hours.contact_ed
+			ma_second += contact_hours.contact_ma
+			sc_second += contact_hours.contact_sc
+			co_second += contact_hours.contact_co
+			
+	for course in courses_third:
+		instances = CourseInstance.objects.filter(course=course, date=third)
+		for instance in instances:
+			contact_hours = ContactHours.objects.get(instance=instance)
+			es_third += contact_hours.contact_es
+			ed_third += contact_hours.contact_ed
+			ma_third += contact_hours.contact_ma
+			sc_third += contact_hours.contact_sc
+			co_third += contact_hours.contact_co
+
+	for course in courses_fourth:
+		instances = CourseInstance.objects.filter(course=course, date=fourth)
+		for instance in instances:
+			contact_hours = ContactHours.objects.get(instance=instance)
+			es_fourth += contact_hours.contact_es
+			ed_fourth += contact_hours.contact_ed
+			ma_fourth += contact_hours.contact_ma
+			sc_fourth += contact_hours.contact_sc
+			co_fourth += contact_hours.contact_co			
+	
+	total_first = es_first + ed_first + ma_first + sc_first + co_first
+	total_second = es_second + ed_second + ma_second + sc_second + co_second
+	total_third = es_third + ed_third + ma_third + sc_third + co_third
+	total_fourth = es_fourth + ed_fourth + ma_fourth + sc_fourth + co_fourth
+	
+	es_total = es_first + es_second + es_third + es_fourth
+	ed_total = ed_first + ed_second + ed_third + ed_fourth
+	ma_total = ma_first + ma_second + ma_third + ma_fourth
+	sc_total = sc_first + sc_second + sc_third + sc_fourth
+	co_total = co_first + co_second + co_third + co_fourth
+	
+	context_dict['es_total'] = es_total
+	context_dict['ed_total'] = ed_total
+	context_dict['ma_total'] = ma_total
+	context_dict['sc_total'] = sc_total
+	context_dict['co_total'] = co_total
+	
+	total = total_first + total_second + total_third + total_fourth
+	
+	context_dict['contact_total'] = total
+	
+	context_dict['total_first'] = total_first
+	context_dict['total_second'] = total_second
+	context_dict['total_third'] = total_third
+	context_dict['total_fourth'] = total_fourth
+	
+	context_dict['es_first'] = es_first
+	context_dict['ed_first'] = ed_first
+	context_dict['ma_first'] = ma_first
+	context_dict['sc_first'] = sc_first
+	context_dict['co_first'] = co_first
+	
+	context_dict['es_second'] = es_second
+	context_dict['ed_second'] = ed_second
+	context_dict['ma_second'] = ma_second
+	context_dict['sc_second'] = sc_second
+	context_dict['co_second'] = co_second
+	
+	context_dict['es_third'] = es_third
+	context_dict['ed_third'] = ed_third
+	context_dict['ma_third'] = ma_third
+	context_dict['sc_third'] = sc_third
+	context_dict['co_third'] = co_third
+	
+	context_dict['es_fourth'] = es_fourth
+	context_dict['ed_fourth'] = ed_fourth
+	context_dict['ma_fourth'] = ma_fourth
+	context_dict['sc_fourth'] = sc_fourth
+	context_dict['co_fourth'] = co_fourth
+	
+	return render_to_response('curriculum/contact_hours_cohort.html',context_dict, context)
 	
 # Allow user to edit the number of lectures taught per course
 def edit_concept_relation(request, course_url, date_url, concept_url):
@@ -918,7 +1114,7 @@ def add_measurement(request, course_url, date_url, ceab_url):
 			instance = CourseInstance.objects.get(course = course, date = date)
 			context_dict['instance']=instance
 			try:
-				ceab_grad = CEABGrad.objects.get(course=instance, name=ceab)
+				ceab_grad = CEABGrad.objects.get(course=instance, id=ceab)
 				context_dict['ceab_grad']=ceab_grad
 			except CEABGrad.DoesNotExist:
 				pass
@@ -936,7 +1132,7 @@ def add_measurement(request, course_url, date_url, ceab_url):
 			measurement.ceab_grad = ceab_grad
 			measurement.save()
 			success=True
-			return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/',context)
+			return HttpResponseRedirect('/curriculum/ceab_grad/'+course_url+'/'+date_url+'/'+str(ceab_grad.id),context)
 		else:
 			print(measurement_form.errors)
 			return render_to_response('curriculum/add_measurement_form.html',context_dict,context)

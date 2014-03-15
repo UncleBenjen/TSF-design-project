@@ -1,0 +1,22 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ program_name }}{% endblock %}
+
+{% block body_block %}
+	<div class = "well hero-unit">
+		<h1>Select Program</h1>
+		<hr>
+		<h3>Calculate academic units for:</h3>
+		{% if programs %}
+			<ul>
+			{% for p in programs %}
+				<li><a href="/curriculum/add_cohort/{{ p.get_url }}/">{{ p.name }}</a></li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<p>No Programs </p>
+		{% endif %}
+	</div>
+{% endblock %}

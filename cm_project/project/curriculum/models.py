@@ -29,9 +29,10 @@ class UserInfo(models.Model):
 class ContactHoursCohort(models.Model):
 	user = models.ForeignKey(UserInfo)
 	
-	date_start = models.DateField(blank=False)
-	date_end = models.DateField(blank=False)
-	public = models.BooleanField(default = False, blank = False)
+	date_start = models.DateField(blank=True)
+	date_end = models.DateField(blank=True)
+	graduating_year = models.CharField(max_length = 4, blank=False)
+	public = models.BooleanField(default = False, blank = True)
 	program = models.CharField(max_length = 400, blank=True)
 	
 	@property
@@ -137,7 +138,7 @@ class Course(models.Model):
 # Course instance(s) and a course have a many to one relationship 
 class CourseInstance(models.Model):
 	course = models.ForeignKey(Course, related_name='instance_set')
-	date = models.DateField(unique = True, blank = False)
+	date = models.CharField(blank = False, max_length = 4)
 	#textbook = models.CharField(max_length = 128, blank = True)
 
 	# Professors and T.A.'s require m2m relations so that multiple teachers can teacher multiple courses
@@ -158,16 +159,9 @@ class CourseInstance(models.Model):
 	# Define concepts covered in this course
 	concepts = models.ManyToManyField(Concept, through = 'ConceptRelation', blank = True)
 	
-	# Define contact hours for each accreditation unit
-	
-	
 	@property
 	def get_date(self):
-		DATE_FORMAT = "%Y-%m-%d" 
-		date_url = self.date
-		d = date_url.strftime(DATE_FORMAT)
-		d = d.replace('-', '_')
-		return d
+		return self.date
 	
 	@property
 	def get_professors(self):
@@ -187,6 +181,7 @@ class CourseInstance(models.Model):
 			pass
 		else:
 			raise ValidationError('Total of CEAB unit percentages must equal 100, or be left blank for future calculation.')
+
 
 	def __str__(self):
 		return "Instance of "+self.course.course_code+" ("+self.get_date+")"
@@ -215,7 +210,7 @@ class StudentGroup(models.Model):
 	instance = models.ForeignKey(CourseInstance)
 	size = models.PositiveIntegerField(blank=False)
 
-	STUDENT_TYPES = (('che', 'Chemical'),('civ', 'Civil'), ('com', 'Computer'), ('ele', 'Electrical'), ('gre', 'Green Process'),('int','Integrated'),('mec','Mechanical'),('mse','Mechatronic'),('sof','Software'))
+	STUDENT_TYPES = (('che', 'Chemical'),('civ', 'Civil'), ('com', 'Computer'), ('ele', 'Electrical'), ('gre', 'Green Process'),('int','Integrated'),('mec','Mechanical'),('mse','Mechatronic'),('sof','Software'),('gen','General (1st year)'))
 	type = models.CharField(max_length = 3  , choices = STUDENT_TYPES)
 
 	def __str__(self):
@@ -307,7 +302,7 @@ class Option(models.Model):
 		return self.name
 
 # CEAB Accreditation Units
-# ~~ Still not sure if we need this... might come in handy ~~
+#
 class ContactHours(models.Model):
 	instance = models.ForeignKey(CourseInstance)
 	
