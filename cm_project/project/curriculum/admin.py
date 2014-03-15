@@ -1,6 +1,6 @@
 from django.contrib import admin
 from curriculum.models import UserInfo
-from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad, Measurement, StudentGroup
+from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad, Measurement, StudentGroup, ConceptRelation
 
 # Defining classes to customize admin interface
 class UserAdmin(admin.ModelAdmin):
@@ -11,6 +11,9 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 class ConceptAdmin(admin.ModelAdmin):
     list_display = ('name','description','ceab_unit')
+
+class ConceptRelationAdmin(admin.ModelAdmin):
+	list_display=('concept','course_instance','lectures')
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('course_code','name','lecture_hours','lab_hours','tut_hours','credit','description','website','year')
@@ -61,3 +64,4 @@ admin.site.register(CEABGrad, CEABGradAdmin)
 admin.site.register( StudentGroup, StudentGroupAdmin)
 admin.site.register( Measurement, MeasurementAdmin)
 admin.site.register(ContactHours,ContactHoursAdmin)
+admin.site.register(ConceptRelation,ConceptRelationAdmin)

@@ -1,6 +1,6 @@
 import os
 from django.contrib.auth.models import User
-from curriculum.models import UserInfo, Department, ProgramStream, Option, Course
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, ConceptRelation
 
 #call each populate method in correct order
 def populate_db():
@@ -10,6 +10,8 @@ def populate_db():
 	populate_options()
 	connect_courses()
 	populate_mechanical()
+	populate_instances()
+	populate_concepts()
 
 # Function to populate the department table
 def populate_departments():
@@ -175,7 +177,7 @@ def populate_courses():
     
 	add_course(course_code="PHYS1402A/B", name="Physics for Engineering Students II", lecture_hours='2', lab_hours='3', credit='0.5', description="A calculus-based laboratory course in physics for Engineering students. Electric fields and potential, Gauss’ law, capacitance, DC circuits, magnetic fields, electromagnetic induction.", year='FI')
     
-	add_course(course_code="1 NTE", name="Approved Non-Technical Elective", lecture_hours='3', lab_hours='0', credit='1.0', description="The Canadian Engineering Accreditation Board (CEAB) requires that engineering programs include a course requirement that teaches the central issues, methodologies and thought processes of the Humanities and Social Sciences.  Please note that language courses do not meet this requirement.", year='FI')
+	add_course(course_code="1NTE", name="Approved Non-Technical Elective", lecture_hours='3', lab_hours='0', credit='1.0', description="The Canadian Engineering Accreditation Board (CEAB) requires that engineering programs include a course requirement that teaches the central issues, methodologies and thought processes of the Humanities and Social Sciences.  Please note that language courses do not meet this requirement.", year='FI')
 
 #create a function that will add the first year courses to the program streams...
 def connect_courses():
@@ -235,6 +237,87 @@ def populate_mechatronics():
 	except:
 		print("Populating the mechatronics program failed")
 
+def populate_instances():
+	try:
+		print("Populating course instances...")
+		professor = add_user(user=User.objects.create(username="doesntmatter",password="password",email = "fakeEmail1@whodunnit.com"),type = "PR")
+
+		es_1050 = Course.objects.get(course_code="ES1050")
+		add_instance(es_1050, "2010", "FI")
+		add_instance(es_1050, "2011", "FI")
+		add_instance(es_1050, "2012", "FI")
+		add_instance(es_1050, "2013", "FI")
+
+		am_1413 = Course.objects.get(course_code="AM1413")
+		add_instance(am_1413, "2010", "FI")
+		add_instance(am_1413, "2011", "FI")
+		add_instance(am_1413, "2012", "FI")
+		add_instance(am_1413, "2013", "FI")
+
+		es_1022 = Course.objects.get(course_code="ES1022A/B/Y")
+		add_instance(es_1022, "2010", "FI")
+		add_instance(es_1022, "2011", "FI")
+		add_instance(es_1022, "2012", "FI")
+		add_instance(es_1022, "2013", "FI")
+
+		am_1411 = Course.objects.get(course_code="AM1411A/B")
+		add_instance(am_1411, "2010", "FI")
+		add_instance(am_1411, "2011", "FI")
+		add_instance(am_1411, "2012", "FI")
+		add_instance(am_1411, "2013", "FI")
+
+		chem_1024 = Course.objects.get(course_code="CHEM1024A/B")
+		add_instance(chem_1024, "2010", "FI")
+		add_instance(chem_1024, "2011", "FI")
+		add_instance(chem_1024, "2012", "FI")
+		add_instance(chem_1024, "2013", "FI")
+
+		es_1021 = Course.objects.get(course_code="ES1021A/B")
+		add_instance(es_1021, "2010", "FI")
+		add_instance(es_1021, "2011", "FI")
+		add_instance(es_1021, "2012", "FI")
+		add_instance(es_1021, "2013", "FI")
+
+		es_1036 = Course.objects.get(course_code="ES1036A/B")
+		add_instance(es_1036, "2010", "FI")
+		add_instance(es_1036, "2011", "FI")
+		add_instance(es_1036, "2012", "FI")
+		add_instance(es_1036, "2013", "FI")
+
+		phys_1401 = Course.objects.get(course_code="PHYS1401A/B")
+		add_instance(phys_1401, "2010", "FI")
+		add_instance(phys_1401, "2011", "FI")
+		add_instance(phys_1401, "2012", "FI")
+		add_instance(phys_1401, "2013", "FI")
+
+		phys_1402 = Course.objects.get(course_code="PHYS1402A/B")
+		add_instance(phys_1402, "2010", "FI")
+		add_instance(phys_1402, "2011", "FI")
+		add_instance(phys_1402, "2012", "FI")
+		add_instance(phys_1402, "2013", "FI")
+
+	except:
+		print("Populating instances failed...")
+
+def populate_concepts():
+	print("Populating concepts...")
+	math = add_concept("Algebra","MA")
+	science = add_concept("Covalent Bonds","SC")
+	eng_science = add_concept("Newtons 1st Law","ES")
+	eng_design = add_concept("UML","ED")
+	comp = add_concept("Technical Writing","CO")
+
+	try:
+		print("Creating concept relations with instances...")
+		courses = CourseInstance.objects.all()
+		for course in courses:
+			add_concept_relation(math, course, 2)
+			add_concept_relation(eng_science, course, 3)
+			add_concept_relation(comp, course, 1)
+	except:
+		print("Creating concept relations failed...")
+		pass
+
 # Methods to add objects to the database:
 def add_user(user, type):
 	u = UserInfo.objects.get_or_create(user= user, type = type)[0]
@@ -249,12 +332,24 @@ def add_program_strm(name, department, description):
 	return ps
 
 def add_option(name, program_stream):
-	o = Option.objects.get_or_create(name = name, program_stream=program_stream)
+	o = Option.objects.get_or_create(name = name, program_stream=program_stream)[0]
 	return o
 
 def add_course(course_code, name, lecture_hours, lab_hours, credit, description, year):
 	c = Course.objects.get_or_create(course_code=course_code, name=name, lecture_hours=lecture_hours, lab_hours=lab_hours, credit=credit, description=description, year=year)[0]
 	return c
+
+def add_instance(course, date, semester):
+	i = CourseInstance.objects.get_or_create(course=course, date=date,semester=semester)[0]
+	return i
+
+def add_concept(name,ceab_unit):
+	e = Concept.objects.get_or_create(name=name, ceab_unit=ceab_unit)[0]
+	return e
+
+def add_concept_relation(concept, instance, lectures):
+	l = ConceptRelation.objects.get_or_create(concept=concept, course_instance=instance, lectures=lectures)[0]
+	return l
 
 # Start script execution here
 if __name__ == '__main__':

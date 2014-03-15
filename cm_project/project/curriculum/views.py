@@ -657,36 +657,36 @@ def get_program_au(request, program_url, year_url):
 	except ProgramStream.DoesNotExist:
 		pass
 	
-	total = 0.0
-	total_first = 0.0
-	total_second = 0.0
-	total_third = 0.0
-	total_fourth = 0.0
+	total = Decimal(0.0)
+	total_first = Decimal(0.0)
+	total_second = Decimal(0.0)
+	total_third = Decimal(0.0)
+	total_fourth = Decimal(0.0)
 	
-	es_first = 0.0
-	es_second = 0.0
-	es_third = 0.0
-	es_fourth = 0.0
+	es_first = Decimal(0.0)
+	es_second = Decimal(0.0)
+	es_third = Decimal(0.0)
+	es_fourth = Decimal(0.0)
 	
-	ed_first = 0.0
-	ed_second = 0.0
-	ed_third = 0.0
-	ed_fourth = 0.0
+	ed_first = Decimal(0.0)
+	ed_second = Decimal(0.0)
+	ed_third = Decimal(0.0)
+	ed_fourth = Decimal(0.0)
 	
-	ma_first = 0.0
-	ma_second = 0.0
-	ma_third = 0.0
-	ma_fourth = 0.0
+	ma_first = Decimal(0.0)
+	ma_second = Decimal(0.0)
+	ma_third = Decimal(0.0)
+	ma_fourth = Decimal(0.0)
 	
-	sc_first = 0.0
-	sc_second = 0.0
-	sc_third = 0.0
-	sc_fourth = 0.0
+	sc_first = Decimal(0.0)
+	sc_second = Decimal(0.0)
+	sc_third = Decimal(0.0)
+	sc_fourth = Decimal(0.0)
 	
-	co_first = 0.0
-	co_second = 0.0
-	co_third = 0.0
-	co_fourth = 0.0
+	co_first = Decimal(0.0)
+	co_second = Decimal(0.0)
+	co_third = Decimal(0.0)
+	co_fourth = Decimal(0.0)
 	
 	courses_first = program_stream.courses.filter(year='FI')
 	courses_second = program_stream.courses.filter(year='SE')
@@ -820,8 +820,8 @@ def edit_concept_relation(request, course_url, date_url, concept_url):
 	if form.is_valid():
 		relation = form.save()
 		Success = True
-		
-		return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context_dict, context)
+		calculate_accreditation_units(course_url, date_url)
+		return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/#au', context_dict, context)
 	else:
 		print(form.errors)
 		
@@ -1276,8 +1276,7 @@ def link_concept(request, course_url, date_url, name_url):
 		return HttpResponseRedirect('/curriculum/add_concept_search/'+course_url+'/'+date_url+'/', context)
 	
 # Calculate the % of each accreditation unit based on the number of lectures for each course
-def calculate_accreditation_units(request, course_url, date_url):
-	context = RequestContext(request)
+def calculate_accreditation_units(course_url, date_url):
 	
 	course_code = course_url.replace('_','/')
 	date = date_url.replace('_','-')
@@ -1336,7 +1335,7 @@ def calculate_accreditation_units(request, course_url, date_url):
 		instance.save()
 	
 	# Get contact hours object associated with instance, set new values, save.
-		contact_hours = ContactHours.objects.get(instance=instance)
+		contact_hours = ContactHours.objects.get_or_create(instance=instance)[0]
 		contact_hours.contact_es = unit_es
 		contact_hours.contact_ed = unit_ed
 		contact_hours.contact_ma = unit_ma
@@ -1346,7 +1345,7 @@ def calculate_accreditation_units(request, course_url, date_url):
 		contact_hours.save()
 
 	# Redirect back to original instance page
-	return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
+#return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 	
 
 		

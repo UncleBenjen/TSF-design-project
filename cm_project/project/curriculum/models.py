@@ -142,7 +142,7 @@ class CourseInstance(models.Model):
 	#textbook = models.CharField(max_length = 128, blank = True)
 
 	# Professors and T.A.'s require m2m relations so that multiple teachers can teacher multiple courses
-	professors = models.ManyToManyField(UserInfo, related_name = 'teaches')
+	professors = models.ManyToManyField(UserInfo, related_name = 'teaches',blank=True)
 	assistants = models.ManyToManyField(UserInfo, related_name = 'assists', blank = True)
     
 	# Hold the percent values for accreditation categories (calculated automatically?)
@@ -189,7 +189,7 @@ class CourseInstance(models.Model):
 class ConceptRelation(models.Model):
 	concept = models.ForeignKey(Concept)
 	course_instance = models.ForeignKey(CourseInstance)
-	lectures = models.FloatField(blank = True)
+	lectures = models.FloatField(blank = True,default=0.0)
 	
 	def __str__(self):
 		return "Relationship between "+self.concept.name+" concept, and course "+self.course_instance
@@ -306,11 +306,11 @@ class Option(models.Model):
 class ContactHours(models.Model):
 	instance = models.ForeignKey(CourseInstance)
 	
-	contact_es = models.FloatField(blank = True, default = 0.0,editable=False)
-	contact_ed = models.FloatField(blank = True, default = 0.0,editable=False)
-	contact_ma = models.FloatField(blank = True, default = 0.0,editable=False)
-	contact_sc = models.FloatField(blank = True, default = 0.0,editable=False)
-	contact_co = models.FloatField(blank = True, default = 0.0,editable=False)
+	contact_es = models.DecimalField(blank = True, default = 0.0,editable=False, decimal_places=1, max_digits=8)
+	contact_ed = models.DecimalField(blank = True, default = 0.0,editable=False, decimal_places=1, max_digits=8)
+	contact_ma = models.DecimalField(blank = True, default = 0.0,editable=False, decimal_places=1, max_digits=8)
+	contact_sc = models.DecimalField(blank = True, default = 0.0,editable=False, decimal_places=1, max_digits=8)
+	contact_co = models.DecimalField(blank = True, default = 0.0,editable=False, decimal_places=1, max_digits=8)
 	
 	def save(self, *args, **kwargs):
 		contact_coefficient = self.instance.course.get_contact_value
@@ -383,3 +383,4 @@ class Measurement(models.Model):
 
 	def __str__(self):
 		return "Measurement of " + self.ceab_grad.name +" for "+self.students.get_type_display() +" students"
+
