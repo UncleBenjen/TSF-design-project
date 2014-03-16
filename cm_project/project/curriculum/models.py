@@ -94,7 +94,7 @@ class Concept(models.Model):
 # Course model
 class Course(models.Model):
 	course_code = models.CharField(max_length = 12, unique = True)
-	name = models.CharField(max_length = 128, unique = True)
+	name = models.CharField(max_length = 128)
     
 	lecture_hours = models.FloatField(default=0.0, blank = False)
 	lab_hours = models.FloatField(default=0.0, blank = False)

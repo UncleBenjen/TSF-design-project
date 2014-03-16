@@ -1,17 +1,23 @@
 import os
+import xlrd
 from django.contrib.auth.models import User
 from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, ConceptRelation, ContactHours
 
 #call each populate method in correct order
 def populate_db():
-	populate_departments()
+	#
+	populate_from_sreadsheet()
 	populate_courses()
+
+	populate_departments()
 	populate_prgrm_strms()
 	populate_options()
+
 	connect_courses()
-	populate_mechanical()
+    #	populate_mechanical()
 	populate_instances()
 	populate_concepts()
+
 
 # Function to populate the department table
 def populate_departments():
@@ -159,19 +165,12 @@ def populate_options():
 #populate first year courses
 def populate_courses():
 	print("Populating first year courses...")
-	add_course(course_code="ES1050", name="Introductory Engineering Design and Innovation Studio", lecture_hours='3', lab_hours='4', credit='2', description="Introduction to the principles and practices of professional engineering. The design studio fosters innovative thinking, improves problem solving, and provides context. Includes elements of need recognition, conceptualization, prototyping, and engineering design to satisfy commercial specifications. Emphasis on creativity, teamwork, communication and engineering skills necessary to practice in any engineering discipline.", year="FI")
 
 	add_course(course_code="AM1413", name="Applied Mathematics for Engineers", lecture_hours='3', lab_hours='0', credit='1', description="The calculus of functions of one and more variables with emphasis on applications in Engineering.", year="FI")
-
-	add_course(course_code="ES1022A/B/Y", name="Engineering Statics", lecture_hours='2', lab_hours='1', credit='0.5', description="Analysis of forces on structures and machines, including addition and resolution of forces and moments in two and three-dimensions. The application of the principles of equilibrium. Topics: trusses; frames; friction; and centroids.",year="FI")
 
 	add_course(course_code="AM1411A/B", name="Linear Algebra for Engineers", lecture_hours='3', lab_hours='2', credit='0.5', description="Matrix operations, systems of linear equations, linear spaces and transformations, determinants, eigenvalues and eigenvectors, applications of interest to Engineers including diagonalization of matrices, quadratic forms, orthogonal transformations.",year='FI')
 
 	add_course(course_code="CHEM1024A/B", name="General Chemistry for Engineers", lecture_hours='3', lab_hours='3', credit='0.5', description="This course provides a basic understanding of the following topics: gas laws; chemical equilibrium; acid-base equilibria; thermodynamics and thermochemistry; chemical kinetics; electrochemistry. Restricted to students in Engineering and Geophysics programs.",year='FI')
-    
-	add_course(course_code="ES1021A/B", name="Properties of Materials", lecture_hours='3', lab_hours='2', credit='0.5', description="An introduction to the relationship between the microstructure and engineering properties of metals, ceramics, polymers, semi-conductors and composites.", year='FI')
-    
-	add_course(course_code="ES1036A/B", name="Programming Fundamentals for Engineers", lecture_hours='3', lab_hours='3', credit='0.5', description="Designing, implementing and testing computer programs using a modern object-oriented language such as C++ to fulfill given specifications for small problems using sound engineering principles and processes. Awareness of the engineering aspects of the process of constructing a computer program.", year='FI')
     
 	add_course(course_code="PHYS1401A/B", name="Physics for Engineering Students I", lecture_hours='2', lab_hours='3', credit='0.5', description="A calculus-based laboratory course in physics for Engineering students. Kinematics, Newton’s laws of motion, work, energy, linear momentum, rotational motion, torque and angular momentum, oscillations.", year='FI')
     
@@ -318,6 +317,31 @@ def populate_concepts():
 	except:
 		print("Creating concept relations failed...")
 		pass
+
+def populate_from_sreadsheet():
+	# open .xlsx file in directory
+	try:
+		print("Opening xlsx document; preparing to populate courses...")
+		book = xlrd.open_workbook("EngineeringFaculty_FullCourseList.xlsx")
+
+		# loop through each spreadsheet; sheet assigned to 'sh'
+		for i in range(book.nsheets):
+			sh = book.sheet_by_index(i)
+			# loop through all the rows for each sheet; assign row to 'rx'
+			for rx in range(1,sh.nrows):
+				print(" ~ Adding courses from row #"+str(rx)+", spreadsheet #"+str(i))
+				#try adding a course using values from the correct columns
+				try:
+					add_course(sh.cell_value(rowx=rx, colx=0).replace(' ',''), sh.cell_value(rowx=rx, colx=1),sh.cell_value(rowx=rx, colx=2),sh.cell_value(rowx=rx, colx=3),sh.cell_value(rowx=rx, colx=4),sh.cell_value(rowx=rx, colx=5),sh.cell_value(rowx=rx, colx=6))
+				except:
+					print(" ~ ~ Adding course failed.")
+
+		print("... Finished parsing spreadsheets. Closing document.")
+
+	except:
+		print("Could not find/open document...")
+	
+
 
 # Methods to add objects to the database:
 def add_user(user, type):
