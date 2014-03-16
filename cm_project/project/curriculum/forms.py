@@ -92,6 +92,7 @@ class DeliverableForm(forms.ModelForm):
 		model = Deliverable
 		fields=['type','percent','due_date']
 
+
 class LearningObjectiveForm(forms.ModelForm):
 	description=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:

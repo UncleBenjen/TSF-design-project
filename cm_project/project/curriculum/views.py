@@ -440,6 +440,11 @@ def instance(request, course_name_url, instance_date_url):
 			deliverables = Deliverable.objects.filter(course_instance=instance)
 			context_dict['deliverables'] =deliverables
 
+			total_deliverables=0
+			for deliverable in deliverables:
+				total_deliverables+=deliverable.percent
+			context_dict['total_deliverables']=total_deliverables
+
 			concepts = instance.concepts.all
 			context_dict['concepts']=concepts
 
@@ -499,6 +504,19 @@ def ceab_grad(request, course_url, date_url, ceab_url):
 	measurements = Measurement.objects.filter(ceab_grad=ceab)
 	context_dict['measurements'] = measurements
 
+	try:
+		course = Course.objects.get(course_code=course_code)
+		instance = CourseInstance.objects.get(course=course,date=date)
+	except:
+		pass
+
+	students = StudentGroup.objects.filter(instance=instance)
+	context_dict['students']=students
+
+	total_students=0
+	for s in students:
+		total_students+=s.size
+	context_dict['total_students']=total_students
 
 	num_students = 0
 	total_average = 0
@@ -1134,7 +1152,7 @@ def add_measurement(request, course_url, date_url, ceab_url):
 		pass
     
 	if request.method == 'POST':
-		measurement_form = MeasurementForm(ceab_grad, data = request.POST)
+		measurement_form = MeasurementForm(instance, data = request.POST)
 		context_dict['measurement_form']=measurement_form
 		if measurement_form.is_valid():
 			measurement = measurement_form.save(commit=False)

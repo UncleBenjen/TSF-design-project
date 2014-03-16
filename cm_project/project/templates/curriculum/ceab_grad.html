@@ -41,8 +41,18 @@
                                         {% endif %}
                                     </tr>
                 					<tr>
-                                        <td>Number of students in measurement:</td>
-                                        <td>{{ num_students }}</a></td>
+                                        <td><strong>Student Breakdown:</strong></td>
+                                        <td></td>
+                                    </tr>
+                                    {% for student in students %}
+                                    <tr>
+                                        <td> ~ {{ student.get_type_display }}</td>
+                                        <td>{{ student.size }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td><strong>Total:</strong></td>
+                                        <td><strong>{{ total_students }}</strong></td>
                                     </tr>
                                 </table>
                                 
@@ -51,13 +61,14 @@
                                 <!-- histogram of measurements for this CEAB grad -->
                                 <canvas id="barChart2" width="400%" height="280%"></canvas>
                                 {% if measurements %}
-                                
-                                <!-- place legend here -->
+
+                                <div class="text-center"> <p>({{ num_students }} students currently being measured)</p></div>
                                 {% else %}
                                 <div class="text-center"><p>There were no measurements to display...</p></div>
                                 {% endif %}
                             </div>
                         </div>
+                        <hr>
                         <div class="row-fluid">
                             <div class="span12">
                                 <h3>Scores:</h3>
