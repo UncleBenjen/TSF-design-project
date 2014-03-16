@@ -74,6 +74,7 @@ class Concept(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
 	description = models.CharField(max_length = 500, blank = False)
 	highscool = models.BooleanField(default = False)
+	height = models.PositiveIntegerField(blank = True, default=0)
 	
 	# Options for CEAB accreditation units
 	ACCREDITATION_TYPES = (('MA', 'Math'), ('SC', 'Science'), ('ES', 'Engineering Science'),
@@ -81,7 +82,7 @@ class Concept(models.Model):
 	ceab_unit = models.CharField(max_length = 2, choices = ACCREDITATION_TYPES, blank = False)
 	
 	# Relate concepts to to themselves
-	related_concepts = models.ManyToManyField('self',blank = True)
+	related_concepts = models.ManyToManyField('self',blank = True, symmetrical = False)
 	
 	def get_url(self):
 		concept_url = self.name.replace(' ', '_')
@@ -194,6 +195,9 @@ class ConceptRelation(models.Model):
 	def __str__(self):
 		return "Relationship between "+self.concept.name+" concept, and course "+self.course_instance
 
+	def save(self, *args, **kwargs):
+		super(ConceptRelation, self).save(*args, **kwargs)
+		
 # Simple textbook model to accomodate having multiple textbooks/keeping a record
 class Textbook(models.Model):
 	name = models.CharField(unique=False,max_length=75,blank=False)

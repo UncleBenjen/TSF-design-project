@@ -1,9 +1,8 @@
 <ul class="nav nav-list">	
 	{% if concept_list %}
-
 		<div style = "margin-left:10%;">
 			{% for concept in concept_list %}
-					<li style = "line-height:120%; font-size:100%; padding-left:40%;h"><a href = "/curriculum/link_concept/{{ course_url }}/{{ date_url }}/{{ concept.get_url }}/">{{ concept.name }}</a></li>
+					<li style = "line-height:120%; font-size:100%; padding-left:30%;"><a href = "/curriculum/link_concept/{{ course_url }}/{{ date_url }}/{{ concept.get_url }}/">{{ concept.name }}</a> - {{ concept.description }}</li>
 			{% endfor %}
 		</div>
 	{% endif %}

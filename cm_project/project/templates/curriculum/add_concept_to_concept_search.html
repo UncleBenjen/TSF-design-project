@@ -1,0 +1,42 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Add concept{% endblock %}
+
+{% block body_block %}
+	<div class = "well hero-unit">
+		<div class = "text-center">
+			<h1>Add Child Concepts</h1>
+		</div>
+		<div class = "text-center">
+			<h3>To concept : <a href = "/curriculum/concepts/{{ concept_url }}/">{{ concept_name }}</a></h3>
+		</div>
+		<hr>
+
+
+		<li class = "nav-header text-center" style = "padding-left:25px; font-size:80%">Find Concept:</li>
+		<form class = "text-center">
+			<input class = "search-query span10" type="text" value="" autocomplete="off" name ="link_child" id ="link_child">
+			<input type = "hidden" value="{{ concept_url }}" name ="hidden-input1" id ="hidden-input1">
+		</form>
+		
+		<div id="results">
+			{% include 'curriculum/add_concept_to_concept_search_list.html' with concept_list=concept_list  %}
+		</div>	
+		
+		<hr>
+		
+		<div class = "text-center">
+			<h2>Child Concepts</h2>
+		
+		{% if concepts %}
+			{% for concept in concepts %}
+				<p><a href = "/curriculum/concepts/{{ concept.get_url }}/" >{{ concept.name }}</a></p>
+			{% endfor %}
+		{% else %}
+			<p>None yet</p>
+		{% endif %}
+		</div>
+	</div>
+{% endblock %}

@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
+from decimal import *
 #
 from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, TextbookForm,StudentGroupForm, DeliverableForm, LearningObjectiveForm, CEABGradForm, MeasurementForm, ConceptRelationForm, ContactHoursCohortForm
 from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Textbook, StudentGroup, Deliverable, CEABGrad, Measurement, ConceptRelation, ContactHours, ContactHoursCohort
@@ -389,12 +390,21 @@ def concept(request, concept_name_url):
 	#course_instances = CourseInstance.objects.filter(concepts__name = concept_name)
 	courses = CourseInstance.objects.filter(concepts__name = concept_name)
 	
-	
 	context_dict = {'concept_name' : concept_name}
 	context_dict['description'] = description
 	context_dict['ceab_unit'] = ceab_unit
 	context_dict['highschool'] = highschool
 	context_dict['courses'] = courses
+	context_dict['concept_url'] = concept_name_url
+	context_dict['level'] = concept.height
+	
+	height = concept.height
+	
+	while height > 0:
+		concepts = concept.related_concepts.all()
+		for concept in concepts:
+			pass
+		height = height-1
 	
 	return render_to_response('curriculum/concept.html', context_dict, context)
 	
@@ -1274,6 +1284,80 @@ def link_concept(request, course_url, date_url, name_url):
 		membership.save()
 		
 		return HttpResponseRedirect('/curriculum/add_concept_search/'+course_url+'/'+date_url+'/', context)
+		
+# implements the search functionality for adding concepts to a course instance	
+def add_child_concept_search(request, concept_url):
+		context = RequestContext(request)
+
+		context_dict = {'concept_url' : concept_url}
+		
+		concept_name = concept_url.replace('_', ' ')
+		
+		context_dict['concept_name'] = concept_name
+	
+		try:
+			concept = Concept.objects.get(name=concept_name)
+		except Concept.DoesNotExist:
+			pass
+		
+		return render_to_response('curriculum/add_concept_to_concept_search.html', context_dict, context)		
+		
+# Used by the get_concept_list function to get the query results
+def get_child_concept_list(max_results=0, starts_with='', parent_concept=''):
+	concept_list = []
+	
+	parent = Concept.objects.get(name=parent_concept)
+	height = parent.height
+	height = height-1
+	
+	if starts_with:
+		concept_list = Concept.objects.filter(name__istartswith=starts_with, height=height)
+	else:
+		concept_list = []
+	
+	if max_results > 0:
+		if len(concept_list) > max_results:
+			concept_list = concept_list[:max_results]
+			
+	return concept_list		
+		
+# Get concept search results and send them to the template	
+def suggest_child_concept_add(request):
+	context = RequestContext(request)
+	concept_list = []
+	starts_with = ''
+	context_dict = {}
+	
+	if request.method == 'GET':
+		starts_with = request.GET['link_child']
+		parent_url = request.GET['arg1']
+		context_dict['starts_with'] = starts_with
+	
+	parent_name = parent_url.replace('_', ' ')
+	
+	concept_list = get_child_concept_list(10, starts_with, parent_name)
+	context_dict['concept_list'] = concept_list
+	context_dict['parent_url'] = parent_url
+	
+	return render_to_response('curriculum/add_concept_to_concept_search_list.html', context_dict, context)		
+		
+def add_child_concept(request, concept_url, child_url):
+	context = RequestContext(request)
+	name_parent = concept_url.replace('_', ' ')
+	name_child = child_url.replace('_', ' ')
+	
+	try:
+		concept_child = Concept.objects.get(name=name_child)
+		try:
+			concept_parent = Concept.objects.get(name=name_parent)
+			concept_parent.related_concepts.add(concept_child)
+		except Concept.DoesNotExist:
+			pass
+	except Concept.DoesNotExist:
+		pass
+
+	
+	return HttpResponseRedirect('/curriculum/add_child_concept_search/'+concept_url+'/', context)
 	
 # Calculate the % of each accreditation unit based on the number of lectures for each course
 def calculate_accreditation_units(course_url, date_url):

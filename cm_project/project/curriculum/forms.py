@@ -73,7 +73,7 @@ class ConceptForm(forms.ModelForm):
 	description=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = Concept
-		fields = ['name','description','ceab_unit','related_concepts']
+		fields = ['name','description','ceab_unit','height']
 		
 class ConceptRelationForm(forms.ModelForm):
 	class Meta:
@@ -100,8 +100,6 @@ class LearningObjectiveForm(forms.ModelForm):
 
 class CEABGradForm(forms.ModelForm):
 	date = forms.DateField(widget=SelectDateWidget())
-	measurement_file = forms.FileField()
-	rubrik = forms.FileField()
 	measurement_text=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = CEABGrad

@@ -25,5 +25,14 @@ $(document).ready(function() {
                  $('#results').html(data);
 		});
 	});
+	
+		$('#link_child').keyup(function(){
+		var query;
+		query = $(this).val();
+		var1 = $("#hidden-input1").val();
+		$.get('/curriculum/suggest_child_concept_add/', {link_child: query, arg1: var1}, function(data){
+                 $('#results').html(data);
+		});
+	});
 
 });

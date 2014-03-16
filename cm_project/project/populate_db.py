@@ -1,6 +1,6 @@
 import os
 from django.contrib.auth.models import User
-from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, ConceptRelation
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, ConceptRelation, ContactHours
 
 #call each populate method in correct order
 def populate_db():
@@ -311,6 +311,7 @@ def populate_concepts():
 		print("Creating concept relations with instances...")
 		courses = CourseInstance.objects.all()
 		for course in courses:
+			add_contact_hours(course)
 			add_concept_relation(math, course, 2)
 			add_concept_relation(eng_science, course, 3)
 			add_concept_relation(comp, course, 1)
@@ -351,6 +352,10 @@ def add_concept_relation(concept, instance, lectures):
 	l = ConceptRelation.objects.get_or_create(concept=concept, course_instance=instance, lectures=lectures)[0]
 	return l
 
+def add_contact_hours(instance):
+	h = ContactHours.objects.get_or_create(instance=instance)
+	return h
+	
 # Start script execution here
 if __name__ == '__main__':
 	print("Starting curriculum-map population script...")

@@ -19,10 +19,14 @@
 			<hr>
 			<p>Highschool concept? {{ highschool }}</p>
 			<hr>
+			<p>Height: {{ level }}</p>
+			<hr>
 			<p>Courses Instances:</p>
 			{% for c in courses %}
-				<p><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}">{{ c.course }} - {{ c.date }}</a></p>
+				<p style = "line-height:100%; font-size: 90%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}">{{ c.course }} - {{ c.date }}</a></p>
 			{% endfor %}
+			<hr>
+			<a class = "btn btn-primary" href = "/curriculum/add_child_concept_search/{{ concept_url }}/">Add Child Concepts</a>
 		</div>
 	</div>
 </div>

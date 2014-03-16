@@ -14,134 +14,172 @@
 			
 			<div class = "row-fluid">
 				<div class = "span12">
-					<div class = "row-fluid">
-						<div class = "span4">
-							<strong>Engineering Science</strong>
-							{% if ES %}
+                    <div class="tabbable">
+                    <div class="tabbable tabs-left">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#es" data-toggle="tab">Engineering Science</a></li>
+                            <li><a href="#cbe" data-toggle="tab">Chemical and Biochemical</a></li>
+                            <li><a href="#cee" data-toggle="tab">Civil and Enivronmental</a></li>
+                            <li><a href="#ece" data-toggle="tab">Electrical and Computer</a></li>
+                            <li><a href="#gpe" data-toggle="tab">Green Process</a></li>
+                            <li><a href="#mme" data-toggle="tab">Mechanical and Materials</a></li>
+                            <li><a href="#mse" data-toggle="tab">Mechatronic Systems</a></li>
+                            <li><a href="#sof" data-toggle="tab">Software</a></li>
+                            <li><a href="#oth" data-toggle="tab">Other</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="es">
+                                {% if ES %}
+                                <table class="table">
 								{% for course in ES %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+                                    <tr>
+                                        <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                        <td>{{ course.name }}</td>
+                                    </tr>
 								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-						<div class = "span4">
-							<strong>Chemical and Biochemical</strong>
-							{% if CBE %}
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="cbe">
+                                {% if CBE %}
+                                <table class="table">
 								{% for course in CBE %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
-								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-						<div class = "span4">
-							<strong>Civil and Enivronmental</strong>
-							{% if CEE %}
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
+                                {% endfor %}
+                                <table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="cee">
+                                {% if CEE %}
+                                <table class="table">
 								{% for course in CEE %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
 								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div class = "row-fluid">
-                <div class = "span12">
-                    <div class = "row-fluid">
-						<div class = "span4">
-							<strong>Electrical and Computer</strong>
-							{% if ECE %}
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="ece">
+                                {% if ECE %}
+                                <table class="table">
 								{% for course in ECE %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
 								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-		
-						<div class = "span4">
-							<strong>Green Process</strong>
-							{% if GPE %}
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="gpe">
+                                {% if GPE %}
+                                <table class="table">
 								{% for course in GPE %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
 								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-						<div class = "span4">
-							<strong>Mechanical and Materials</strong>
-							{% if MME %}
+                                <table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="mme">
+                                {% if MME %}
+                                <table class="table">
 								{% for course in MME %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
 								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="mse">
+                                {% if MSE %}
+                                <table class="table">
+								{% for course in MSE %}
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
+								{% endfor %}
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="sof">
+                                {% if SE %}
+                                <table class="table">
+								{% for course in SE %}
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
+								{% endfor %}
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="oth">
+                                {% if other %}
+                                <table class="table">
+                                {% for course in other %}
+                                <tr>
+                                    <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></td>
+                                    <td>{{ course.name }}</td>
+								</tr>
+                                {% endfor %}
+                                </table>
+                                {% else %}
+                                <ul>
+                                    <li>Currently Empty</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
+                    </div>
+                <hr>
+					
                 </div>
             </div>
-            <hr>
-            <div class = "row-fluid">
-				<div class = "span12">
-					<div class = "row-fluid">
-						<div class = "span4">
-							<strong>Mechatronic Systems</strong>
-							{% if MSE %}
-								{% for course in MSE %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
-								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-						<div class = "span4">
-							<strong>Software</strong>
-							{% if SE %}
-								{% for course in SE %}
-									<li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
-								{% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-                        <div class = "span4">
-							<strong>Other</strong>
-							{% if other %}
-                            {% for course in other %}
-                            <li style = "line-height:110%;font-size:100%;"><a href = "/curriculum/courses/{{ course.get_url }}/">{{course.course_code}}</a></li>
-                            {% endfor %}
-							{% else %}
-                            <ul>
-                                <li>Currently Empty</li>
-                            </ul>
-							{% endif %}
-						</div>
-					</div>
-				</div>
-			</div>
-			<hr>
+            
 
 		</div>
 	</div>
