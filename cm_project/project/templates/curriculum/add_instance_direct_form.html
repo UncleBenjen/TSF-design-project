@@ -1,0 +1,40 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Add Instance{% endblock %}
+
+{% block body_block %}
+<div class="well hero-unit">
+    
+	<h1>Create a Course Instance</h1>
+	<hr>
+	
+	{% if user.is_authenticated%}
+    
+    {% if success %}
+    <p><strong>Successful instance creation... </strong></p>
+    {% else %}
+    
+    <strong>Please enter the following information... </strong>
+    <br />
+    <div class="row-fluid">
+        <div class="span12">
+        	
+            <form id = "course_form" method = "post" action = "/curriculum/add_instance_direct/{{ course_url }}/" enctype = "multipart/form-data">
+                {% csrf_token %}
+                {{ instance_form.as_p }}
+                
+                <input class = "btn btn-primary" type = "submit" name = "submit" value = "create course instance"/>
+            </form>
+        	
+        </div>
+    </div>
+    {% endif %}
+	{% else %}
+	
+	
+    
+	{% endif %}
+</div>
+{% endblock %}

@@ -8,8 +8,17 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from decimal import *
 #
-from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, ConceptForm, TextbookForm,StudentGroupForm, DeliverableForm, LearningObjectiveForm, CEABGradForm, MeasurementForm, ConceptRelationForm, ContactHoursCohortForm
-from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Textbook, StudentGroup, Deliverable, CEABGrad, Measurement, ConceptRelation, ContactHours, ContactHoursCohort
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.lib.enums import TA_RIGHT, TA_CENTER, TA_LEFT, TA_JUSTIFY
+#
+from curriculum.forms import RegisterForm, UserForm, UserInfoForm, CourseForm, InstanceForm, InstanceDirectForm, ConceptForm, ConceptFormDirect, TextbookForm,StudentGroupForm, DeliverableForm, LearningObjectiveForm, CEABGradForm, MeasurementForm, ConceptRelationForm, ContactHoursCohortForm
+from curriculum.models import UserInfo, Department, ProgramStream, Option, Course, CourseInstance, Concept, LearningObjective, Textbook, StudentGroup, Deliverable, CEABGrad, Measurement, ConceptRelation, ContactHours, ContactHoursCohort, YearlyCourseList
 
 
 def index(request):
@@ -288,11 +297,32 @@ def all_courses(request):
 	
 	return render_to_response('curriculum/all_courses.html', context_dict, context)
 
+	
+def all_concepts(request):
+	context = RequestContext(request)
+	
+	concepts_es = Concept.objects.filter(ceab_unit = 'ES', highscool = False)
+	concepts_ed = Concept.objects.filter(ceab_unit = 'ED', highscool = False)
+	concepts_ma = Concept.objects.filter(ceab_unit = 'MA', highscool = False)
+	concepts_sc = Concept.objects.filter(ceab_unit = 'SC', highscool = False)
+	concepts_co = Concept.objects.filter(ceab_unit = 'CO', highscool = False)
+	concepts_hs = Concept.objects.filter(highscool = True)
+	
+	context_dict = {'concepts_es' : concepts_es}
+	context_dict['concepts_ed'] = concepts_ed 
+	context_dict['concepts_ma'] = concepts_ma 
+	context_dict['concepts_sc'] = concepts_sc 
+	context_dict['concepts_co'] = concepts_co 
+	context_dict['concepts_hs'] = concepts_hs 
+	
+	return render_to_response('curriculum/all_concepts.html', context_dict, context)
+	
 def option(request, option_name_url):
 	context = RequestContext(request)
 
 	option_name = option_name_url.replace('_',' ')
 	context_dict={'option_name':option_name}
+	context_dict['option_url'] = option_name_url
 	try:
 		option = Option.objects.get(name = option_name)
 		context_dict['option']=option
@@ -318,9 +348,29 @@ def option(request, option_name_url):
 		context_dict['year2']=year2
 		context_dict['year3']=year3
 		context_dict['year4']=year4
+		
+		try:
+			c_list = YearlyCourseList.objects.get(option=option, year=1)
+			course = Course.objects.get(course_code='ES1050')
+			c_list.courses.add(course)
+		except YearlyCourseList.DoesNotExist:
+			pass
+		
+		try:
+			course_lists = YearlyCourseList.objects.filter(option=option)
+			for courses in course_lists:
+				year_string = courses.year
+				year_string = str(year_string)
+				year_string = "list"+year_string
+				context_dict[year_string] = courses.courses.all()
+			
+		except YearlyCourseList.DoesNotExist:
+			pass
 
 	except Option.DoesNotExist:
 		pass
+		
+
 
 	return render_to_response('curriculum/option.html',context_dict,context)
 
@@ -332,7 +382,6 @@ def get_programs(request):
 		
 		return render_to_response('curriculum/programs_for_au.html', context_dict, context)
 		
-	
 # Simple view to display a course	
 def course(request, course_name_url):
 	context = RequestContext(request)
@@ -340,6 +389,7 @@ def course(request, course_name_url):
 	# Get the name from the url that was passed with the request
 	course_name = course_name_url.replace('_','/')
 	context_dict={'course_name':course_name}
+	context_dict['course_url'] = course_name_url
 	
 	course_instances = CourseInstance.objects.filter(course__course_code = course_name)
 	context_dict['instances'] = course_instances
@@ -398,15 +448,43 @@ def concept(request, concept_name_url):
 	context_dict['concept_url'] = concept_name_url
 	context_dict['level'] = concept.height
 	
-	height = concept.height
+	#height = concept.height
+	#html_list = ""
+	#my_children = concept.related_concepts.all()
+	#context_dict['children'] = my_children
 	
-	while height > 0:
-		concepts = concept.related_concepts.all()
-		for concept in concepts:
-			pass
-		height = height-1
+	#if(height > 0):
+	#	html_list = display_concepts(my_children, height, html_list)
+	#	context_dict['concept_html'] = html_list
+	
+	context_dict['concept_html'] = meta_display_concepts(concept)
+	
 	
 	return render_to_response('curriculum/concept.html', context_dict, context)
+	
+# passes data to and calls display_concepts function
+def meta_display_concepts(concept):
+	html_list = ""
+	height = concept.height
+	my_children = concept.related_concepts.all()
+	
+	if(height > 0):
+		html_list = display_concepts(my_children, height, html_list)
+		
+	return html_list
+	
+# Recursive function to get child concepts of a concept
+def display_concepts(concept_list, height, html_list):
+	html_list = html_list + "<ul>"
+	for c in concept_list:
+		html_list = html_list + "<li><a href='/curriculum/concepts/"+c.get_url+"/'>" + c.name + "</a></li>"
+		one_down = height - 1
+		if (one_down >= 0):
+			children = c.related_concepts.all()
+			html_list = display_concepts(children, one_down, html_list)
+	html_list = html_list + "</ul>"
+
+	return html_list
 	
 # Simple view to display an instance of a course	
 def instance(request, course_name_url, instance_date_url):
@@ -595,8 +673,41 @@ def add_instance(request):
 
 		return render_to_response('curriculum/add_instance_form.html',{'instance_form' : instance_form},context)
 
+# Same as the add_instance function, except it will add it directly to a course
+# Add course instance from a course page
+def add_instance_direct(request, course_url):
+	context = RequestContext(request)
+	course_code = course_url.replace('_', '/')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+	except Course.DoesNotExist:
+		pass
+		
+	context_dict = {'course_url' : course_url}
+	
+	if request.method == 'POST':
+		instance_form = InstanceDirectForm(data = request.POST)
+		context_dict['form'] = instance_form
+		
+		if instance_form.is_valid():
+			instance = instance_form.save(commit=False)
+			instance.course = course
+			instance.save()
+			
+			return HttpResponseRedirect('/curriculum/instances/'+instance.course.get_url+'/'+instance.get_date+'/', context)
+			
+		else:
+			print(instance_form.errors())
+	else:
+		instance_form = InstanceDirectForm()
+		context_dict['instance_form'] = instance_form
+		
+		return render_to_response('curriculum/add_instance_direct_form.html', context_dict, context)
+
 # Add Concept - returns form, empty if GET, with data if POST
 def add_concept(request):
+
 	context = RequestContext(request)
 	success = False
 	
@@ -633,9 +744,9 @@ def add_cohort(request, program_stream_url):
 		if cohort_form.is_valid():
 			contact_hours_cohort = cohort_form.save(commit = False)
 			contact_hours_cohort.program = program_name
-			program = ProgramStream.objects.get(name=program_name)
+			program = Option.objects.get(name=program_name)
 			program.cohorts = contact_hours_cohort
-			program.save()
+			#program.save()
 			#contact_hours_cohort.save()		
 			
 			graduating_year = contact_hours_cohort.graduating_year
@@ -681,7 +792,7 @@ def get_program_au(request, program_url, year_url):
 	context_dict['first'] = first
 	
 	try:
-		program_stream = ProgramStream.objects.get(name=program)
+		program_stream = Option.objects.get(name=program)
 	except ProgramStream.DoesNotExist:
 		pass
 	
@@ -716,10 +827,16 @@ def get_program_au(request, program_url, year_url):
 	co_third = Decimal(0.0)
 	co_fourth = Decimal(0.0)
 	
-	courses_first = program_stream.courses.filter(year='FI')
-	courses_second = program_stream.courses.filter(year='SE')
-	courses_third = program_stream.courses.filter(year='TH')
-	courses_fourth = program_stream.courses.filter(year='FO')
+	courses_first = YearlyCourseList.objects.get(option=program_stream, year=1).courses.all()
+	courses_second = YearlyCourseList.objects.get(option=program_stream, year=2).courses.all()
+	courses_third = YearlyCourseList.objects.get(option=program_stream, year=3).courses.all()
+	courses_fourth = YearlyCourseList.objects.get(option=program_stream, year=4).courses.all()
+	
+	
+	#courses_first = program_stream.courses.filter(year='FI')
+	#courses_second = program_stream.courses.filter(year='SE')
+	#courses_third = program_stream.courses.filter(year='TH')
+	#courses_fourth = program_stream.courses.filter(year='FO')
 	
 	for course in courses_first:
 		instances = CourseInstance.objects.filter(course=course, date=first)
@@ -866,10 +983,21 @@ def add_concept_to_instance(request, course_url, date_url):
 	
 	course_code = course_url.replace('_', '/')
 	date = date_url.replace('_', '-')
+	height = 0
 	
 	try:
 		course = Course.objects.get(course_code=course_code)
 		context_dict['course'] = course		
+		
+		if course.year == 'FI':
+			height = 1
+		elif course.year == 'SE':
+			height = 2
+		elif course.year == 'TH':
+			height = 3
+		elif course.year == 'FO':
+			height = 4
+		
 		try:
 			instance = CourseInstance.objects.get(course=course, date=date)
 			context_dict['instance'] = instance		
@@ -879,11 +1007,13 @@ def add_concept_to_instance(request, course_url, date_url):
 			pass
 			
 	if request.method == 'POST':
-		concept_form = ConceptForm(data = request.POST)
+		concept_form = ConceptFormDirect(data = request.POST)
 		context_dict['concept_form'] = concept_form
 		
 		if concept_form.is_valid():
-			concept = concept_form.save()
+			concept = concept_form.save(commit=False)
+			concept.height = height
+			concept.save()			
 						
 			#instance.concepts.add(concept)
 			membership = ConceptRelation(concept=concept, course_instance=instance, lectures=0)
@@ -896,7 +1026,7 @@ def add_concept_to_instance(request, course_url, date_url):
 			return render_to_response('curriculum/add_concept_form.html',context_dict,context)
 	
 	else:
-		concept_form = ConceptForm()
+		concept_form = ConceptFormDirect()
 		context_dict['concept_form']=concept_form
 	
 	return render_to_response('curriculum/add_concept_form.html', context_dict, context)
@@ -1193,9 +1323,274 @@ def suggest_course(request):
 		if request.method == 'GET':
 			starts_with = request.GET['course_suggestion']
 			
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		
 		return render_to_response('curriculum/search_list.html', {'course_list' : course_list}, context)
+		
+# Used the get_course_list function to get the top 5 matches
+def suggest_course_add_one(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_courses_1']
+			option_url = request.GET['arg1']
+			year = request.GET['arg2']
+			year_str = str(year)
+			
+		
+		course_list = get_course_list(5, starts_with)
+		context_dict = {'course_list' : course_list}
+		context_dict['option_url'] = option_url
+		context_dict['year'] = year_str
+		
+		return render_to_response('curriculum/search_list_add.html', context_dict, context)
+		
+# Used the get_course_list function to get the top 5 matches
+def suggest_course_add_two(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_courses_2']
+			option_url = request.GET['arg1']
+			year = request.GET['arg2']
+			year_str = str(year)
+			
+		
+		course_list = get_course_list(5, starts_with)
+		context_dict = {'course_list' : course_list}
+		context_dict['option_url'] = option_url
+		context_dict['year'] = year_str
+		
+		return render_to_response('curriculum/search_list_add.html', context_dict, context)
+		
+# Used the get_course_list function to get the top 5 matches
+def suggest_course_add_three(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_courses_3']
+			option_url = request.GET['arg1']
+			year = request.GET['arg2']
+			year_str = str(year)
+			
+		
+		course_list = get_course_list(5, starts_with)
+		context_dict = {'course_list' : course_list}
+		context_dict['option_url'] = option_url
+		context_dict['year'] = year_str
+		
+		return render_to_response('curriculum/search_list_add.html', context_dict, context)
+		
+# Used the get_course_list function to get the top 5 matches
+def suggest_course_add_four(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_courses_4']
+			option_url = request.GET['arg1']
+			year = request.GET['arg2']
+			year_str = str(year)
+			
+		
+		course_list = get_course_list(5, starts_with)
+		context_dict = {'course_list' : course_list}
+		context_dict['option_url'] = option_url
+		context_dict['year'] = year_str
+		
+		
+		return render_to_response('curriculum/search_list_add_requisite.html', context_dict, context)
+		
+# Used the get_course_list function to get the top 5 matches
+def suggest_pre_requisite(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_pre']
+			course_url = request.GET['arg1']
+			requisite = request.GET['arg2']
+			
+			course_code = course_url.replace('_', '/')
+			course = Course.objects.get(course_code=course_code)
+		
+		course_list = get_course_list(5, starts_with)
+		
+		anti_list = course.anti_requisites.all()
+		co_list = course.co_requisites.all()
+		
+		if anti_list:
+			new_list = [course for course in course_list if course not in anti_list]
+			course_list = new_list
+			
+		if co_list:	
+			new_list = [course for course in course_list if course not in co_list]
+			course_list = new_list
+		
+		context_dict = {'course_list' : course_list}
+		context_dict['course_url'] = course_url
+		context_dict['requisite'] = requisite
+		
+		
+		return render_to_response('curriculum/search_list_add_requisite.html', context_dict, context)
+
+def add_pre_requisite(request, course_url, requisite_url):
+	context = RequestContext(request)
+	course_code = course_url.replace('_', '/')
+	requisite_code = requisite_url.replace('_', '/')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		
+		try:
+			requisite = Course.objects.get(course_code=requisite_code)
+			course.pre_requisites.add(requisite)
+			
+		except Course.DoesNotExist:
+			pass
+	except Course.DoesNotExist:
+		pass
+		
+	return HttpResponseRedirect('/curriculum/courses/'+course_url+'/', context)
+	
+# Used the get_course_list function to get the top 5 matches
+def suggest_co_requisite(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_co']
+			course_url = request.GET['arg1']
+			requisite = request.GET['arg2']
+			
+			course_code = course_url.replace('_', '/')
+			course = Course.objects.get(course_code=course_code)
+		
+		course_list = get_course_list(5, starts_with)
+		
+		anti_list = course.anti_requisites.all()
+		pre_list = course.pre_requisites.all()
+		
+		
+		if anti_list:
+			new_list = [course for course in course_list if course not in anti_list]
+			course_list = new_list
+		
+		if pre_list:	
+			new_list = [course for course in course_list if course not in pre_list]
+			course_list = new_list
+		
+		context_dict = {'course_list' : course_list}
+		context_dict['course_url'] = course_url
+		context_dict['requisite'] = requisite
+		
+		
+		return render_to_response('curriculum/search_list_add_requisite.html', context_dict, context)
+		
+def add_co_requisite(request, course_url, requisite_url):
+	context = RequestContext(request)
+	course_code = course_url.replace('_', '/')
+	requisite_code = requisite_url.replace('_', '/')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		
+		try:
+			requisite = Course.objects.get(course_code=requisite_code)
+			course.co_requisites.add(requisite)
+			
+		except Course.DoesNotExist:
+			pass
+	except Course.DoesNotExist:
+		pass
+		
+	return HttpResponseRedirect('/curriculum/courses/'+course_url+'/', context)		
+
+# Used the get_course_list function to get the top 5 matches
+def suggest_anti_requisite(request):
+		context = RequestContext(request)
+		course_list = []
+		starts_with = ''
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_anti']
+			course_url = request.GET['arg1']
+			requisite = request.GET['arg2']
+			
+			course_code = course_url.replace('_', '/')
+			course = Course.objects.get(course_code=course_code)
+		
+		course_list = get_course_list(5, starts_with)
+		
+		co_list = course.co_requisites.all()
+		pre_list = course.pre_requisites.all()
+		
+		if co_list:
+			new_list = [course for course in course_list if course not in co_list]
+			course_list = new_list
+			
+		if pre_list:	
+			new_list = [course for course in course_list if course not in pre_list]
+			course_list = new_list
+		
+		context_dict = {'course_list' : course_list}
+		context_dict['course_url'] = course_url
+		context_dict['requisite'] = requisite
+		
+		
+		return render_to_response('curriculum/search_list_add_requisite.html', context_dict, context)
+		
+def add_anti_requisite(request, course_url, requisite_url):
+	context = RequestContext(request)
+	course_code = course_url.replace('_', '/')
+	requisite_code = requisite_url.replace('_', '/')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		
+		try:
+			requisite = Course.objects.get(course_code=requisite_code)
+			course.anti_requisites.add(requisite)
+			
+		except Course.DoesNotExist:
+			pass
+	except Course.DoesNotExist:
+		pass
+		
+	return HttpResponseRedirect('/curriculum/courses/'+course_url+'/', context)	
+		
+def add_course_to_course_list(request, option_url, year_url, course_url):
+	context = RequestContext(request)
+	option_name = option_url.replace('_', ' ')
+	year = int(year_url)
+	course_code = course_url.replace('_', '/')
+	
+	try:
+		option = Option.objects.get(name=option_name)
+		
+		try:
+			course = Course.objects.get(course_code=course_code)
+		except Course.DoesNotExist:
+			pass	
+	except Option.DoesNotExist:
+		pass
+			
+	try:
+		course_list = YearlyCourseList.objects.get(option=option, year=year)
+		course_list.courses.add(course)
+	except YearlyCourseList.DoesNotExist:
+		pass
+	
+	return HttpResponseRedirect('/curriculum/options/'+option_url+'/', context)
 	
 # Used by the get_concept_list function to get the query results
 def get_concept_list(max_results=0, starts_with=''):
@@ -1315,9 +1710,10 @@ def add_child_concept_search(request, concept_url):
 	
 		try:
 			concept = Concept.objects.get(name=concept_name)
+			context_dict['concepts_html'] = meta_display_concepts(concept)
 		except Concept.DoesNotExist:
 			pass
-		
+				
 		return render_to_response('curriculum/add_concept_to_concept_search.html', context_dict, context)		
 		
 # Used by the get_concept_list function to get the query results
@@ -1449,9 +1845,180 @@ def calculate_accreditation_units(course_url, date_url):
 	# Redirect back to original instance page
 #return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 	
+def download_syllabus(request, course_url, date_url):
+	# replace characters in url's
+	course_code = course_url.replace('_','/')
+	date = date_url
+    
+	# Obtain the course object to find the instance
+	try:
+		course = Course.objects.get(course_code=course_code)
+		# Obtain the instance object to be used for syllabus generation
+		try:
+			instance = CourseInstance.objects.get(course=course,date=date)
+			professors = instance.professors.all()
+			assistants = instance.professors.all()
+			textbooks = Textbook.objects.filter(instance=instance)
+			concepts = instance.concepts.all()
+			objectives = LearningObjective.objects.filter(course_instance=instance)
+			deliverables = Deliverable.objects.filter(course_instance=instance)
+			pre_reqs = instance.course.pre_requisites.all()
+            
+            # Create dynamic file name based on instane; create content disposition with filename for response
+			file_name = course_url + "-" + date + "-syllabus"
+			content_disposition = "attachment; filename='"+file_name+"'"
+			# Create the HttpResponse object with the appropriate PDF headers.
+			response = HttpResponse(content_type='application/pdf')
+			response['Content-Disposition'] = content_disposition
+            
+			buffer = BytesIO()
+            
+			doc = SimpleDocTemplate(buffer, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=72, pagesize=letter)
+			elements=[]
+                                    
+			styles=getSampleStyleSheet()
+			styles.add(ParagraphStyle(name='big_centerAlign',fontName='Helvetica',alignment=TA_CENTER,fontSize=16, spaceBefore=5, leading=20))
+			styles.add(ParagraphStyle(name='small_centerAlign',fontName='Helvetica',alignment=TA_CENTER,fontSize=12, spaceBefore=5, leading=15))
 
+			styles.add(ParagraphStyle(name='title_leftAlign',fontName='Helvetica',alignment=TA_LEFT,fontSize=14, spaceAfter=10, spaceBefore=10))
+			styles.add(ParagraphStyle(name='body_leftAlign',fontName='Times-Roman',alignment=TA_LEFT, firstLineIndent=25, spaceAfter=5))
+			styles.add(ParagraphStyle(name='body_justifyAlign',fontName='Times-Roman',alignment=TA_JUSTIFY, firstLineIndent=25, spaceAfter=5))
+
+			# Print out the header information; course code and name, date of the isntance
+			elements.append(Paragraph("<i>Western University ~ Faculty of Engineering</i>",styles['small_centerAlign']))
+			elements.append(Paragraph(instance.course.course_code + " - " + instance.course.name,styles['big_centerAlign']))
+			elements.append(Paragraph("Course Outline - "+str(instance.date)+"/"+str(int(instance.date)+1),styles['big_centerAlign']))
+
+			# Print out the description if it exists
+			elements.append(Paragraph("<b>Course Description:</b>",styles['title_leftAlign']))
+			if course.description:
+				elements.append(Paragraph(course.description,styles['body_justifyAlign']))
+			else:
+				elements.append(Paragraph("There was no description listed under this course object...",styles['body_leftAlign']))
+
+			# If any pre-reqs were found under this course, print them
+			elements.append(Paragraph("<b>Pre-Requisites:</b>",styles['title_leftAlign']))
+			if pre_reqs:
+				for idx,val in enumerate(pre_reqs):
+					elements.append(Paragraph(str(idx+1)+". "+val.course_code+" - "+val.name,styles['body_leftAlign']))
+				elements.append(Paragraph("<b>Please Note: </b>Unless you have either the prerequisites for this course or written special permission from your Dean to enroll in it, you will be removed from this course and it will be deleted from your record. This decision may not be appealed. You will receive no adjustment to your fees in the event that you are dropped from a course for failing to have the necessary prerequisites.",styles['body_justifyAlign']))
+			else:
+				elements.append(Paragraph("There were no pre-requisites listed under this course object...",styles['body_leftAlign']))
+
+			# Display accreditation units
+			elements.append(Paragraph("<b>Accreditation Units:</b>",styles['title_leftAlign']))
+			if instance.acc_math != 0:
+				elements.append(Paragraph("Math = "+str(instance.acc_math)+"%",styles['body_leftAlign']))
+			if instance.acc_science != 0:
+				elements.append(Paragraph("Science = "+str(instance.acc_science)+"%",styles['body_leftAlign']))
+			if instance.acc_eng_science != 0:
+				elements.append(Paragraph("Engineering Science = "+str(instance.acc_eng_science)+"%",styles['body_leftAlign']))
+			if instance.acc_eng_design != 0:
+				elements.append(Paragraph("Engineering Design = "+str(instance.acc_eng_design)+"%",styles['body_leftAlign']))
+			if instance.acc_comp != 0:
+				elements.append(Paragraph("Complementory = "+str(instance.acc_comp)+"%",styles['body_leftAlign']))
+
+			# display detailed professor information
+			elements.append(Paragraph("<b>Professors:</b>",styles['title_leftAlign']))
+			if professors:
+				for prof in professors:
+					elements.append(Paragraph("<b>"+prof.user.first_name+" "+prof.user.last_name+"</b>",styles['body_leftAlign']))
+					elements.append(Paragraph("Email: "+prof.user.email,styles['body_leftAlign']))
+					elements.append(Paragraph("Office: "+prof.office,styles['body_leftAlign']))
+			else:
+				elements.append(Paragraph("There were no professors listed under this course instance...",styles['body_leftAlign']))
+
+			# Print plain T.A. info (if they exist)
+			elements.append(Paragraph("<b>Assistants:</b>",styles['title_leftAlign']))
+			if assistants:
+				for idx, val in enumerate(assistants):
+					elements.append(Paragraph(str(idx+1)+". "+val.user.first_name+" "+val.user.last_name+" ("+val.user.email+")",styles['body_leftAlign']))
+			else:
+				elements.append(Paragraph("There were no assistants listed under this course instance...",styles['body_leftAlign']))
+
+			# Print out contact hour info
+			elements.append(Paragraph("<b>Contact Hours:</b>",styles['title_leftAlign']))
+			elements.append(Paragraph("Lecture hours: "+str(instance.course.lecture_hours)+" - Lab hours: "+str(instance.course.lab_hours)+" - Tutorial hours: "+str(instance.course.tut_hours)+" - Credit: "+str(instance.course.credit), styles['body_leftAlign']))
+
+
+			# Print out textbooks
+			elements.append(Paragraph("<b>Textbooks:</b>",styles['title_leftAlign']))
+			if textbooks:
+				for textbook in textbooks:
+					if textbook.required:
+						elements.append(Paragraph(textbook.name+" (required)", styles['body_leftAlign']))
+					else:
+						elements.append(Paragraph(textbook.name,styles['body_leftAlign']))
+			else:
+				elements.append(Paragraph("There were no textbooks listed under this course instance...", styles['body_leftAlign']))
+
+			# concepts
+			elements.append(Paragraph("<b>Topics Covered:</b>",styles['title_leftAlign']))
+			if concepts:
+				for idx, val in enumerate(concepts):
+					elements.append(Paragraph("<b>"+str(idx+1)+".</b> "+val.name,styles['body_leftAlign']))
+			else:
+				elements.append(Paragraph("There were no concepts listed under this course instance...",styles['body_leftAlign']))
+
+			# Learning objectives
+			elements.append(Paragraph("<b>Learning Objectives:</b>",styles['title_leftAlign']))
+			if objectives:
+				for idx, val in enumerate(objectives):
+					elements.append(Paragraph("<b>"+str(idx+1)+".</b> "+val.description,styles['body_leftAlign']))
+			else:
+				elements.append(Paragraph("There were no learning objectives listed under this course instance...",styles['body_leftAlign']))
+
+			elements.append(Paragraph("<b>CEAB Graduate Attributes:</b>",styles['title_leftAlign']))
+			ceab_data = [['Knowledge Base',' ','Individual Work',' ','Ethics and Equity',' '],
+                         ['Problem Analysis',' ','Team Work',' ','Economics and Project Management',' '],
+                         ['Investigation',' ','Communication',' ','Life-long Learning',' '],
+                         ['Design',' ','Professionalism',' ', ' ',' '],
+                         ['Engineering Tools',' ','Impact on Soceity',' ',' ',' '],
+                         ]
+			ceab_table = Table(ceab_data)
+			ceab_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black)]))
+			elements.append(ceab_table)
+
+			# Deliverables
+			elements.append(Paragraph("<b>Deliverables: </b>",styles['title_leftAlign']))
+			if deliverables:
+				table_data = [['Type', '%', 'Tentative Due Date'],]
+				for idx, val in enumerate(deliverables):
+					data=[val.get_type_display(),str(val.percent),val.due_date]
+					table_data.append(data)
+				t=Table(table_data)
+				elements.append(t)
+			else:
+				elements.append(Paragraph("There were no deliverables listed under this course...",styles['body_leftAlign']))
+
+			# Display and append random disclaimers
+			elements.append(Paragraph("<b>English: </b>",styles['title_leftAlign']))
+			elements.append(Paragraph("In accordance with Senate and Faculty Policy, students may be penalized up to 10% of the marks on all assignments, tests and examinations for the improper use of English. Additionally, poorly written work with the exception of final examinations may be returned without grading. If resubmission of the work is permitted, it may be graded with marks deducted for poor English and/or late submission.",styles['body_justifyAlign']))
+			elements.append(Paragraph("<b>Attendance: </b>",styles['title_leftAlign']))
+			elements.append(Paragraph("Any student who, in the opinion of the instructor, is absent too frequently from class or laboratory periods in any course, will be reported to the Dean (after due warning has been given). On the recommendation of the Department concerned, and with the permission of the Dean, the student will be debarred from taking the regular examination in the course.",styles['body_justifyAlign']))
+			elements.append(Paragraph("<b>SSD: </b>",styles['title_leftAlign']))
+			elements.append(Paragraph("<i>Please contact the course instructor if you require material in an alternate format or if any other arrangements can make this course more accessible to you. You may also wish to contact Services for Students with Disabilities (SSD) at 661-2111 x 82147 for any specific question regarding an accommodation.</i>",styles['body_justifyAlign']))
+			elements.append(Paragraph("<b>Cheating: </b>",styles['title_leftAlign']))
+			elements.append(Paragraph("University policy states that cheating, including plagiarism, is a scholastic offense. The commission of a scholastic offence is attended by academic penalties which might include expulsion from the program. If you are caught cheating, there will be no second warning.",styles['body_justifyAlign']))
+			elements.append(Paragraph("<b>Note: </b>",styles['title_leftAlign']))
+			elements.append(Paragraph("The above topics and outline are subject to adjustments and changes as needed. Students who have failed an Engineering course (ie.<50%) must repeat all components of the course. No special permissions will be granted enabling a student to retain laboratory, assignment or test marks from previous years. Previously completed assignments and laboratories cannot be resubmitted for grading by the student in subsequent years.",styles['body_justifyAlign']))
+
+
+			doc.build(elements)
+
+			# Get the value of the BytesIO buffer and write it to the response.
+			pdf = buffer.getvalue()
+			buffer.close()
+			response.write(pdf)
+			return response
+        
+		except CourseInstance.DoesNotExist:
+			return HttpResponseRedirect()
+    
+	except Course.DoesNotExist:
+		return HttpResponseRedirect()
 		
-		
+	
 
 	
 	

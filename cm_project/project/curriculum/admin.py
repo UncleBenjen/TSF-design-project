@@ -1,6 +1,6 @@
 from django.contrib import admin
 from curriculum.models import UserInfo
-from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad, Measurement, StudentGroup, ConceptRelation
+from curriculum.models import Department, Concept, Course, CourseInstance,Textbook, Deliverable, LearningObjective, ProgramStream, Option, ContactHours, CEABGrad, Measurement, StudentGroup, ConceptRelation, YearlyCourseList
 
 # Defining classes to customize admin interface
 class UserAdmin(admin.ModelAdmin):
@@ -10,7 +10,7 @@ class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'head', 'website')
 
 class ConceptAdmin(admin.ModelAdmin):
-    list_display = ('name','description','ceab_unit')
+    list_display = ('name','description','ceab_unit', 'height')
 
 class ConceptRelationAdmin(admin.ModelAdmin):
 	list_display=('concept','course_instance','lectures')
@@ -36,6 +36,9 @@ class ProgramStreamAdmin(admin.ModelAdmin):
 class OptionAdmin(admin.ModelAdmin):
 	list_display= ('name', 'program_stream')
 
+class YearlyCourseListAdmin(admin.ModelAdmin):
+	list_display= ('option','year')
+	
 class CEABGradAdmin(admin.ModelAdmin):
 	list_display = ('name', 'date', 'measurement_text','measurement_file','rubrik','attribute', 'course')
 	filter_horizontal = ('student_groups',)
@@ -65,3 +68,4 @@ admin.site.register( StudentGroup, StudentGroupAdmin)
 admin.site.register( Measurement, MeasurementAdmin)
 admin.site.register(ContactHours,ContactHoursAdmin)
 admin.site.register(ConceptRelation,ConceptRelationAdmin)
+admin.site.register(YearlyCourseList, YearlyCourseListAdmin)

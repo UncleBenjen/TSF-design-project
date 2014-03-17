@@ -1,0 +1,135 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}All Conceps{% endblock %}
+
+{% block body_block %}
+	<div class = "well hero-unit">
+		<div class = "row-fluid">
+			<div class = "text-center">
+				<h1>All Concepts</h1>
+			</div>
+			<hr>
+			
+			<div class = "row-fluid">
+				<div class = "span12">
+                    <div class="tabbable">
+                        <div class="tabbable tabs-left">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#es" data-toggle="tab">Engineering Science</a></li>
+                                <li><a href="#ed" data-toggle="tab">Engineering Design</a></li>
+                                <li><a href="#ma" data-toggle="tab">Math</a></li>
+                                <li><a href="#sc" data-toggle="tab">Science</a></li>
+                                <li><a href="#co" data-toggle="tab">Complementary Studies</a></li>
+								<li><a href="#hs" data-toggle="tab">High School</a></li>
+                            </ul>
+                            <div class="tab-content" style="height:300px; overflow:scroll;">
+                                <div class="tab-pane active" id="es">
+                                    {% if concepts_es %}
+                                    <table class="table">
+                                    {% for concept in concepts_es %}
+                                        <tr>
+                                            <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{concept.name}}</a></td>
+                                            <td>{{ concept.description }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </table>
+                                    {% else %}
+                                    <ul>
+                                        <li>Currently Empty</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane" id="ed">
+                                    {% if concepts_ed %}
+                                    <table class="table">
+                                    {% for concept in concepts_ed %}
+                                    <tr>
+                                        <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{concept.name}}</a></td>
+                                        <td>{{ course.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </table>
+                                    {% else %}
+                                    <ul>
+                                        <li>Currently Empty</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane" id="ma">
+                                    {% if concepts_ma %}
+                                    <table class="table">
+                                    {% for concept in concepts_ma %}
+                                    <tr>
+                                        <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{concept.name}}</a></td>
+                                        <td>{{ concept.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </table>
+                                    {% else %}
+                                    <ul>
+                                        <li>Currently Empty</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane" id="sc">
+                                    {% if concepts_sc %}
+                                    <table class="table">
+                                    {% for concept in concepts_sc %}
+                                    <tr>
+                                        <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{concept.name}}</a></td>
+                                        <td>{{ concept.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </table>
+                                    {% else %}
+                                    <ul>
+                                        <li>Currently Empty</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane" id="co">
+                                    {% if concepts_co %}
+                                    <table class="table">
+                                    {% for concept in concepts_co %}
+                                    <tr>
+                                        <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{concept.name}}</a></td>
+                                        <td>{{ concept.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </table>
+                                    {% else %}
+                                    <ul>
+                                        <li>Currently Empty</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane" id="hs">
+                                    {% if concepts_hs %}
+                                    <table class="table">
+                                    {% for concept in concepts_hs %}
+                                    <tr>
+                                        <td style = "line-height:110%;font-size:100%;"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{concept.name}}</a></td>
+                                        <td>{{ concept.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </table>
+                                    {% else %}
+                                    <ul>
+                                        <li>Currently Empty</li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <hr>
+					
+                </div>
+            </div>
+            
+
+		</div>
+	</div>
+{% endblock %}

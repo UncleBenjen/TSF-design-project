@@ -297,6 +297,8 @@
                 </table>
                 </div>
             </div>
+            <hr>
+            
             {% else %}
             <p>There were no ceab graduate attributes listed under this course instance...</p>
             
@@ -305,7 +307,13 @@
             
             
             <hr>
-            
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="span4 offset4">
+                        <a class="btn btn-primary"href="/curriculum/download_syllabus/{{ course_url}}/{{ date_url }}/">Generate Syllabus</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

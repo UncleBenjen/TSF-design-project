@@ -1,0 +1,9 @@
+<ul class="nav nav-list">
+            <table class="table">
+			{% for course in course_list %}
+            
+				<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/add_course_to_program/{{ option_url }}/{{ year }}/{{ course.get_url }}">{{ course.course_code }}</a></div></td></tr>
+				
+            {% endfor %}
+            </table>
+</ul>

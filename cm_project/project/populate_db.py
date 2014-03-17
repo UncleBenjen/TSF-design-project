@@ -357,7 +357,7 @@ def add_program_strm(name, department, description):
 	return ps
 
 def add_option(name, program_stream):
-	o = Option.objects.get_or_create(name = name, program_stream=program_stream)[0]
+	o = Option.objects.get_or_create(name = name, program_stream=program_stream, num_years=4)[0]
 	return o
 
 def add_course(course_code, name, lecture_hours, lab_hours, credit, description, year):

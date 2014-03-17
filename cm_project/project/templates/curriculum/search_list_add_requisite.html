@@ -1,0 +1,32 @@
+<ul class="nav nav-list">
+		{% if requisite == "pre" %}
+            <table class="table">	
+				{% for course in course_list %}
+				
+					<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/add_pre_requisite/{{ course_url }}/{{ course.get_url }}/">{{ course.course_code }}</a></div></td></tr>
+					
+				{% endfor %}
+			</table>
+		{% endif %}
+		
+		{% if requisite == "co" %}
+            <table class="table">	
+				{% for course in course_list %}
+				
+					<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/add_co_requisite/{{ course_url }}/{{ course.get_url }}">{{ course.course_code }}</a></div></td></tr>
+					
+				{% endfor %}
+			</table>
+		{% endif %}
+		
+		{% if requisite == "anti" %}
+            <table class="table">	
+				{% for course in course_list %}
+				
+					<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/add_anti_requisite/{{ course_url }}/{{ course.get_url }}">{{ course.course_code }}</a></div></td></tr>
+					
+				{% endfor %}
+			</table>
+		{% endif %}
+            
+</ul>

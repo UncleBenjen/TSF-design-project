@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import date, datetime, time
 from django.core.exceptions import ValidationError
-
+from django.db import models
 # User model
 class UserInfo(models.Model):
 	# One to one field implies inheritance from User class
@@ -84,6 +84,7 @@ class Concept(models.Model):
 	# Relate concepts to to themselves
 	related_concepts = models.ManyToManyField('self',blank = True, symmetrical = False)
 	
+	@property
 	def get_url(self):
 		concept_url = self.name.replace(' ', '_')
 		return concept_url
@@ -242,8 +243,7 @@ class LearningObjective(models.Model):
 	
 	def __str__(self):
 		return self.name
-		
-		
+				
 # Program Stream model
 class ProgramStream(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
@@ -261,11 +261,10 @@ class ProgramStream(models.Model):
 	@property
 	def get_url(self):
 		return self.name.replace(' ','_')
-
 	
 	def __str__(self):
 		return self.name
-
+		
 # Option Model
 class Option(models.Model):
 	name = models.CharField(max_length=128, unique=True)
@@ -274,7 +273,8 @@ class Option(models.Model):
 	#m2m relation with courses to be added to program, and removed from program
 	added_courses = models.ManyToManyField(Course, related_name='courses_added', blank=True)
 	removed_courses = models.ManyToManyField(Course,related_name='courses_removed', blank=True)
-    
+	num_years = models.IntegerField(blank=True)
+	
 	@property
 	def get_url(self):
 		return self.name.replace(' ','_')
@@ -302,9 +302,25 @@ class Option(models.Model):
 			return courses
 
 
+
 	def __str__(self):
 		return self.name
 
+# List of courses a 'program stream' will take in a given year
+# Several of these objects will be used to define a 'course progression'
+class YearlyCourseList(models.Model):
+	option = models.ForeignKey(Option)
+	year = models.IntegerField(blank = True, default = 0)
+	courses = models.ManyToManyField(Course, blank=True)
+	
+	def __str__(self):
+		return self.option+'/'+self.year		
+		
+def auto_create_course_lists(instance, *args, **kwargs):
+	for i in range(instance.num_years):
+		YearlyCourseList.objects.create(option=instance, year=i+1)
+	#option.save()
+models.signals.post_save.connect(auto_create_course_lists, sender=Option, dispatch_uid='auto_create_course_lists')
 # CEAB Accreditation Units
 #
 class ContactHours(models.Model):

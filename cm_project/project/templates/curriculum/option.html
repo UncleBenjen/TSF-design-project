@@ -19,47 +19,107 @@
         <div class="span12">
         <div class="row-fluid">
         <div class="span3">
-            <p><strong>1st Year:</p></strong>
+            <p><strong>1st Year:</p></strong>	
             <table class="table">
-                {% for course in year1 %}
-                <tr>
-                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
-                </tr>
-                {% endfor %}
+				{% if list1 %}
+					{% for course in list1 %}
+					<tr>
+						<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+					</tr>
+					{% endfor %}				
+				{% else %}
+					<p>Currently Empty</p>
+				{% endif %}
+
             </table>
+
+			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
+			<form>
+				<input class = "search-query span10" type="text" name ="add_courses_1" value="" id ="add_courses_1" autocomplete="off">
+				<input type = "hidden" value="{{ option_url }}" name ="hidden-input1" id ="hidden-input1">
+				<input type = "hidden" value="1" name ="hidden-input2" id ="hidden-input2">
+			</form>
+			<div id = "results1">
+				{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
+			</div>			
+
         </div>
         
         <div class="span3">
             <p><strong>2nd Year:</strong/></p>
             <table class="table">
-                {% for course in year2 %}
-                <tr>
-                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
-                </tr>
-                {% endfor %}
+				{% if list2 %}
+					{% for course in list2 %}
+						<tr>
+							<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+						</tr>
+					{% endfor %}
+				{% else %}
+					<p>Currently Empty</p>
+				{% endif %}
             </table>
+			
+			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
+			<form>
+				<input class = "search-query span10" type="text" name ="add_courses_2" value="" id ="add_courses_2" autocomplete="off">
+				<input type = "hidden" value="{{ option_url }}" name ="hidden-input3" id ="hidden-input3">
+				<input type = "hidden" value="2" name ="hidden-input4" id ="hidden-input4">
+			</form>
+			<div id = "results2">
+				
+			</div>	
         </div>
         
         <div class="span3">
             <p><strong>3rd Year:</p></strong>
             <table class="table">
-                {% for course in year3 %}
-                <tr>
-                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
-                </tr>
-                {% endfor %}
+				{% if list3 %}
+					{% for course in list3 %}
+					<tr>
+						<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+					</tr>
+					{% endfor %}
+				{% else %}
+					<p>Currently Empty</p>
+				{% endif %}
             </table>
+			
+			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
+			<form>
+				<input class = "search-query span10" type="text" name ="add_courses_3" value="" id ="add_courses_3" autocomplete="off">
+				<input type = "hidden" value="{{ option_url }}" name ="hidden-input5" id ="hidden-input5">
+				<input type = "hidden" value="3" name ="hidden-input6" id ="hidden-input6">
+			</form>
+			<div id = "results3">
+				{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
+			</div>	
+			
         </div>
         
         <div class="span3">
             <p><strong>4th Year:</p></strong>
             <table class="table">
-                {% for course in year4 %}
-                <tr>
-                    <td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
-                </tr>
-                {% endfor %}
+				{% if list4 %}
+					{% for course in list4 %}
+					<tr>
+						<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a></td>
+					</tr>
+					{% endfor %}
+				{% else %}
+					<p>Currently Empty</p>
+				{% endif %}
             </table>
+			
+			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
+			<form>
+				<input class = "search-query span10" type="text" name ="add_courses_4" value="" id ="add_courses_4" autocomplete="off">
+				<input type = "hidden" value="{{ option_url }}" name ="hidden-input7" id ="hidden-input7">
+				<input type = "hidden" value="4" name ="hidden-input8" id ="hidden-input8">
+			</form>
+			<div id = "results4">
+				{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
+			</div>	
+			
         </div>
         </div>
         </div>
@@ -67,6 +127,7 @@
         {% else %}
         <p>No option was found...</p>
         {% endif %}
+		<a class = "btn btn-primary" href ="/curriculum/add_cohort/{{ option_url }}/">Accreditation Units</a>
 	</div>
 </div>
 {% endblock %}

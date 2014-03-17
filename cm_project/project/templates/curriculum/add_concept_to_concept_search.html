@@ -27,16 +27,13 @@
 		
 		<hr>
 		
-		<div class = "text-center">
+		<div>
 			<h2>Child Concepts</h2>
-		
-		{% if concepts %}
-			{% for concept in concepts %}
-				<p><a href = "/curriculum/concepts/{{ concept.get_url }}/" >{{ concept.name }}</a></p>
-			{% endfor %}
-		{% else %}
-			<p>None yet</p>
-		{% endif %}
+			{% if concepts_html %}
+				{{ concepts_html|safe }}
+			{% else %}
+				<p>None yet</p>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

@@ -67,7 +67,15 @@
                     {% else %}
                     <p style = "font-size:85%; line-height:125%;">No pre-requisites are listed under this course...</p>
                     {% endif %}
-					<p style = "font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Add Pre-Requisite</a></p>
+					<li class = "nav-header" style = "font-size:80%">Add Pre-requisite:</li>
+					<form>
+						<input class = "search-query span10" type="text" name ="add_pre" value="" id ="add_pre" autocomplete="off">
+						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-pre" id ="hidden-input-pre">
+						<input type = "hidden" value="pre" name ="hidden-input-pre2" id ="hidden-input-pre2">
+					</form>
+					<div id = "resultspre">
+						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
+					</div>	
                 </div>
                 <div class="span4">
                     <h4>Co-Requisites: </h3>
@@ -80,7 +88,17 @@
                     {% else %}
                     <p style = "font-size:85%; line-height:125%;">No co-requisites are listed under this course...</p>
                     {% endif %}
-					<p style = "font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Add Co-Requisite</a></p>
+					
+					<li class = "nav-header" style = "font-size:80%">Add Co-requisite:</li>
+					<form>
+						<input class = "search-query span10" type="text" name ="add_co" value="" id ="add_co" autocomplete="off">
+						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-co" id ="hidden-input-co">
+						<input type = "hidden" value="co" name ="hidden-input-co2" id ="hidden-input-co2">
+					</form>
+					<div id = "resultsco">
+						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
+					</div>	
+					
                 </div>
                 <div class="span4">
                     <h4>Anti-Requisites: </h3>
@@ -93,7 +111,16 @@
                     {% else %}
                     <p style = "font-size:85%; line-height:125%;">No anti-requisites are listed under this course...</p>
                     {% endif %}
-					<p style = "font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Add Anti-Requisite</a></p>
+					
+					<li class = "nav-header" style = "font-size:80%">Add Anti-requisite:</li>
+					<form>
+						<input class = "search-query span10" type="text" name ="add_anti" value="" id ="add_anti" autocomplete="off">
+						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-anti" id ="hidden-input-anti">
+						<input type = "hidden" value="anti" name ="hidden-input-anti2" id ="hidden-input-anti2">
+					</form>
+					<div id = "resultsanti">
+						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
+					</div>	
                 </div>
             </div>
         </div>
@@ -113,6 +140,8 @@
 						{% else %}
 							<p>No instances yet</p>
 						{% endif %}
+						
+						<a class = "btn btn-primary" href = "/curriculum/add_instance_direct/{{ course_url }}/">Add Instance</a>
 						</div>
 					</div>
 				</div>
