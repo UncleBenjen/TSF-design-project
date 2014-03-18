@@ -72,7 +72,7 @@
                     {% if pre_requisites %}
                     {% for pre_requisite in pre_requisites %}
                     <ul>
-                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ pre_requisite.get_url }}">{{ pre_requisite.course_code }}</a></li>
+                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ pre_requisite.get_url }}">{{ pre_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ pre_requisite.get_url }}/pre/">&times;</a></li>
                     </ul>
                     {% endfor %}
                     {% else %}
@@ -84,7 +84,7 @@
 						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-pre" id ="hidden-input-pre">
 						<input type = "hidden" value="pre" name ="hidden-input-pre2" id ="hidden-input-pre2">
 					</form>
-					<div id = "resultspre">
+					<div id = "resultspre" style="height:150px; overflow:scroll;">
 						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 					</div>	
                 </div>
@@ -93,7 +93,7 @@
                     {% if co_requisites %}
                     {% for co_requisite in co_requisites %}
                     <ul>
-                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ co_requisite.get_url }}">{{ co_requisite.course_code }}</a></li>
+                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ co_requisite.get_url }}">{{ co_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ co_requisite.get_url }}/co/">&times;</a></li>
                     </ul>
                     {% endfor %}
                     {% else %}
@@ -106,7 +106,7 @@
 						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-co" id ="hidden-input-co">
 						<input type = "hidden" value="co" name ="hidden-input-co2" id ="hidden-input-co2">
 					</form>
-					<div id = "resultsco">
+					<div id = "resultsco" style="height:150px; overflow:scroll;">
 						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 					</div>	
 					
@@ -116,7 +116,7 @@
                     {% if anti_requisites %}
                     {% for anti_requisite in anti_requisites %}
                     <ul>
-                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ anti_requisite.get_url }}">{{ anti_requisite.course_code }}</a></li>
+                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ anti_requisite.get_url }}">{{ anti_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ anti_requisite.get_url }}/anti/">&times;</a></li>
                     </ul>
                     {% endfor %}
                     {% else %}
@@ -129,7 +129,7 @@
 						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-anti" id ="hidden-input-anti">
 						<input type = "hidden" value="anti" name ="hidden-input-anti2" id ="hidden-input-anti2">
 					</form>
-					<div id = "resultsanti">
+					<div id = "resultsanti" style="height:150px; overflow:scroll;">
 						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 					</div>	
                 </div>
@@ -152,7 +152,7 @@
 							<p>No instances yet</p>
 						{% endif %}
 						
-						<a class = "btn btn-primary" href = "/curriculum/add_instance_direct/{{ course_url }}/">Add Instance</a>
+						<a class = "btn btn-success" href = "/curriculum/add_instance_direct/{{ course_url }}/">Add Instance</a>
 						</div>
 					</div>
 				</div>

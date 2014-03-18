@@ -589,7 +589,7 @@ def instance(request, course_name_url, instance_date_url):
 def ceab_grad(request, course_url, date_url, ceab_url):
 	context = RequestContext(request)
 	
-	course_code = course_url.replace('-', '/')
+	course_code = course_url.replace('_', '/')
 	date = date_url.replace('_', '-')
 	
 	context_dict = {'course_code' : course_code}
@@ -1486,7 +1486,7 @@ def suggest_course_add_one(request):
 			year_str = str(year)
 			
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		context_dict = {'course_list' : course_list}
 		context_dict['option_url'] = option_url
 		context_dict['year'] = year_str
@@ -1506,7 +1506,7 @@ def suggest_course_add_two(request):
 			year_str = str(year)
 			
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		context_dict = {'course_list' : course_list}
 		context_dict['option_url'] = option_url
 		context_dict['year'] = year_str
@@ -1526,7 +1526,7 @@ def suggest_course_add_three(request):
 			year_str = str(year)
 			
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		context_dict = {'course_list' : course_list}
 		context_dict['option_url'] = option_url
 		context_dict['year'] = year_str
@@ -1546,7 +1546,7 @@ def suggest_course_add_four(request):
 			year_str = str(year)
 			
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		context_dict = {'course_list' : course_list}
 		context_dict['option_url'] = option_url
 		context_dict['year'] = year_str
@@ -2164,6 +2164,7 @@ def download_syllabus(request, course_url, date_url):
 	except Course.DoesNotExist:
 		return HttpResponseRedirect()
 
+
 def create_accreditation_report(request, option_url, date_url):
 	context=RequestContext(request)
 	option_name = option_url.replace('_',' ')
@@ -2244,10 +2245,11 @@ def create_accreditation_report(request, option_url, date_url):
 			total_math = 0
 			for instance in math_instances:
 				au = ContactHours.objects.get(instance=instance)
+				instance_name = Paragraph(instance.course.name,styleN)
 				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance.course.name,au.contact_ma,'n/a', '-']
+					data = [instance.course.course_code,instance_name,au.contact_ma,'n/a', '-']
 				else:
-					data =[instance.course.course_code,instance.course.name,au.contact_ma,instance.professors.all(), '-']
+					data =[instance.course.course_code,instance_name,au.contact_ma,instance.professors.all(), '-']
 				total_math += au.contact_ma
 				math_data.append(data)
             
@@ -2280,24 +2282,27 @@ def create_accreditation_report(request, option_url, date_url):
 			elements.append(science_table)
             
 			# ENGINEERING SCIENCE AND DESIGN
+			contact_para = Paragraph("Course Contact",styleN)
+			content_para = Paragraph("Relevant Content",styleN)
 			elements.append(Paragraph("Engineering Science and Design",styles['title_leftAlign']))
-			eng_sc_ed_data = [['Course Number','Course Title','ES','ED','ES + ED','Course Contact','Relevant Content'],]
+			eng_sc_ed_data = [['Course Number','Course Title','ES','ED','ES + ED',contact_para,content_para],]
             
 			total_es = 0
 			total_ed = 0
 			for instance in eng_sc_ed_instances:
 				au = ContactHours.objects.get(instance=instance)
+				instance_name = Paragraph(instance.course.name,styleN)
 				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance.course.name,au.contact_es, au.contact_ed, (au.contact_es + au.contact_ed),'n/a', '-']
+					data = [instance.course.course_code,instance_name,au.contact_es, au.contact_ed, (au.contact_es + au.contact_ed),'n/a', '-']
 				else:
-					data =[instance.course.course_code,instance.course.name,au.contact_ma,instance.professors.all(), '-']
+					data =[instance.course.course_code,instance_name,au.contact_ma,instance.professors.all(), '-']
 				total_es += au.contact_es
 				total_ed += au.contact_ed
 				eng_sc_ed_data.append(data)
             
 			total_eng_au = ['Total:','',total_es,total_ed,(total_es+total_ed),'','']
 			eng_sc_ed_data.append(total_eng_au)
-			eng_table = Table(eng_sc_ed_data, colWidths=[2.5*cm,4.0*cm,2.0*cm,2.0*cm,2.0*cm,2.0*cm,2.0*cm])
+			eng_table = Table(eng_sc_ed_data, colWidths=[3.0*cm,7.0*cm,1.5*cm,1.5*cm,2.0*cm,2.25*cm,2.25*cm])
 			eng_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(6,0),colors.grey)]))
 			elements.append(eng_table)
             
@@ -2308,16 +2313,17 @@ def create_accreditation_report(request, option_url, date_url):
 			total_comp = 0
 			for instance in comp_instances:
 				au = ContactHours.objects.get(instance=instance)
+				instance_name = Paragraph(instance.course.name,styleN)
 				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance.course.name,au.contact_co,'n/a', '-']
+					data = [instance.course.course_code,instance_name,au.contact_co,'n/a', '-']
 				else:
-					data =[instance.course.course_code,instance.course.name,au.contact_co,instance.professors.all(), '-']
+					data =[instance.course.course_code,instance_name,au.contact_co,instance.professors.all(), '-']
 				total_comp += au.contact_co
 				comp_data.append(data)
             
 			comp_total = ['Total:','',total_comp,'','']
 			comp_data.append(comp_total)
-			comp_table = Table(comp_data)
+			comp_table = Table(comp_data,colWidths=[3.0*cm,7.0*cm,2.5*cm,3.0*cm,4.0*cm])
 			comp_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
 			elements.append(comp_table)
             
@@ -2439,8 +2445,6 @@ def concept_map(request, concept_url):
 	
 	return render_to_response('curriculum/concept_map.html',context_dict, context)
 
-
-
 # passes data to and calls display_concepts function
 def meta_display_concepts_json(concept):
 	html_list = ""
@@ -2468,8 +2472,6 @@ def display_concepts_json(concept_list, height, html_list):
     
 	return html_list
 
-
-
 def course_map(request, program_stream_url):
 	context = RequestContext(request)
     
@@ -2489,6 +2491,52 @@ def course_map(request, program_stream_url):
 	
 	return render_to_response('curriculum/course_map.html',context_dict,context)
 	
+def delete_course_from_list(request, option_url, course_url, year_url):
+	context = RequestContext(request)
+	option_name = option_url.replace('_', ' ')
+	course_code = course_url.replace('_', '/')
+	
+	year = int(year_url)
+	
+	try:
+		option = Option.objects.get(name = option_name)
+		
+		try:
+			course = Course.objects.get(course_code = course_code)
+			
+			try:
+				course_list = YearlyCourseList.objects.get(option=option, year=year)
+				course_list.courses.remove(course)
+				
+			except YearlyCourseList.DoesNotExist:
+				pass
+			
+		except Course.DoesNotExist:
+			pass
+		
+	except Option.DoesNotExist:
+		pass
+	
+	return HttpResponseRedirect('/curriculum/options/'+option_url+'/', context)
+	
+def delete_requisite_from_list(request, course_url, requisite_url, type_url):
+	context = RequestContext(request)
+	course_code = course_url.replace('_', '/')
+	requisite_code = requisite_url.replace('_', '/')
+	
+	type = str(type_url)
+	
+	course = Course.objects.get(course_code=course_code)
+	requisite = Course.objects.get(course_code=requisite_code)
+	
+	if type == "pre":
+		course.pre_requisites.remove(requisite)
+	elif type == "co":
+		course.co_requisites.remove(requisite)
+	elif type == "anti":
+		course.anti_requisites.remove(requisite)
+
+	return HttpResponseRedirect('/curriculum/courses/'+course_url+'/', context)
 	
 	
 	
