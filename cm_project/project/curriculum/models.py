@@ -164,7 +164,7 @@ class CourseInstance(models.Model):
 	acc_comp = models.PositiveIntegerField(blank = True, default=0)
 	
 	# Define options for semester course is taught in
-	SEMESTER_TYPES = (('F', 'First'), ('S', 'Second'), ('Y', 'Year'))
+	SEMESTER_TYPES = (('A', 'First'), ('B', 'Second'), ('Y', 'Year'))
 	semester = models.CharField(max_length = 1, choices = SEMESTER_TYPES, blank = False)
 	
 	# Define concepts covered in this course
@@ -228,7 +228,7 @@ class StudentGroup(models.Model):
 	type = models.CharField(max_length = 3  , choices = STUDENT_TYPES)
 
 	def __str__(self):
-		return self.get_type_display() +" students for " + str(self.instance)
+		return str(self.size)+" "+self.get_type_display() +" students for " + str(self.instance)
 
 # Model for a course deliverable (Assignment, Quiz, Test, etc...)
 class Deliverable(models.Model):
@@ -240,7 +240,10 @@ class Deliverable(models.Model):
 		
 	def __str__(self):
 		return self.type
-		
+
+
+
+
 # Model for a course learning objective 
 class LearningObjective(models.Model):
 	name = models.CharField(max_length = 128, blank = False)

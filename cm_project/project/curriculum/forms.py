@@ -109,7 +109,7 @@ class LearningObjectiveForm(forms.ModelForm):
 	description=forms.CharField(widget=forms.widgets.Textarea())
 	class Meta:
 		model = LearningObjective
-		fields=['name', 'description','related_concepts']
+		fields=['name', 'description']
 
 class CEABGradForm(forms.ModelForm):
 	date = forms.DateField(widget=SelectDateWidget())

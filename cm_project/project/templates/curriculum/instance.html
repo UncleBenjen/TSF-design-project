@@ -58,6 +58,7 @@
                         <tr>
                             <td>{{ student_group.get_type_display }}</td>
                             <td>{{ student_group.size }}</td>
+                            <td><a class = "close" href = "/curriculum/delete_student_group/{{ course_url }}/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ student_group.pk }}/">&times;</a></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -141,8 +142,9 @@
                     <p><strong>Textbooks:</strong> </p>
                     <ul>
                         {% if textbooks %}
+                        
                         {% for textbook in textbooks %}
-                        <li>{{ textbook.name }}{% if textbook.required %} (required){% endif %}</li>
+                        <li>{{ textbook.name }}{% if textbook.required %} (required){% endif %}<a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ textbook.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></li>
                         {% endfor %}
                         {% else %}
                         <li>No textbooks are listed under this course instance...</li>
@@ -162,6 +164,7 @@
                     <td><strong>Type</strong></td>
                     <td><strong>Percent</strong></td>
                     <td><strong>Delivery Date</strong></td>
+                    <td></td>
                 </tr>
                 <!-- traverse through the deliverables listing their attributes -->
                 {% for deliverable in deliverables %}
@@ -169,12 +172,14 @@
                     <td>{{ deliverable.get_type_display }}</td>
                     <td>{{ deliverable.percent }}</td>
                     <td>{{ deliverable.due_date }}</td>
+                    <td><a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_deliverable/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ deliverable.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td><strong></strong></td>
                     <td><strong>{{total_deliverables}}</strong></td>
                     <td><strong></strong></td>
+                    <td></td>
                 </tr>
             </table>
             {% else %}
@@ -246,8 +251,11 @@
             <h3>Learning Objectives</h3>
             {% if objectives %}
             {% for objective in objectives %}
-            <h5>{{ objective.name }}</h5>
-            <p>{{ objective.description }}</p>
+            <h5><strong>{{forloop.counter}}.</strong> {{ objective.name }}</h5>
+            <a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_objective/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ objective.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a>
+            <ul>
+                <li><p>{{ objective.description }}</p></li>
+            </ul>
             {% endfor %}
             <!-- if none were found alert the user -->
             {% else %}
@@ -301,23 +309,24 @@
             <h3>CEAB Graduate Attribute Measurements</h3>
             {% if ceab_grads %}
             <div class="row-fluid">
-                <div class="span6">
+               
                 <table class="table">
                 <tr>
                     <td><strong>Graduate Attribute:</strong></td>
                     <td><strong></strong></td>
+                    <td></td>
                     <td></td>
                 </tr>
             	{% for ceab_grad in ceab_grads %}
                 <tr>
                     <td>{{ ceab_grad.get_attribute_display }}</td>
                     <td>{{ ceab_grad.date }}</td>
-                    <td> <a href = "/curriculum/ceab_grad/{{ course_url }}/{{ date_url }}/{{ ceab_grad.get_id }}/">{{ ceab_grad.name }}</a></td>
-
+                    <td> <a class="btn btn-default"href = "/curriculum/ceab_grad/{{ course_url }}/{{ date_url }}/{{ ceab_grad.get_id }}/">View/Update Performance</a></td>
+                    <td><a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_ceab_grad/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ ceab_grad.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></td>
                 </tr>
                 {% endfor %}
                 </table>
-                </div>
+                
             </div>
             <hr>
             

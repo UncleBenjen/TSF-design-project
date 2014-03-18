@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
+from django.core.exceptions import ValidationError
 from decimal import *
 #
 from io import BytesIO
@@ -2537,11 +2538,61 @@ def delete_requisite_from_list(request, course_url, requisite_url, type_url):
 		course.anti_requisites.remove(requisite)
 
 	return HttpResponseRedirect('/curriculum/courses/'+course_url+'/', context)
+
+def delete_students(request, course_url, date_url, students_id):
+	context = RequestContext(request)
+	course_code = course_url.replace('_','/')
+    
+	try:
+		students = StudentGroup.objects.get(pk=students_id)
+		students.delete()
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+	except:
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+
+def delete_textbook(request, course_url, date_url, book_id):
+	context = RequestContext(request)
+	course_code = course_url.replace('_','/')
+
+	try:
+		text = Textbook.objects.get(pk=book_id)
+		text.delete()
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+	except:
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
 	
-	
-	
-	
-	
+def delete_deliverable(request, course_url, date_url, deliverable_id):
+	context = RequestContext(request)
+	course_code = course_url.replace('_','/')
+    
+	try:
+		deliverable = Deliverable.objects.get(pk=deliverable_id)
+		deliverable.delete()
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+	except:
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+
+def delete_objective(request, course_url, date_url, objective_id):
+	context = RequestContext(request)
+	course_code = course_url.replace('_','/')
+    
+	try:
+		objective = LearningObjective.objects.get(pk=objective_id)
+		objective.delete()
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+	except:
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+
+def delete_ceab_grad(request, course_url, date_url, ceab_id):
+	context = RequestContext(request)
+	course_code = course_url.replace('_','/')
+    
+	try:
+		ceab_grad = CEABGrad.objects.get(pk=ceab_id)
+		ceab_grad.delete()
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
+	except:
+		return HttpResponseRedirect("/curriculum/instances/"+course_url+"/"+date_url+"/", context)
 		
 	
 	
