@@ -1,0 +1,31 @@
+{% extends 'curriculum/base.html' %}
+
+{% load static %}
+
+{% block title %}Departments{% endblock %}=
+
+{% block body_block %}
+<div class = "well hero-unit">
+	<h1>Possible Pre-requisites</h1>
+	<h2>For course <a href = "/curriculum/courses/{{ course.get_url }}/">{{ course.course_code }}</a>, year: {{ course.get_year_display }}</h2>
+	<hr>
+	
+	{% if list_matches %}
+		{% for match in list_matches %}
+			<p><a href = "/curriculum/courses/{{ match.0 }}/"> {{ match.1 }}</a> {{ match.2 }} % match, year: {{ match.4.get_year_display }}</p>
+			
+			<strong>Matching Concepts</strong>
+			
+			<ul>
+			{% for concept in match.3 %}
+				<li><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{ concept.name }}</a></li>
+			{% endfor %}
+			</ul>
+		<hr>
+		{% endfor %}
+	{% else %}
+		<p>No results for possible pre-requisites</p>
+	{% endif %}
+	
+</div>
+{% endblock %}

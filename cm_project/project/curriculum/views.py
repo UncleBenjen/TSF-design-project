@@ -296,7 +296,6 @@ def all_courses(request):
 	context_dict['other'] = courses_rest
 	
 	return render_to_response('curriculum/all_courses.html', context_dict, context)
-
 	
 def all_concepts(request):
 	context = RequestContext(request)
@@ -398,6 +397,8 @@ def course(request, course_name_url):
 		# Get the course object from the database and add it to the context dict
 		course = Course.objects.get(course_code = course_name)
 		context_dict['course'] = course
+		
+		get_course_concepts(course_name_url)
 
     	# Add lists of pre/co/anti requisite courses to the context dict
 		pre_courses = course.pre_requisites.all()
@@ -421,6 +422,9 @@ def course(request, course_name_url):
 			concepts_obj.add(concept)
 			
 		context_dict['concepts'] = concepts_obj
+		
+		concept_list = course.typical_concepts.all()
+		context_dict['typical_concept_list'] = concept_list
 
 	except Course.DoesNotExist:
 		pass
@@ -442,7 +446,7 @@ def concept(request, concept_name_url):
 	
 	context_dict = {'concept_name' : concept_name}
 	context_dict['description'] = description
-	context_dict['ceab_unit'] = ceab_unit
+	context_dict['ceab_unit'] = concept.get_ceab_unit_display
 	context_dict['highschool'] = highschool
 	context_dict['courses'] = courses
 	context_dict['concept_url'] = concept_name_url
@@ -1109,11 +1113,136 @@ def add_student_group(request, course_url, date_url):
 		context_dict['student_group_form']=student_group_form
 		return render_to_response('curriculum/add_student_group_form.html',context_dict,context)
 
+# This is to aid the functionality of searching for a course
+def get_user_list(max_results=0, starts_with=''):
+	user_list = []
+	
+	if starts_with:
+		user_list = UserInfo.objects.filter(user__last_name__istartswith=starts_with)
+	else:
+		user_list = []
+
+	if max_results > 0:
+		if len(user_list) > max_results:
+			user_list = user_list[:max_results]
+			
+	return user_list		
+		
+# Used the get_course_list function to get the top 5 matches
+def suggest_user(request):
+		context = RequestContext(request)
+		user_list = []
+		starts_with = ''
+		context_dict = {}
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_professor']
+			course = request.GET['arg1']
+			date = request.GET['arg2']
+			
+			type = request.GET['arg3']
+			
+			if type == "prof":
+				context_dict['prof'] = type
+			if type == "ass":
+				context_dict['ass'] = type
+			
+			
+			context_dict['course'] = course
+			context_dict['date'] = date
+			
+		user_list = get_user_list(5, starts_with)
+		
+		context_dict['user_list'] = user_list
+		
+		return render_to_response('curriculum/user_list.html', context_dict, context)		
+
+# Used the get_course_list function to get the top 5 matches
+def suggest_user_assistant(request):
+		context = RequestContext(request)
+		user_list = []
+		starts_with = ''
+		context_dict = {}
+		
+		if request.method == 'GET':
+			starts_with = request.GET['add_assistant']
+			course = request.GET['arg1']
+			date = request.GET['arg2']
+			
+			type = request.GET['arg3']
+			
+			if type == "prof":
+				context_dict['prof'] = type
+			if type == "ass":
+				context_dict['ass'] = type
+			
+			
+			context_dict['course'] = course
+			context_dict['date'] = date
+			
+		user_list = get_user_list(5, starts_with)
+		
+		context_dict['user_list'] = user_list
+		
+		return render_to_response('curriculum/user_list.html', context_dict, context)			
+		
 # space to implement view to call/pass context to user search/link?
-def add_professor(request, course_url, date_url):
-    return
-def add_assistant(request, course_url, date_url):
-    return
+def add_professor(request, course_url, date_url, user_url):
+	context = RequestContext(request)
+	course_name = course_url.replace('_', '/')
+	date = date_url.replace('_', '-')
+	user_name = user_url.replace('_', ' ')
+	
+	try:
+		course = Course.objects.get(course_code = course_name)
+		
+		try:
+			instance = CourseInstance.objects.get(course=course, date=date)
+			
+			try:
+				user = UserInfo.objects.get(user__username=user_name)
+				
+				instance.professors.add(user)
+			
+			except UserInfo.DoesNotExist:
+				pass
+			
+		except CourseInstance.DoesNotExist:
+			pass
+		
+	except Course.DoesNotExist:
+		pass
+
+	return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
+	
+# space to implement view to call/pass context to user search/link?
+def add_assistant(request, course_url, date_url, user_url):
+	context = RequestContext(request)
+	course_name = course_url.replace('_', '/')
+	date = date_url.replace('_', '-')
+	user_name = user_url.replace('_', ' ')
+	
+	try:
+		course = Course.objects.get(course_code = course_name)
+		
+		try:
+			instance = CourseInstance.objects.get(course=course, date=date)
+			
+			try:
+				user = UserInfo.objects.get(user__username=user_name)
+				
+				instance.assistants.add(user)
+			
+			except UserInfo.DoesNotExist:
+				pass
+			
+		except CourseInstance.DoesNotExist:
+			pass
+		
+	except Course.DoesNotExist:
+		pass
+
+	return HttpResponseRedirect('/curriculum/instances/'+course_url+'/'+date_url+'/', context)
 
 # Add Deliverable - returns form, empty if GET, with data if POST
 def add_deliverable(request, course_url, date_url):
@@ -2017,9 +2146,263 @@ def download_syllabus(request, course_url, date_url):
     
 	except Course.DoesNotExist:
 		return HttpResponseRedirect()
-		
-	
 
+def create_accreditation_report(request, option_url, date_url):
+	context=RequestContext(request)
+	option_name = option_url.replace('_',' ')
+	try:
+		option = Option.objects.get(name = option_name)
+        
+		try:
+            # Get the yearly course lists associated with the appropriate option; get the number of years
+			yearly_course_lists = YearlyCourseList.objects.filter(option=option)
+			num_of_years = len(yearly_course_lists)
+            
+            
+            # Loop through courses_lists;  get instances for appropriate year and add to master list
+			all_course_instances=set()
+            
+			for course_list in yearly_course_lists:
+				for course in course_list.courses.all():
+					cohort_date = int(date_url)-num_of_years+(course_list.year - 1)
+					try:
+						all_course_instances.add(CourseInstance.objects.get(course=course, date=cohort_date))
+					except:
+						pass
+            
+			# categorize master list into math, science, eng_science, eng_design, and comp lists
+            # loop through master, add to appropriate list if acc_percent is >0)
+			math_instances = set()
+			science_instances = set()
+			eng_sc_ed_instances = set()
+			comp_instances = set()
+			empty_instances = set()
+            
+			for instance in all_course_instances:
+				try:
+					aunits = ContactHours.objects.get(instance=instance)
+					if aunits.contact_ma > 0:
+						math_instances.add(instance)
+					if aunits.contact_sc > 0:
+						science_instances.add(instance)
+					if aunits.contact_es > 0 or aunits.contact_ed > 0:
+						eng_sc_ed_instances.add(instance)
+					if aunits.contact_co > 0:
+						comp_instances.add(instance)
+					if (aunits.contact_ma == 0) and (aunits.contact_sc == 0) and (aunits.contact_es == 0) and (aunits.contact_ed == 0) and (aunits.contact_co == 0):
+						empty_instances.add(instance)
+				except:
+					empty_instances.add(instance)
+            
+    		# Create a dynamic file name, content disposition based on that name, and prepare the response object (for serving a pdf)
+			file_name = option_url + "-Class_of_" + str(date_url) + "-au_report"
+			content_disposition = "attachment; filename='"+file_name+"'"
+			# Create the HttpResponse object with the appropriate PDF headers.
+			response = HttpResponse(content_type='application/pdf')
+			response['Content-Disposition'] = content_disposition
+            
+			# create a buffer to write to, and initialize a reportlab doc template to receive the buffer
+			buffer = BytesIO()
+			doc = SimpleDocTemplate(buffer, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=72, pagesize=letter)
+			elements=[]
+            
+			# Setup styles to be used throughout document creation
+			styles=getSampleStyleSheet()
+			styles.add(ParagraphStyle(name='big_centerAlign',fontName='Helvetica',alignment=TA_CENTER,fontSize=16, spaceBefore=5, leading=20))
+			styles.add(ParagraphStyle(name='small_centerAlign',fontName='Helvetica',alignment=TA_CENTER,fontSize=12, spaceBefore=5, leading=15))
+			styleN = styles['BodyText']
+			styles.add(ParagraphStyle(name='title_leftAlign',fontName='Helvetica',alignment=TA_LEFT,fontSize=14, spaceAfter=10, spaceBefore=10))
+			styles.add(ParagraphStyle(name='body_leftAlign',fontName='Times-Roman',alignment=TA_LEFT, firstLineIndent=25, spaceAfter=5))
+			styles.add(ParagraphStyle(name='body_justifyAlign',fontName='Times-Roman',alignment=TA_JUSTIFY, firstLineIndent=25, spaceAfter=5))
+            
+			# HEADER/TITLE
+			elements.append(Paragraph("<i>Western University ~ Faculty of Engineering</i>",styles['small_centerAlign']))
+			elements.append(Paragraph("Accreditation Report on the "+option_name, styles['big_centerAlign']))
+			elements.append(Paragraph("For the graduating class of "+date_url, styles['big_centerAlign']))
+            
+            # MATHEMATICS
+			elements.append(Paragraph("Mathematics",styles['title_leftAlign']))
+			math_data = [['Course Number','Course Title','Math AU','Course Contact','Relevant Content'],]
+            
+			total_math = 0
+			for instance in math_instances:
+				au = ContactHours.objects.get(instance=instance)
+				if len(instance.professors.all())==0:
+					data = [instance.course.course_code,instance.course.name,au.contact_ma,'n/a', '-']
+				else:
+					data =[instance.course.course_code,instance.course.name,au.contact_ma,instance.professors.all(), '-']
+				total_math += au.contact_ma
+				math_data.append(data)
+            
+			total_math_au = ['Total:','',total_math,'','']
+			math_data.append(total_math_au)
+			math_table = Table(math_data,colWidths=[3.0*cm,7.0*cm,2.5*cm,3.0*cm,4.0*cm])
+			math_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
+			elements.append(math_table)
+            
+			# SCIENCES
+			elements.append(Paragraph("Natural Sciences",styles['title_leftAlign']))
+			science_data = [['Course Number','Course Title','Science AU','Course Contact','Relevant Content'],]
+            
+			total_science = 0
+			for instance in science_instances:
+				au = ContactHours.objects.get(instance=instance)
+				instance_name = Paragraph(instance.course.name,styleN)
+				if len(instance.professors.all())==0:
+					data = [instance.course.course_code,instance_name,au.contact_sc,'n/a', '-']
+				else:
+					instance_professors = Paragraph(instance.professors.all()[0], styleN)
+					data =[instance.course.course_code,instance_name,au.contact_sc,instance_professors, '-']
+				total_science += au.contact_sc
+				science_data.append(data)
+            
+			total_science_au = ['Total:','',total_science,'','']
+			science_data.append(total_science_au)
+			science_table = Table(science_data, colWidths=[3.0*cm,7.0*cm,2.5*cm,3.0*cm,4.0*cm])
+			science_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
+			elements.append(science_table)
+            
+			# ENGINEERING SCIENCE AND DESIGN
+			elements.append(Paragraph("Engineering Science and Design",styles['title_leftAlign']))
+			eng_sc_ed_data = [['Course Number','Course Title','ES','ED','ES + ED','Course Contact','Relevant Content'],]
+            
+			total_es = 0
+			total_ed = 0
+			for instance in eng_sc_ed_instances:
+				au = ContactHours.objects.get(instance=instance)
+				if len(instance.professors.all())==0:
+					data = [instance.course.course_code,instance.course.name,au.contact_es, au.contact_ed, (au.contact_es + au.contact_ed),'n/a', '-']
+				else:
+					data =[instance.course.course_code,instance.course.name,au.contact_ma,instance.professors.all(), '-']
+				total_es += au.contact_es
+				total_ed += au.contact_ed
+				eng_sc_ed_data.append(data)
+            
+			total_eng_au = ['Total:','',total_es,total_ed,(total_es+total_ed),'','']
+			eng_sc_ed_data.append(total_eng_au)
+			eng_table = Table(eng_sc_ed_data, colWidths=[2.5*cm,4.0*cm,2.0*cm,2.0*cm,2.0*cm,2.0*cm,2.0*cm])
+			eng_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(6,0),colors.grey)]))
+			elements.append(eng_table)
+            
+			# COMP STUDIES
+			elements.append(Paragraph("Complementary Studies",styles['title_leftAlign']))
+			comp_data = [['Course Number','Course Title','CS AU','Course Contact','Relevant Content'],]
+            
+			total_comp = 0
+			for instance in comp_instances:
+				au = ContactHours.objects.get(instance=instance)
+				if len(instance.professors.all())==0:
+					data = [instance.course.course_code,instance.course.name,au.contact_co,'n/a', '-']
+				else:
+					data =[instance.course.course_code,instance.course.name,au.contact_co,instance.professors.all(), '-']
+				total_comp += au.contact_co
+				comp_data.append(data)
+            
+			comp_total = ['Total:','',total_comp,'','']
+			comp_data.append(comp_total)
+			comp_table = Table(comp_data)
+			comp_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
+			elements.append(comp_table)
+            
+			# EMPTY
+			elements.append(Paragraph("Empty Instances",styles['title_leftAlign']))
+			elements.append(Paragraph("The following instances have no accreditation units available for analysis. Please make sure the instance is properly constructed/updated with all the appropriate information...",styles['body_leftAlign']))
+			for instance in empty_instances:
+				elements.append(Paragraph("<b>"+instance.course.course_code+" - "+instance.date+"</b>",styles['body_leftAlign']))
+            
+            
+			doc.build(elements)
+			# Get the value of the BytesIO buffer and write it to the response.
+			pdf = buffer.getvalue()
+			buffer.close()
+			response.write(pdf)
+			return response
+		except YearlyCourseList.DoesNotExist:
+			return HttpResponseRedirect()
+    
+	except Option.DoesNotExist:
+		return HttpResponseRedirect()
+
+	
+def calculate_pre_requisite(request, course_url):
+	context = RequestContext(request)
+	context_dict = { 'course_url' : course_url }
+	course_code = course_url.replace('_', '/')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		context_dict['course'] = course
+		get_course_concepts(course_url)
+		
+		concepts_high = course.typical_concepts.all()
+		
+		concepts_children = set()
+		
+		for concept in concepts_high:
+			concept_down = concept.related_concepts.all()
+			for c in concept_down:
+				concepts_children.add(c)
+				
+		size_high = 0
+		
+		for i in concepts_children:
+			size_high = size_high + 1
+				
+		# Concepts children is the set of this courses lower level concepts
+		
+		all_courses = Course.objects.all()
+		
+		list_matches = []
+		
+		for course in all_courses:
+			get_course_concepts(course.get_url)
+		
+		for course in all_courses:
+			concepts_low = course.typical_concepts.all()
+			difference = [concept for concept in concepts_low if concept in concepts_children]
+			difference = set(difference)
+			
+			size_difference = 0
+			
+			for i in difference:
+				size_difference = size_difference + 1
+				
+			percent_match = 0
+			
+			if not size_high == 0:
+				if not size_difference == 0:
+					percent_match = (size_difference / size_high) * 100
+
+			if percent_match > 0:
+				if not course.get_url == course_url:
+					list_matches.append((course.get_url, course.course_code, percent_match, difference, course))
+				
+		if list_matches:
+			context_dict['list_matches'] = list_matches 
+		
+	except Course.DoesNotExist:
+		pass
+	
+	
+	return render_to_response('curriculum/calculate_pre_requisite.html', context_dict, context)
+	
+def get_course_concepts(course_url):
+	course_code = course_url.replace('_', '/')
+	
+	try:
+		course = Course.objects.get(course_code=course_code)
+		instances = CourseInstance.objects.filter(course=course)
+		
+		for instance in instances:
+			concepts = instance.concepts.all()
+			for concept in concepts:
+				course.typical_concepts.add(concept)
+		
+	except Course.DoesNotExist:
+		pass
+	
+	
+	
 	
 	
 	

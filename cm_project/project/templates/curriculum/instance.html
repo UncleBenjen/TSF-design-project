@@ -93,10 +93,21 @@
                                 {% else %}
                                 <ul><li><p>There are no professors currently listed under this course instance...</p></li></ul>
                                 {% endif %}
-                                <div ><a class="btn btn-success" href="#au">Add Professor</a></div>
+								
+								<li class = "nav-header" style = "font-size:80%;">Add Professor:</li>
+								<form>
+									<input class = "search-query span10" type="text" name ="add_professor" value="" id ="add_professor" autocomplete="off">
+									<input type = "hidden" value="{{ parent_course.get_url }}" name ="hidden-input-prof" id ="hidden-input-prof">
+									<input type = "hidden" value="{{ instance.get_date }}" name ="hidden-input-prof2" id ="hidden-input-prof2">
+									<input type = "hidden" value="prof" name ="hidden-input-prof3" id ="hidden-input-prof3">
+								</form>
+								<div id = "professors">
+									{% include 'curriculum/user_list.html' %}
+								</div>
+								
                             </div>
                             <div class="tab-pane" id="tab2">
-                                {% if instance.get_assistans %}
+                                {% if instance.get_assistants %}
                                 <table class="table">
                                     {% for assistant in instance.get_assistants %}
                                     <tr>
@@ -111,7 +122,18 @@
                                 {% else %}
                                 <ul><li><p>There are no teaching assistants currently listed under this course instance...</p></li></ul>
                                 {% endif %}
-                                <div ><a class="btn btn-success" href="#">Add Teaching Assistant</a></div>
+								
+								<li class = "nav-header" style = "font-size:80%;">Add Assistant:</li>
+								<form>
+									<input class = "search-query span10" type="text" name ="add_assistant" value="" id ="add_assistant" autocomplete="off">
+									<input type = "hidden" value="{{ parent_course.get_url }}" name ="hidden-input-ass" id ="hidden-input-ass">
+									<input type = "hidden" value="{{ instance.get_date }}" name ="hidden-input-ass2" id ="hidden-input-ass2">
+									<input type = "hidden" value="ass" name ="hidden-input-ass3" id ="hidden-input-ass3">
+								</form>
+								<div id = "assistants">
+									{% include 'curriculum/user_list.html' with concept_list=concept_list %}
+								</div>
+								
                             </div>
                         </div>
                     </div>

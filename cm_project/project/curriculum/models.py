@@ -17,10 +17,15 @@ class UserInfo(models.Model):
 	USER_TYPES = (('PR','Professor'), ('TA', 'Teaching Assistant'), ('GN','General'), ('SP', 'Special'))
 	type = models.CharField(max_length = 2, choices = USER_TYPES, default = 'GN')
 	
+	@property
 	def get_user_name(self):
 		user_name_url = self.user.username
 		user_name_url = user_name_url.replace(' ', '_')
-		return user_name_url
+		return user_name_url		
+		
+	@property 
+	def get_full_name(self):
+		return self.user.last_name+', '+self.user.first_name
 	
 	def __str__(self):
 		return self.user.username
@@ -104,6 +109,8 @@ class Course(models.Model):
     
 	description = models.CharField(max_length = 500, blank = True)
 	website = models.URLField(blank = True)
+	
+	typical_concepts = models.ManyToManyField(Concept, blank = True)
     
 	
 	# Define options for class year
@@ -116,6 +123,8 @@ class Course(models.Model):
 	pre_requisites = models.ManyToManyField('self', symmetrical = False, related_name='pre', blank = True)
 	anti_requisites = models.ManyToManyField('self', symmetrical = False, related_name='anti', blank = True)
 	co_requisites = models.ManyToManyField('self', symmetrical = False, related_name='co', blank = True)
+	
+	
 	
 	# Definte a function to get half the combined lab and tutorial hours + lecture hours, all times weeks per semester. Multiply that by credit value
 	@property

@@ -52,6 +52,17 @@
     
     <hr>
     
+	<div class = "row-fluid">
+		<div class = "span12">
+			<div class = "text-center">
+			<h2>Course Requisites</h2>
+			<a class = "btn" href = "/curriculum/calculate_pre_requisite/{{ course_url }}/">Get Suggestions</a>	
+			<br/>
+			<br/>
+			</div>
+		</div>
+	</div>
+
     <!-- row fluid that contains the pre/co/anti requisites in span3 each -->
     <div class="row-fluid">
         <div class="span12">
@@ -150,6 +161,17 @@
 					<h4>Typical concepts:</h4>
 					{% if concepts %}
 						{% for c in concepts %}
+							<p style="line-height:90%; font-size:90%;"><a href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
+						{% endfor %}
+					{% else %}
+						<p>No concepts yet</p>
+					{% endif %}
+				</div>
+				
+				<div class = "span4">
+					<h4>Typical concepts:</h4>
+					{% if typical_concept_list %}
+						{% for c in concept_list %}
 							<p style="line-height:90%; font-size:90%;"><a href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
 						{% endfor %}
 					{% else %}

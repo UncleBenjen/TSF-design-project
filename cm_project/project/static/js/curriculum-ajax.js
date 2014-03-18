@@ -104,5 +104,27 @@ $(document).ready(function() {
                  $('#resultsanti').html(data);
 		});
 	});	
+	
+		$('#add_professor').keyup(function(){
+		var query;
+		query = $(this).val();
+		var1 = $("#hidden-input-prof").val();
+		var2 = $("#hidden-input-prof2").val();
+		var3 = $("#hidden-input-prof3").val();
+		$.get('/curriculum/suggest_user/', {add_professor: query, arg1: var1, arg2: var2, arg3: var3}, function(data){
+                 $('#professors').html(data);
+		});
+	});	
+	
+		$('#add_assistant').keyup(function(){
+		var query;
+		query = $(this).val();
+		var1 = $("#hidden-input-ass").val();
+		var2 = $("#hidden-input-ass2").val();
+		var3 = $("#hidden-input-ass3").val();
+		$.get('/curriculum/suggest_user_assistant/', {add_assistant: query, arg1: var1, arg2: var2, arg3: var3}, function(data){
+                 $('#assistants').html(data);
+		});
+	});
 
 });
