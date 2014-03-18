@@ -1,6 +1,5 @@
 <ul class="nav nav-list">
 		{% if requisite == "pre" %}
-        	<div style="height=10px; overflow:scroll;">
             <table class="table">
 				{% for course in course_list %}
 				
@@ -8,7 +7,6 @@
 					
 				{% endfor %}
 			</table>
-            </div>
 		{% endif %}
 		
 		{% if requisite == "co" %}

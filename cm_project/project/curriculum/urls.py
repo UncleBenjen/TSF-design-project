@@ -70,4 +70,5 @@ urlpatterns = patterns('',
 		url(r'^calculate_pre_requisite/(?P<course_url>\w+)/$',views.calculate_pre_requisite, name = 'calculate_pre_requisite'),
 		url(r'^concept_map/(?P<concept_url>\w+)/$', views.concept_map, name='concept_map'),
 		url(r'^course_map/(?P<program_stream_url>\w+)/$', views.course_map, name='course_map'),
+		url(r'^map/$', views.course_hyper_map, name='concept_map'),
 		)

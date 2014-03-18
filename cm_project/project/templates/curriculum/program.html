@@ -5,12 +5,11 @@
 {% block title %}{{ program_name }}{% endblock %}
 
 {% block body_block %}
-	<div class = "well hero-unit">
+	<div class = "well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
 		<div class = "row-fluid">
-			<div class = "text-center">
+			<div class = "">
 				<h1>{{ program_name }}</h1>
 			</div>
-			<hr>
 			<div>
 				<h3>Department: <a href = "/curriculum/departments/{{ department.get_url }}/">{{ department.name }}</a></h3>
 			</div>
@@ -115,8 +114,6 @@
 				</div>
 			
 			</div>
-			
-			<hr>
 			
 		</div>
 	</div>

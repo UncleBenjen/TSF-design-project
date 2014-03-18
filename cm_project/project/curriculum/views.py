@@ -2491,7 +2491,38 @@ def course_map(request, program_stream_url):
 	context_dict = {'Graph' : jsonFile}
 	
 	return render_to_response('curriculum/course_map.html',context_dict,context)
+
+def course_hyper_map(request):
+	context = RequestContext(request)
 	
+	html_list =  '{"id": "o","name": "Centre","data":[],"children":['
+    
+	departments = Department.objects.all();
+	for d in departments:
+		html_list = html_list + '{"id": "'+d.name+'","name": "' + d.name + '","data":{"link":"departments/'+d.get_url+'"},"children":['
+		programs = ProgramStream.objects.filter(department = d)
+		for p in programs:
+			html_list = html_list + '{"id": "'+p.name+'","name": "' + p.name + '","data":{"link":"programs/'+p.get_url+'"},"children":['
+			options = Option.objects.filter(program_stream = p)
+			for o in options:
+				html_list = html_list + '{"id": "'+o.name+'","name": "' + o.name + '","data":{"link":"options/'+o.get_url+'"},"children":['
+				for x in range(1,5):
+					html_list = html_list + '{"id": "Year '+str(x)+ o.name+'","name": "Year ' + str(x) + '","data":[],"children":['
+					course_list = YearlyCourseList.objects.get(option = o, year=x)
+					courses = course_list.courses.all()
+					for c in courses:
+						html_list = html_list + '{"id": "'+c.name + o.name + '","name": "' + c.name + '","data":{"link":"courses/'+c.get_url+'"},"children":['
+						html_list = html_list + ']},'
+					html_list = html_list + ']},'
+				html_list = html_list + ']},'
+			html_list = html_list + ']},'
+		html_list = html_list + ']},'
+	html_list = html_list + ']}'
+    
+	context_dict = {'Graph' : html_list}
+	
+	return render_to_response('curriculum/curriculum_map.html',context_dict,context)
+
 def delete_course_from_list(request, option_url, course_url, year_url):
 	context = RequestContext(request)
 	option_name = option_url.replace('_', ' ')

@@ -1,6 +1,6 @@
 <ul class="nav nav-list">
 	{% if course_list %}
-		<div style="height:150px; overflow:scroll;">
+		<div style="height:150px; overflow-y:auto;">
             <table class="table">
 			{% for course in course_list %}
             
@@ -12,12 +12,12 @@
 	{% endif %}
 	
 	{% if concept_list %}
-		
+		<div style="height:150px; overflow-y:auto;">
             <table class="table">
 			{% for concept in concept_list %}
 				<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/concepts/{{ concept.get_url }}/">{{ concept.name }}</a></div></td></tr>
 			{% endfor %}
             </table>
-	
+		</div>
 	{% endif %}
 </ul>

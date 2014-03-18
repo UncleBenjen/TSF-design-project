@@ -5,34 +5,38 @@
 {% block title %}{{ option_name }}{% endblock %}
 
 {% block body_block %}
-<div class = "well hero-unit">
+<div class = "well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
     <div class = "row-fluid">
         <!-- if an option was passed -->
         {% if option %}
         
-        <h2>{{ option.name }}</h2>
+		<div class = "">
+			<h1>{{ option.name }}</h1>
+			<h3>Program: <a href="/curriculum/programs/{{ option.program_stream.get_url }}/">{{option.program_stream.name}}</a></h3>
+			<a class = "btn btn-default" href ="/curriculum/add_cohort/{{ option_url }}/">View Accreditation Units</a>
+		</div>
         <hr>
-        <h3>Program: <a href="/curriculum/programs/{{ option.program_stream.get_url }}/">{{option.program_stream.name}}</a   ></h3>
-        <hr>
-        <div class="text-center"><a class = "btn btn-default" href ="/curriculum/add_cohort/{{ option_url }}/">View Accreditation Units</a></div>
+        <div class="text-center">
         <!-- display courses -->
-        <h3>Course Progression: </h3>
+			<h2>Course Progression: </h2>
+		</div>
+		<br/>
         <div class="span12">
         <div class="row-fluid">
         <div class="span3">
-            <p><strong>1st Year:</p></strong>	
-            <table class="table">
-				{% if list1 %}
-					{% for course in list1 %}
-					<tr>
-						<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/1/">&times;</a></td>
-					</tr>
-					{% endfor %}				
-				{% else %}
-					<p>Currently Empty</p>
-				{% endif %}
-
-            </table>
+            <p><strong>1st Year:</strong></p>
+				<div style = "height:150px; overflow-y:auto;">
+					{% if list1 %}
+						<ul>
+						{% for course in list1 %}
+								<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/1/">&times;</a></li>
+						{% endfor %}
+						</ul>
+					{% else %}
+						<p>Currently Empty</p>
+					{% endif %}
+				</div>
+            
 
 			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
 			<form>
@@ -40,7 +44,7 @@
 				<input type = "hidden" value="{{ option_url }}" name ="hidden-input1" id ="hidden-input1">
 				<input type = "hidden" value="1" name ="hidden-input2" id ="hidden-input2">
 			</form>
-			<div id = "results1" style="height:150px; overflow:scroll;">
+			<div id = "results1" style="height:150px; overflow-y:auto;">
 				{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 			</div>			
 
@@ -48,17 +52,17 @@
         
         <div class="span3">
             <p><strong>2nd Year:</strong/></p>
-            <table class="table">
+			<div style = "height:150px; overflow-y:auto;">
 				{% if list2 %}
+					<ul>
 					{% for course in list2 %}
-						<tr>
-							<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/2/">&times;</a></td>
-						</tr>
+							<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/2/">&times;</a></li>
 					{% endfor %}
+					</ul>
 				{% else %}
 					<p>Currently Empty</p>
 				{% endif %}
-            </table>
+			</div>
 			
 			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
 			<form>
@@ -66,24 +70,24 @@
 				<input type = "hidden" value="{{ option_url }}" name ="hidden-input3" id ="hidden-input3">
 				<input type = "hidden" value="2" name ="hidden-input4" id ="hidden-input4">
 			</form>
-			<div id = "results2" style="height:150px; overflow:scroll;">
+			<div id = "results2" style="height:150px; overflow-y:auto;">
 				
 			</div>	
         </div>
         
         <div class="span3">
             <p><strong>3rd Year:</p></strong>
-            <table class="table">
+            <div style = "height:150px; overflow-y:auto;">
 				{% if list3 %}
+					<ul>
 					{% for course in list3 %}
-					<tr>
-						<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/3/">&times;</a></td>
-					</tr>
+						<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/3/">&times;</a></li>
 					{% endfor %}
+					</ul>
 				{% else %}
 					<p>Currently Empty</p>
 				{% endif %}
-            </table>
+            </div>
 			
 			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
 			<form>
@@ -91,7 +95,7 @@
 				<input type = "hidden" value="{{ option_url }}" name ="hidden-input5" id ="hidden-input5">
 				<input type = "hidden" value="3" name ="hidden-input6" id ="hidden-input6">
 			</form>
-			<div id = "results3" style="height:150px; overflow:scroll;">
+			<div id = "results3" style="height:150px; overflow-y:auto;">
 				{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 			</div>	
 			
@@ -99,17 +103,17 @@
         
         <div class="span3">
             <p><strong>4th Year:</p></strong>
-            <table class="table">
+            <div style = "height:150px; overflow-y:auto;">
 				{% if list4 %}
+					<ul>
 					{% for course in list4 %}
-					<tr>
-						<td><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/4/">&times;</a></td>
-					</tr>
+						<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/4/">&times;</a></li>
 					{% endfor %}
+					</ul>
 				{% else %}
 					<p>Currently Empty</p>
 				{% endif %}
-            </table>
+            </div>
             
 			
 			<li class = "nav-header" style = "font-size:80%">Add Course:</li>
@@ -119,7 +123,7 @@
 				<input type = "hidden" value="4" name ="hidden-input8" id ="hidden-input8">
 			</form>
             
-			<div id = "results4" style="height:150px; overflow:scroll;">
+			<div id = "results4" style="height:150px; overflow-y:auto;">
 				{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 			</div>	
 			

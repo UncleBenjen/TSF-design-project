@@ -5,7 +5,7 @@
 {% block title %}Calculate Accreditation Units{% endblock %}
 
 {% block body_block %}
-<div class="well hero-unit">
+<div class="well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
     
 	<h1>Calculate Accreditation Units</h1>
 	<h4>Program stream: <a href = "/curriculum/programs/{{ program_stream_url }}">{{ program_name}}</a></h4>
@@ -26,7 +26,7 @@
 					{% csrf_token %}
 					{{ cohort_form.as_p }}
 					
-					<input class = "btn btn-primary" type = "submit" name = "submit" value = "Update"/>
+					<input class = "btn btn-primary" type = "submit" name = "submit" value = "Calculate"/>
 				</form>
 				
 			</div>

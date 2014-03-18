@@ -5,9 +5,9 @@
 {% block title %}Departments{% endblock %}
 
 {% block body_block %}
-<div class = "well hero-unit">
+<div class = "well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
     <h1>{{ department_name }}</h1>
-	<hr>
+	<br/>
 	<strong>Department Website: <a href = "{{ department.website }}">{{ department.website }}</a></strong>
 	<hr>
 	{% if program_streams %}

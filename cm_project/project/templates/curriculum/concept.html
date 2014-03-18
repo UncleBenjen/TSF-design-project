@@ -127,7 +127,7 @@ function init(){
                          if (node.selected) {
                          node.data.$color = "#ff7";
                          
-                         
+                         /*
                          html ='<p class=""><a  class="btn btn-primary btn-block" href = "/curriculum/concepts/';
                          temp = node.name;
                          temp = temp.replace(" ","_");
@@ -136,6 +136,7 @@ function init(){
                          html += node.name;
                          html += '</a></p>';
                          $jit.id('inner-details').innerHTML = html;
+						 */
                          }
                          else {
                          delete node.data.$color;
@@ -209,7 +210,7 @@ function init(){
 {% block title %}Concept{% endblock %}
 
 {% block body_block %}
-<div class = "well hero-unit">
+<div class = "well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
     <div class="row-fluid">
         <div class="span12">
             <h1>Concept Page</h1>
@@ -262,13 +263,13 @@ function init(){
         </div>
         <div class="well span12">
             <div id="infovis"    style = "width:800px;" >
-                <div id="inner-details" class = "pull-right" ></div>
+ 
             </div>
             <div id="log"></div>
             <div class = "span12">
                 <div id="inner-details" class = "pull-right" ></div>
             </div>
-            </div>
+
 		</div>
 	</div>
 </div>

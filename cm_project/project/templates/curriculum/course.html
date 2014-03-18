@@ -5,12 +5,16 @@
 {% block title %}Departments{% endblock %}=
 
 {% block body_block %}
-<div class = "well hero-unit">
+<div class = "well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
 	{% if course %}
-    <h2>{{ course_name }} - {{ course.name }}</h2>
-    <hr>
+    <h1>{{ course_name }}</h1> 
+	<h2>{{ course.name }}</h2>
+    <br />
+	<a class = "btn btn-success" href = "/curriculum/add_instance_direct/{{ course_url }}/">Add Instance</a>
+    <br/>
+	<br/>
     <p>{{ course.description }}</p>
-    <hr>
+    <br/>
     
     <!-- row fluid that contains the year/credit and the lab/lecture hours in table form -->
     <div class="row-fluid">
@@ -68,37 +72,49 @@
         <div class="span12">
             <div class="row-fluid">
                 <div class="span4">
-                    <h4>Pre-Requisites: </h3>
+                    <h4>Pre-Requisites: </h4>
+					<div style = "height: 150px; overflow-y:auto;">
                     {% if pre_requisites %}
-                    {% for pre_requisite in pre_requisites %}
-                    <ul>
-                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ pre_requisite.get_url }}">{{ pre_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ pre_requisite.get_url }}/pre/">&times;</a></li>
-                    </ul>
-                    {% endfor %}
-                    {% else %}
-                    <p style = "font-size:85%; line-height:125%;">No pre-requisites are listed under this course...</p>
-                    {% endif %}
+					
+						{% for pre_requisite in pre_requisites %}	
+						<ul>
+							<li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ pre_requisite.get_url }}">{{ pre_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ pre_requisite.get_url }}/pre/">&times;</a></li>
+						</ul>
+						{% endfor %}
+					
+					{% else %}
+						<p style = "font-size:85%; line-height:125%;">None yet...</p>
+					{% endif %}
+					</div>
+					
+					
 					<li class = "nav-header" style = "font-size:80%">Add Pre-requisite:</li>
 					<form>
 						<input class = "search-query span10" type="text" name ="add_pre" value="" id ="add_pre" autocomplete="off">
 						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-pre" id ="hidden-input-pre">
 						<input type = "hidden" value="pre" name ="hidden-input-pre2" id ="hidden-input-pre2">
 					</form>
-					<div id = "resultspre" style="height:150px; overflow:scroll;">
+					<div id = "resultspre" style="height:150px; overflow:scroll; overflow: hidden">
 						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 					</div>	
                 </div>
                 <div class="span4">
-                    <h4>Co-Requisites: </h3>
+                    <h4>Co-Requisites: </h4>
+					<div style = "height: 150px; overflow-y:auto;">
                     {% if co_requisites %}
-                    {% for co_requisite in co_requisites %}
-                    <ul>
-                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ co_requisite.get_url }}">{{ co_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ co_requisite.get_url }}/co/">&times;</a></li>
-                    </ul>
-                    {% endfor %}
-                    {% else %}
-                    <p style = "font-size:85%; line-height:125%;">No co-requisites are listed under this course...</p>
-                    {% endif %}
+					
+						{% for co_requisite in co_requisites %}
+						
+							<ul>
+								<li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ co_requisite.get_url }}">{{ co_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ co_requisite.get_url }}/co/">&times;</a></li>
+							</ul>
+						
+						{% endfor %}
+					
+					{% else %}
+						<p style = "font-size:85%; line-height:125%;">None yet...</p>
+					{% endif %}			
+					</div>
 					
 					<li class = "nav-header" style = "font-size:80%">Add Co-requisite:</li>
 					<form>
@@ -106,22 +122,28 @@
 						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-co" id ="hidden-input-co">
 						<input type = "hidden" value="co" name ="hidden-input-co2" id ="hidden-input-co2">
 					</form>
-					<div id = "resultsco" style="height:150px; overflow:scroll;">
+					<div class = "text-center" id = "resultsco" style="height:150px; overflow:hidden;">
 						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 					</div>	
 					
                 </div>
                 <div class="span4">
-                    <h4>Anti-Requisites: </h3>
-                    {% if anti_requisites %}
-                    {% for anti_requisite in anti_requisites %}
-                    <ul>
-                        <li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ anti_requisite.get_url }}">{{ anti_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ anti_requisite.get_url }}/anti/">&times;</a></li>
-                    </ul>
-                    {% endfor %}
-                    {% else %}
-                    <p style = "font-size:85%; line-height:125%;">No anti-requisites are listed under this course...</p>
-                    {% endif %}
+                    <h4>Anti-Requisites: </h4>
+					<div style = "height: 150px; overflow-y:auto;">
+					{% if anti_requisites %}
+					
+						{% for anti_requisite in anti_requisites %}
+						<ul>
+							<li style = "font-size:85%; line-height:125%;"><a href="/curriculum/courses/{{ anti_requisite.get_url }}">{{ anti_requisite.course_code }}</a><a class = "close" href = "/curriculum/delete_requisite_from_list/{{ course_url }}/{{ anti_requisite.get_url }}/anti/">&times;</a></li>
+						</ul>
+						{% endfor %}
+					{% else %}
+
+						<p style = "font-size:85%; line-height:125%;">None yet...</p>
+
+					{% endif %}
+					</div>
+					
 					
 					<li class = "nav-header" style = "font-size:80%">Add Anti-requisite:</li>
 					<form>
@@ -129,7 +151,7 @@
 						<input type = "hidden" value="{{ course_url }}" name ="hidden-input-anti" id ="hidden-input-anti">
 						<input type = "hidden" value="anti" name ="hidden-input-anti2" id ="hidden-input-anti2">
 					</form>
-					<div id = "resultsanti" style="height:150px; overflow:scroll;">
+					<div id = "resultsanti" style="height:150px; overflow: hidden;">
 						{% include 'curriculum/search_list_add.html' with concept_list=concept_list %}
 					</div>	
                 </div>
@@ -140,52 +162,42 @@
 	<div class = "row-fluid">
 		<div class = "span12">
 			<div class = "row-fluid">
-				<div class = "span4">
-					<h4>Instances of this course:</h4>
-					<div class = "row-fluid">
-						<div class = "span6">
+				<div class = "span6">
+					<div class = "text-center">
+					<h3>Instances of this course</h3>
 						{% if instances %}
 							{% for c in instances %}
-								<p style = "line-height:90%;font-size:90%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
+								<p style = "line-height:90%;"><a style = "font-size:90%;" href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
 							{% endfor %}
+
 						{% else %}
 							<p>No instances yet</p>
 						{% endif %}
 						
-						<a class = "btn btn-success" href = "/curriculum/add_instance_direct/{{ course_url }}/">Add Instance</a>
-						</div>
+						<br/>
+						
 					</div>
+
 				</div>
+	
 				
-				<div class = "span4">
-					<h4>Typical concepts:</h4>
+				<div class = "span6">
+					<div class = "text-center">
+					<h3>Typical concepts</h3>
 					{% if concepts %}
-						{% for c in concepts %}
-							<p style="line-height:90%; font-size:90%;"><a href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
-						{% endfor %}
+							{% for c in concepts %}
+								<p style = "line-height:100%;"><a  style="font-size:90%;" href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
+							{% endfor %}
 					{% else %}
 						<p>No concepts yet</p>
 					{% endif %}
-				</div>
-				
-				<div class = "span4">
-					<h4>Typical concepts:</h4>
-					{% if typical_concept_list %}
-						{% for c in concept_list %}
-							<p style="line-height:90%; font-size:90%;"><a href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
-						{% endfor %}
-					{% else %}
-						<p>No concepts yet</p>
-					{% endif %}
+					</div>
 				</div>
 			</div>	
 		</div>
 	</div>
     <hr>
 	
-	<div class = "row-fluid">
-
-	</div>
     
 	{% else %}
 	<p>There was no course found under this name...</p>

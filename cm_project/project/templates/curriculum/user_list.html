@@ -1,14 +1,12 @@
 <ul class="nav nav-list">
 		{% if prof %}
 			{% for u in user_list %}
-				<p>prof</p>
 				<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/add_professor/{{ course }}/{{ date}}/{{ u.get_user_name }}/">{{ u.get_full_name }}</a></div></td></tr>
             {% endfor %}
 		{% endif %}
 		
 		{% if ass %}
 			{% for u in user_list %}
-				<p>ass</p>
 				<tr><td style = "line-height:100%; font-size:70%;"><div class="text-center"><a href = "/curriculum/add_assistant/{{ course }}/{{ date}}/{{ u.get_user_name }}/">{{ u.get_full_name }}</a></div></td></tr>
             {% endfor %}
 		{% endif %}

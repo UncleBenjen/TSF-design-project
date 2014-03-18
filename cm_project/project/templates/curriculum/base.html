@@ -15,7 +15,7 @@
 		<title>Curriculum Map - {% block title %}{% endblock %}</title>
 	</head>
 	
-	<body onload="init();">
+	<body onload="init();" style = "background-color:#C8CCCB; ">
 		<!-- Top menubar -->
 		<div class = "navbar navbar-inverse navbar-fixed-top">
 			<div class = "navbar-inner">
@@ -47,6 +47,8 @@
 										<li><a href="/curriculum/departments/Civil_and_Environmental_Engineering">Civil and Environmental Engineering</a></li>
 										<li><a href="/curriculum/departments/Electrical_and_Computer_Engineering">Electrical and Computer Engineering</a></li>
 										<li><a href="/curriculum/departments/Mechanical_and_Materials_Engineering">Mechanical and Materials Engineering</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="/curriculum/map/">View All Departments</a></li>
 										<!--
 										<li class="divider"></li>										
 										<li><a href="/curriculum/departments/">View All Departments</a></li>
@@ -81,7 +83,7 @@
 		
 		<!-- side bar and main content window -->
 		
-		<div class = "container-fluid" style = "margin-left:auto;margin-right:auto;">
+		<div class = "container-fluid" style = "margin-left:auto;margin-right:5%;">
 			<div class = "row-fluid">
 				<!--<div class = "span3">
 					<div class = "well sidebar-nav">
@@ -125,26 +127,22 @@
                             <p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_course/">Create a course</a></p>
                             <p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_concept/">Create a concept</a></p>
                         	<p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_instance/">Create a course instance</a></p>
-							</div>
                             
-                            <hr>
+							</div>
+
 							<div style = "padding-left:10%; padding-right:10%;">
-								<p style = "line-height:130%; font-size:90%;"><a class="btn btn-primary btn-block" href = "#">View my courses</a></p>
-								<p style = "line-height:130%; font-size:90%;"><a class="btn btn-primary btn-block" href = "#">View map</a></p>
-								<p style = "line-height:130%; font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Create query</a></p>
-								<p style = "line-height:130%; font-size:90%;"><a class="btn btn-primary btn-block" href = "#">Edit profile</a></p>
 								<p style = "line-height:130%; font-size:90%;"><a class="btn btn-primary btn-block" href = "/curriculum/select_program_for_au/">Calculate AUs</a></p>
-								
-							<hr>
+                                <p><a class="btn btn-primary btn-block"href = "/curriculum/map/">View Curriculum map</a></p>
+                            </div>
+
 						{% else %}
 							<ul>
 								<li style = "line-height:130%; font-size:90%;"><a href = "#">View concept map</a></li>
-								<li style = "line-height:130%; font-size:90%;"><a href = "#">View course map</a></li>
+								<li style = "line-height:130%; font-size:90%;"><a href = "/curriculum/map/">View Curriculum map</a></li>
 							</ul>
 							
 							<hr>
 							<p style = "line-height:120%;">Please <a href = "/curriculum/login/">Login</a> or <a href = "/curriculum/register/">Register</a> for more options.</p>
-							<hr>
 						{% endif %}
 						
 						
@@ -170,7 +168,6 @@
 				</div>
 			</div>
 		</footer>
-		
 		<script src = "{% static 'js/jquery-2.1.0.min.js' %}"></script>
 		<script src = "{% static 'js/bootstrap.min.js' %}"></script>
 		<script src = "{% static 'js/curriculum-ajax.js' %}"></script>

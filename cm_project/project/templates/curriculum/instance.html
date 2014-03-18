@@ -5,12 +5,11 @@
 {% block title %}Instance{% endblock %}
 
 {% block body_block %}
-<div class = "well hero-unit">
+<div class = "well hero-unit" style = "max-width:80%; min-width:80%; float:right;">
     <div class = "row-fluid">
         <div class="span12">
             <!-- Dispay basic info; course code and name, as well as date -->
         	<h1>Course Instance</h1>
-            <hr>
         	<h3><a href="/curriculum/courses/{{ parent_course.get_url }}">{{ parent_course.course_code }}</a> - {{ parent_course.name }}</h3>
             <hr>
             {% if instance %}
@@ -66,7 +65,24 @@
                     <ul><li>There are no students listed under this class...</li></ul>
                     {% endif %}
                     <div><a class="btn btn-success" href="/curriculum/add_students/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add Students</a></div>
+					
+					<div class="row-fluid"><div class="span4 offset4"></div></div>
+                    <p><strong>Textbooks:</strong> </p>
+                    <ul>
+                        {% if textbooks %}
+                        
+                        {% for textbook in textbooks %}
+                        <li>{{ textbook.name }}{% if textbook.required %} (required){% endif %}<a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ textbook.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></li>
+                        {% endfor %}
+                        {% else %}
+                        <li>No textbooks are listed under this course instance...</li>
+                        {% endif %}
+                    </ul>
+                    <div ><a class="btn btn-success" href="/curriculum/add_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add Textbook</a></div>
+					
                 </div>
+				
+				
                 
                 <!-- right column-->
                 <div class="span6">
@@ -88,22 +104,24 @@
                                         <td>{{ teacher.user.username }}</td>
                                         {% endif %}
                                         <td>{{teacher.user.email}}</td>
+										<td>{{teacher.office}}</td>
                                     </tr>
                                     {% endfor %}
                                 </table>
                                 {% else %}
                                 <ul><li><p>There are no professors currently listed under this course instance...</p></li></ul>
                                 {% endif %}
-								
-								<li class = "nav-header" style = "font-size:80%;">Add Professor:</li>
-								<form>
-									<input class = "search-query span10" type="text" name ="add_professor" value="" id ="add_professor" autocomplete="off">
-									<input type = "hidden" value="{{ parent_course.get_url }}" name ="hidden-input-prof" id ="hidden-input-prof">
-									<input type = "hidden" value="{{ instance.get_date }}" name ="hidden-input-prof2" id ="hidden-input-prof2">
-									<input type = "hidden" value="prof" name ="hidden-input-prof3" id ="hidden-input-prof3">
-								</form>
-								<div id = "professors">
-									{% include 'curriculum/user_list.html' %}
+								<div class = "text-center">
+									<li class = "nav-header" style = "font-size:80%;">Add Professor:</li>
+									<form>
+										<input class = "search-query span10" type="text" name ="add_professor" value="" id ="add_professor" autocomplete="off">
+										<input type = "hidden" value="{{ parent_course.get_url }}" name ="hidden-input-prof" id ="hidden-input-prof">
+										<input type = "hidden" value="{{ instance.get_date }}" name ="hidden-input-prof2" id ="hidden-input-prof2">
+										<input type = "hidden" value="prof" name ="hidden-input-prof3" id ="hidden-input-prof3">
+									</form>
+									<div id = "professors">
+										{% include 'curriculum/user_list.html' %}
+									</div>
 								</div>
 								
                             </div>
@@ -117,6 +135,8 @@
                                         {% else %}
                                         <td>{{ assistant.user.username }}</td>
                                         {% endif %}
+										<td>{{assistant.user.email}}</td>
+										<td>{{assistant.office}}</td>
                                     </tr>
                                     {% endfor %}
                                 </table>
@@ -124,33 +144,23 @@
                                 <ul><li><p>There are no teaching assistants currently listed under this course instance...</p></li></ul>
                                 {% endif %}
 								
-								<li class = "nav-header" style = "font-size:80%;">Add Assistant:</li>
-								<form>
-									<input class = "search-query span10" type="text" name ="add_assistant" value="" id ="add_assistant" autocomplete="off">
-									<input type = "hidden" value="{{ parent_course.get_url }}" name ="hidden-input-ass" id ="hidden-input-ass">
-									<input type = "hidden" value="{{ instance.get_date }}" name ="hidden-input-ass2" id ="hidden-input-ass2">
-									<input type = "hidden" value="ass" name ="hidden-input-ass3" id ="hidden-input-ass3">
-								</form>
-								<div id = "assistants">
-									{% include 'curriculum/user_list.html' with concept_list=concept_list %}
+								<div class = "text-center">
+									<li class = "nav-header" style = "font-size:80%;">Add Assistant:</li>
+									<form>
+										<input class = "search-query span10" type="text" name ="add_assistant" value="" id ="add_assistant" autocomplete="off">
+										<input type = "hidden" value="{{ parent_course.get_url }}" name ="hidden-input-ass" id ="hidden-input-ass">
+										<input type = "hidden" value="{{ instance.get_date }}" name ="hidden-input-ass2" id ="hidden-input-ass2">
+										<input type = "hidden" value="ass" name ="hidden-input-ass3" id ="hidden-input-ass3">
+									</form>
+									<div id = "assistants">
+										{% include 'curriculum/user_list.html' with concept_list=concept_list %}
+									</div>
 								</div>
 								
                             </div>
                         </div>
                     </div>
-                    <div class="row-fluid"><div class="span4 offset4"><hr></div></div>
-                    <p><strong>Textbooks:</strong> </p>
-                    <ul>
-                        {% if textbooks %}
-                        
-                        {% for textbook in textbooks %}
-                        <li>{{ textbook.name }}{% if textbook.required %} (required){% endif %}<a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ textbook.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></li>
-                        {% endfor %}
-                        {% else %}
-                        <li>No textbooks are listed under this course instance...</li>
-                        {% endif %}
-                    </ul>
-                    <div ><a class="btn btn-success" href="/curriculum/add_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add Textbook</a></div>
+
                 </div>
             </div>
 
