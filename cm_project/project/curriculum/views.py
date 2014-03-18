@@ -1568,7 +1568,7 @@ def suggest_pre_requisite(request):
 			course_code = course_url.replace('_', '/')
 			course = Course.objects.get(course_code=course_code)
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		
 		anti_list = course.anti_requisites.all()
 		co_list = course.co_requisites.all()
@@ -1621,7 +1621,7 @@ def suggest_co_requisite(request):
 			course_code = course_url.replace('_', '/')
 			course = Course.objects.get(course_code=course_code)
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		
 		anti_list = course.anti_requisites.all()
 		pre_list = course.pre_requisites.all()
@@ -1675,7 +1675,7 @@ def suggest_anti_requisite(request):
 			course_code = course_url.replace('_', '/')
 			course = Course.objects.get(course_code=course_code)
 		
-		course_list = get_course_list(5, starts_with)
+		course_list = get_course_list(50, starts_with)
 		
 		co_list = course.co_requisites.all()
 		pre_list = course.pre_requisites.all()
