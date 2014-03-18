@@ -61,4 +61,6 @@ urlpatterns = patterns('',
 		url(r'download_syllabus/(?P<course_url>\w+)/(?P<date_url>\w+)/$', views.download_syllabus, name='download_syllabus'),
 		url(r'create_accreditation_report/(?P<option_url>\w+)/(?P<date_url>\w+)/$', views.create_accreditation_report, name='create_accreditation_report'),
 		url(r'^calculate_pre_requisite/(?P<course_url>\w+)/$',views.calculate_pre_requisite, name = 'calculate_pre_requisite'),
+		url(r'^concept_map/(?P<concept_url>\w+)/$', views.concept_map, name='concept_map'),
+		url(r'^course_map/(?P<program_stream_url>\w+)/$', views.course_map, name='course_map'),
 		)

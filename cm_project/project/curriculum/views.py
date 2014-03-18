@@ -376,8 +376,8 @@ def option(request, option_name_url):
 def get_programs(request):
 		context = RequestContext(request)
 		
-		programs = ProgramStream.objects.all
-		context_dict = {'programs' : programs}
+		options = Option.objects.all
+		context_dict = {'programs' : options}
 		
 		return render_to_response('curriculum/programs_for_au.html', context_dict, context)
 		
@@ -443,6 +443,7 @@ def concept(request, concept_name_url):
 	highschool = concept.highscool
 	#course_instances = CourseInstance.objects.filter(concepts__name = concept_name)
 	courses = CourseInstance.objects.filter(concepts__name = concept_name)
+	courses2 = Course.objects.filter(typical_concepts__name = concept_name)
 	
 	context_dict = {'concept_name' : concept_name}
 	context_dict['description'] = description
@@ -452,6 +453,22 @@ def concept(request, concept_name_url):
 	context_dict['concept_url'] = concept_name_url
 	context_dict['level'] = concept.height
 	
+	context_dict['courses2'] = courses2
+	
+	height = concept.height
+	
+	while height > 0:
+		concepts = concept.related_concepts.all()
+		for concept in concepts:
+			pass
+		height = height-1
+    
+	
+	#concept_name = concept_url.replace('_',' ')
+	concept = Concept.objects.get(name=concept_name)
+	
+	jsonFile = meta_display_concepts_json(concept)
+	context_dict['Graph'] =jsonFile
 	#height = concept.height
 	#html_list = ""
 	#my_children = concept.related_concepts.all()
@@ -1535,7 +1552,7 @@ def suggest_course_add_four(request):
 		context_dict['year'] = year_str
 		
 		
-		return render_to_response('curriculum/search_list_add_requisite.html', context_dict, context)
+		return render_to_response('curriculum/search_list_add.html', context_dict, context)
 		
 # Used the get_course_list function to get the top 5 matches
 def suggest_pre_requisite(request):
@@ -2400,7 +2417,77 @@ def get_course_concepts(course_url):
 		
 	except Course.DoesNotExist:
 		pass
+
+# MAP VISUALIZATIONS
+def concept_map(request):
+	context = RequestContext(request)
 	
+	return render_to_response('curriculum/concept_map.html', context)
+
+def concept_map(request, concept_url):
+	context = RequestContext(request)
+	
+    
+	
+	concept_name = concept_url.replace('_',' ')
+	concept = Concept.objects.get(name=concept_name)
+	
+	jsonFile = meta_display_concepts_json(concept)
+	
+	
+	context_dict = {'Graph' : jsonFile}
+	
+	return render_to_response('curriculum/concept_map.html',context_dict, context)
+
+
+
+# passes data to and calls display_concepts function
+def meta_display_concepts_json(concept):
+	html_list = ""
+	height = concept.height
+	my_children = concept.related_concepts.all()
+	html_list = html_list + '{"id": "'+concept.name+'","name": "' + concept.name + '","data":[],"children":['
+    
+	if(height > 0):
+		html_list = display_concepts_json(my_children, height, html_list)
+    
+    
+	html_list = html_list + '],}'
+	return html_list
+
+# Recursive function to get child concepts of a concept
+def display_concepts_json(concept_list, height, html_list):
+	for c in concept_list:
+		html_list = html_list + '{"id": "'+c.name+'","name": "' + c.name + '","data":[],"children":['
+		one_down = height - 1
+		if (one_down >= 0):
+			children = c.related_concepts.all()
+			html_list = display_concepts_json(children, one_down, html_list)
+		html_list = html_list + ']},'
+    
+    
+	return html_list
+
+
+
+def course_map(request, program_stream_url):
+	context = RequestContext(request)
+    
+	jsonFile ='['
+	
+	program_stream = program_stream_url.replace('_',' ')
+	program = ProgramStream.objects.get(name=program_stream)
+	
+	for course in program.courses.all():
+		jsonFile += '{"adjacencies": [';
+		for pre in course.pre_requisites.all():
+			jsonFile+= '{"nodeTo": "'+str(pre.course_code)+'","nodeFrom": "'+str(course.course_code)+'","data": {"$color": "#557EAA" } }, '
+		jsonFile += '],"data": { "$color": "#83548B", "$type": "circle", "$dim": 10}, "id": "' +str(course.course_code)+'", "name": "'+str(course.course_code)+'"},'
+	
+	jsonFile += ']'
+	context_dict = {'Graph' : jsonFile}
+	
+	return render_to_response('curriculum/course_map.html',context_dict,context)
 	
 	
 	
