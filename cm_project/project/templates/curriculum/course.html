@@ -9,11 +9,10 @@
 	{% if course %}
     <h1>{{ course_name }}</h1> 
 	<h2>{{ course.name }}</h2>
-    <br />
+	<p>{{ course.description }}</p>
+
 	<a class = "btn btn-success" href = "/curriculum/add_instance_direct/{{ course_url }}/">Add Instance</a>
     <br/>
-	<br/>
-    <p>{{ course.description }}</p>
     <br/>
     
     <!-- row fluid that contains the year/credit and the lab/lecture hours in table form -->
@@ -56,6 +55,51 @@
     
     <hr>
     
+	<div class = "row-fluid">
+		<div class = "span12">
+			<div class = "row-fluid">
+				<div class = "span6">
+					<div class = "text-center">
+						<h3>Instances of this course</h3>
+					</div>
+					<div class = "text-center" style = "height:180px; overflow-y:auto; ">
+						{% if instances %}
+							{% for c in instances %}
+								<p style = "line-height:90%;"><a style = "font-size:90%;" href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
+							{% endfor %}
+
+						{% else %}
+							<p>No instances yet</p>
+						{% endif %}
+						
+						<br/>
+						
+					</div>
+
+				</div>
+	
+				
+				<div class = "span6">
+					<div class = "text-center">
+						<h3>Typical concepts</h3>
+					</div>
+					<div class = "text-center" style = "height:180px; overflow-y: auto;">
+					{% if concepts %}
+							{% for c in concepts %}
+								<p style = "line-height:100%;"><a  style="font-size:90%;" href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
+							{% endfor %}
+					{% else %}
+						<p>No concepts yet</p>
+					{% endif %}
+					</div>
+				</div>
+			</div>	
+		</div>
+		
+	</div>
+	
+	<hr>
+	
 	<div class = "row-fluid">
 		<div class = "span12">
 			<div class = "text-center">
@@ -158,46 +202,6 @@
             </div>
         </div>
     </div>
-	<hr>
-	<div class = "row-fluid">
-		<div class = "span12">
-			<div class = "row-fluid">
-				<div class = "span6">
-					<div class = "text-center">
-					<h3>Instances of this course</h3>
-						{% if instances %}
-							{% for c in instances %}
-								<p style = "line-height:90%;"><a style = "font-size:90%;" href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}/">{{ c.course }} - {{ c.date }}</a></p>
-							{% endfor %}
-
-						{% else %}
-							<p>No instances yet</p>
-						{% endif %}
-						
-						<br/>
-						
-					</div>
-
-				</div>
-	
-				
-				<div class = "span6">
-					<div class = "text-center">
-					<h3>Typical concepts</h3>
-					{% if concepts %}
-							{% for c in concepts %}
-								<p style = "line-height:100%;"><a  style="font-size:90%;" href="/curriculum/concepts/{{ c.get_url }}/">{{ c.name }}</a></p>
-							{% endfor %}
-					{% else %}
-						<p>No concepts yet</p>
-					{% endif %}
-					</div>
-				</div>
-			</div>	
-		</div>
-	</div>
-    <hr>
-	
     
 	{% else %}
 	<p>There was no course found under this name...</p>

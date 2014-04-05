@@ -12,7 +12,11 @@
         <link type="text/css" href="{% static 'css/base.css' %}" rel="stylesheet" />
         <script language="javascript" type="text/javascript" src="{% static 'js/jit.js' %}"></script>
 		
+		<link rel="shortcut icon" href={% static "favicon.ico"%}> 
+		
 		<title>Curriculum Map - {% block title %}{% endblock %}</title>
+		
+		
 	</head>
 	
 	<body onload="init();" style = "background-color:#C8CCCB; ">
@@ -73,7 +77,7 @@
 							{% endif %}
 							<li><a href = "/curriculum/course_list/">Courses</a></li>
 							<li><a href = "/curriculum/concept_list/">Concepts</a></li>
-							<li><a href = "/curriculum/about/">About</a></li>
+							
 						</ul>
 					</div>
 				</div>
@@ -99,8 +103,7 @@
 				</div>
 				<div class = "span3">
 					<div class = "well hero-unit" style = "padding-left:20px; padding-right:20px; padding-top:20px;">
-						<h3 class = "text-center">Available actions</h3>
-						<hr>
+						
 						
 						<li class = "nav-header" style = "padding-left:25px; font-size:80%;">Find Course:</li>
 						<form class = "text-center">
@@ -112,7 +115,6 @@
 						</div>
 
 						
-						<hr>
 						<li class = "nav-header" style = "padding-left:25px; font-size:80%">Find Concept:</li>
 						<form class = "text-center">
 							<input class = "search-query span10" type="text" name ="concept_suggestion" value="" id ="concept_suggestion" autocomplete="off">
@@ -124,24 +126,19 @@
 						
 						{% if user.is_authenticated %}
 							<div style = "padding-left:10%; padding-right:10%;">
-                            <p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_course/">Create a course</a></p>
-                            <p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_concept/">Create a concept</a></p>
-                        	<p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_instance/">Create a course instance</a></p>
+                            <p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_course/">Create course</a></p>
+                            <p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_concept/">Create concept</a></p>
+                        	<p class="text-center"><a class="btn btn-primary btn-block" href = "/curriculum/add_instance/">Create instance</a></p>
                             
 							</div>
 
 							<div style = "padding-left:10%; padding-right:10%;">
 								<p style = "line-height:130%; font-size:90%;"><a class="btn btn-primary btn-block" href = "/curriculum/select_program_for_au/">Calculate AUs</a></p>
-                                <p><a class="btn btn-primary btn-block"href = "/curriculum/map/">View Curriculum map</a></p>
+                                <p><a class="btn btn-primary btn-block" href = "/curriculum/map/">Curriculum map</a></p>
+								<a class="btn btn-primary btn-block" href = "/curriculum/about/">About</a>
                             </div>
 
 						{% else %}
-							<ul>
-								<li style = "line-height:130%; font-size:90%;"><a href = "#">View concept map</a></li>
-								<li style = "line-height:130%; font-size:90%;"><a href = "/curriculum/map/">View Curriculum map</a></li>
-							</ul>
-							
-							<hr>
 							<p style = "line-height:120%;">Please <a href = "/curriculum/login/">Login</a> or <a href = "/curriculum/register/">Register</a> for more options.</p>
 						{% endif %}
 						

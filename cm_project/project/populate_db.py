@@ -7,15 +7,15 @@ from curriculum.models import UserInfo, Department, ProgramStream, Option, Cours
 def populate_db():
 	#
 	populate_from_sreadsheet()
-	populate_courses()
+#	populate_courses()
 
 	populate_departments()
 	populate_prgrm_strms()
 	populate_options()
 
 	connect_courses()
-    #	populate_mechanical()
-	populate_instances()
+#	populate_mechanical()
+#	populate_instances()
 	populate_concepts()
 
 
@@ -259,6 +259,7 @@ def populate_instances():
 		add_instance(es_1022, "2012", "FI")
 		add_instance(es_1022, "2013", "FI")
 
+
 		am_1411 = Course.objects.get(course_code="AM1411A/B")
 		add_instance(am_1411, "2010", "FI")
 		add_instance(am_1411, "2011", "FI")
@@ -299,24 +300,31 @@ def populate_instances():
 		print("Populating instances failed...")
 
 def populate_concepts():
-	print("Populating concepts...")
-	math = add_concept("Algebra","MA")
-	science = add_concept("Covalent Bonds","SC")
-	eng_science = add_concept("Newtons 1st Law","ES")
-	eng_design = add_concept("UML","ED")
-	comp = add_concept("Technical Writing","CO")
-
 	try:
-		print("Creating concept relations with instances...")
-		courses = CourseInstance.objects.all()
-		for course in courses:
-			add_contact_hours(course)
-			add_concept_relation(math, course, 2)
-			add_concept_relation(eng_science, course, 3)
-			add_concept_relation(comp, course, 1)
+		print("Opening xlsx document; preparing to populate concepts...")
+		book = xlrd.open_workbook("EngineeringFaculty_ConceptList.xlsx")
+
+        
+		# loop through each spreadsheet; sheet assigned to 'sh'
+		for i in range(book.nsheets):
+			sh = book.sheet_by_index(i)
+			# loop through all the rows for each sheet; assign row to 'rx'
+			for rx in range(1,sh.nrows):
+				print(" ~ Adding concept from row #"+str(rx)+", spreadsheet #"+str(i))
+				#try adding a course using values from the correct columns
+				try:
+					if(i == 0):
+						add_concept(sh.cell_value(rowx=rx, colx=0), sh.cell_value(rowx=rx, colx=1),sh.cell_value(rowx=rx, colx=2),sh.cell_value(rowx=rx, colx=3),'True')
+					else:
+						add_concept(sh.cell_value(rowx=rx, colx=0), sh.cell_value(rowx=rx, colx=1),sh.cell_value(rowx=rx, colx=2),sh.cell_value(rowx=rx, colx=3),'False')
+				except:
+					print(" ~ ~ Adding concepts failed.")
+        
+		print("... Finished parsing spreadsheets. Closing document.")
+    
 	except:
-		print("Creating concept relations failed...")
-		pass
+		print("Could not find/open document...")
+
 
 def populate_from_sreadsheet():
 	# open .xlsx file in directory
@@ -361,15 +369,15 @@ def add_option(name, program_stream):
 	return o
 
 def add_course(course_code, name, lecture_hours, lab_hours, credit, description, year):
-	c = Course.objects.get_or_create(course_code=course_code, name=name, lecture_hours=lecture_hours, lab_hours=lab_hours, credit=credit, description=description, year=year)[0]
+	c = Course.objects.get_or_create(course_code=course_code, name=name, lecture_hours=lecture_hours, lab_hours=lab_hours, tut_hours=0, credit=credit, description=description, year=year)[0]
 	return c
 
 def add_instance(course, date, semester):
 	i = CourseInstance.objects.get_or_create(course=course, date=date,semester=semester)[0]
 	return i
 
-def add_concept(name,ceab_unit):
-	e = Concept.objects.get_or_create(name=name, ceab_unit=ceab_unit)[0]
+def add_concept(name,description,ceab_unit,height,highschool):
+	e = Concept.objects.get_or_create(name=name, description=description, ceab_unit=ceab_unit,height=height,highschool=highschool)[0]
 	return e
 
 def add_concept_relation(concept, instance, lectures):

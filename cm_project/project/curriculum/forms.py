@@ -67,13 +67,13 @@ class InstanceForm(forms.ModelForm):
 	date = forms.RegexField(r'[0-9]+',max_length=4,min_length=4)
 	class Meta:
 		model = CourseInstance
-		fields = ['course','date','professors','assistants','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester']
+		fields = ['course','date','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester']
 		
 class InstanceDirectForm(forms.ModelForm):
 	date = forms.RegexField(r'[0-9]+',max_length=4,min_length=4)
 	class Meta:
 		model = CourseInstance
-		fields = ['date','professors','assistants','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester']
+		fields = ['date','acc_math','acc_science','acc_eng_science','acc_eng_design','acc_comp','semester']
 
 class ConceptForm(forms.ModelForm):
 	description=forms.CharField(widget=forms.widgets.Textarea())

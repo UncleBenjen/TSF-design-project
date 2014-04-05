@@ -10,11 +10,14 @@
 	<br/>
 	<strong>Department Website: <a href = "{{ department.website }}">{{ department.website }}</a></strong>
 	<hr>
+	
 	{% if program_streams %}
     {% for program_stream in program_streams %}
+
 		<h4><a href = "/curriculum/programs/{{ program_stream.get_url }}/">{{ program_stream.name }}:</a></h4>
 		<p style = "font-size:90%;">{{ program_stream.description }}</p>
 		<hr>
+	
     {% endfor %}
 	{% else %}
 		<h3>There were no program streams present...</h3>

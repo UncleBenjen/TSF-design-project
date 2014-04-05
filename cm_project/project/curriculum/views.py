@@ -55,6 +55,38 @@ def profile(request):
 	except ProgramStream.DoesNotExist:	
 		pass
 		
+	teaches = []
+	assists = []
+		
+	try:
+		instances = CourseInstance.objects.all()
+		
+		for instance in instances:
+			professors = instance.professors.all()
+			
+			if professors:
+				for professor in professors:
+					if professor == up:
+						teaches.append(instance)
+	
+						
+		for instance in instances:
+			assistants = instance.assistants.all()
+				
+			if assistants:
+				for assistant in assistants:
+					if assistant == up:
+						assists.append(instance)
+		
+	except CourseInstance.DoesNotExist:
+		pass
+		
+	if teaches:
+		context_dict['teaches'] = teaches
+	if assists:
+		context_dict['assists'] = assists
+		
+		
 	return render_to_response('curriculum/profile.html',context_dict, context)
 	
 def contact_hours_cohort(request, id_url):
@@ -497,9 +529,9 @@ def meta_display_concepts(concept):
 	
 # Recursive function to get child concepts of a concept
 def display_concepts(concept_list, height, html_list):
-	html_list = html_list + "<ul>"
+	html_list = html_list + "<ul style='line-height:90%;'>"
 	for c in concept_list:
-		html_list = html_list + "<li><a href='/curriculum/concepts/"+c.get_url+"/'>" + c.name + "</a></li>"
+		html_list = html_list + "<li style='line-height:120%;'><a href='/curriculum/concepts/"+c.get_url+"/'>" + c.name + "</a></li>"
 		one_down = height - 1
 		if (one_down >= 0):
 			children = c.related_concepts.all()
@@ -949,6 +981,7 @@ def get_program_au(request, program_url, year_url):
 	context_dict['ma_fourth'] = ma_fourth
 	context_dict['sc_fourth'] = sc_fourth
 	context_dict['co_fourth'] = co_fourth
+	
 	
 	return render_to_response('curriculum/contact_hours_cohort.html',context_dict, context)
 	
@@ -2168,19 +2201,32 @@ def download_syllabus(request, course_url, date_url):
 
 def create_accreditation_report(request, option_url, date_url):
 	context=RequestContext(request)
+
+	CEAB_TOTAL_MIN = 1950
+	CEAB_MA_MIN = 195
+	CEAB_SC_MIN = 195
+	CEAB_MA_SC_MIN = 420
+	CEAB_ES_MIN = 225
+	CEAB_ED_MIN = 225
+	CEAB_ES_ED_MIN = 900
+	CEAB_CO_MIN = 225
+
+	TOTAL_AU = 0
+
 	option_name = option_url.replace('_',' ')
+
 	try:
 		option = Option.objects.get(name = option_name)
-        
+		 
 		try:
-            # Get the yearly course lists associated with the appropriate option; get the number of years
+			# Get the yearly course lists associated with the appropriate option; get the number of years
 			yearly_course_lists = YearlyCourseList.objects.filter(option=option)
 			num_of_years = len(yearly_course_lists)
-            
-            
-            # Loop through courses_lists;  get instances for appropriate year and add to master list
+			 
+			 
+			# Loop through courses_lists;  get instances for appropriate year and add to master list
 			all_course_instances=set()
-            
+			 
 			for course_list in yearly_course_lists:
 				for course in course_list.courses.all():
 					cohort_date = int(date_url)-num_of_years+(course_list.year - 1)
@@ -2188,15 +2234,15 @@ def create_accreditation_report(request, option_url, date_url):
 						all_course_instances.add(CourseInstance.objects.get(course=course, date=cohort_date))
 					except:
 						pass
-            
+			 
 			# categorize master list into math, science, eng_science, eng_design, and comp lists
-            # loop through master, add to appropriate list if acc_percent is >0)
+			# loop through master, add to appropriate list if acc_percent is >0)
 			math_instances = set()
 			science_instances = set()
 			eng_sc_ed_instances = set()
 			comp_instances = set()
 			empty_instances = set()
-            
+			 
 			for instance in all_course_instances:
 				try:
 					aunits = ContactHours.objects.get(instance=instance)
@@ -2212,19 +2258,19 @@ def create_accreditation_report(request, option_url, date_url):
 						empty_instances.add(instance)
 				except:
 					empty_instances.add(instance)
-            
-    		# Create a dynamic file name, content disposition based on that name, and prepare the response object (for serving a pdf)
+			 
+			# Create a dynamic file name, content disposition based on that name, and prepare the response object (for serving a pdf)
 			file_name = option_url + "-Class_of_" + str(date_url) + "-au_report"
 			content_disposition = "attachment; filename='"+file_name+"'"
 			# Create the HttpResponse object with the appropriate PDF headers.
 			response = HttpResponse(content_type='application/pdf')
 			response['Content-Disposition'] = content_disposition
-            
+			 
 			# create a buffer to write to, and initialize a reportlab doc template to receive the buffer
 			buffer = BytesIO()
 			doc = SimpleDocTemplate(buffer, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=72, pagesize=letter)
 			elements=[]
-            
+			 
 			# Setup styles to be used throughout document creation
 			styles=getSampleStyleSheet()
 			styles.add(ParagraphStyle(name='big_centerAlign',fontName='Helvetica',alignment=TA_CENTER,fontSize=16, spaceBefore=5, leading=20))
@@ -2233,109 +2279,234 @@ def create_accreditation_report(request, option_url, date_url):
 			styles.add(ParagraphStyle(name='title_leftAlign',fontName='Helvetica',alignment=TA_LEFT,fontSize=14, spaceAfter=10, spaceBefore=10))
 			styles.add(ParagraphStyle(name='body_leftAlign',fontName='Times-Roman',alignment=TA_LEFT, firstLineIndent=25, spaceAfter=5))
 			styles.add(ParagraphStyle(name='body_justifyAlign',fontName='Times-Roman',alignment=TA_JUSTIFY, firstLineIndent=25, spaceAfter=5))
-            
+			 
 			# HEADER/TITLE
 			elements.append(Paragraph("<i>Western University ~ Faculty of Engineering</i>",styles['small_centerAlign']))
 			elements.append(Paragraph("Accreditation Report on the "+option_name, styles['big_centerAlign']))
 			elements.append(Paragraph("For the graduating class of "+date_url, styles['big_centerAlign']))
-            
-            # MATHEMATICS
+			 
+			# MATHEMATICS
 			elements.append(Paragraph("Mathematics",styles['title_leftAlign']))
 			math_data = [['Course Number','Course Title','Math AU','Course Contact','Relevant Content'],]
-            
+			 
 			total_math = 0
 			for instance in math_instances:
 				au = ContactHours.objects.get(instance=instance)
 				instance_name = Paragraph(instance.course.name,styleN)
-				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance_name,au.contact_ma,'n/a', '-']
+
+				prof_string = ""
+				if len(instance.professors.all())!=0:
+					for prof in instance.professors.all():
+						prof_string += (prof.user.last_name +", "+prof.user.first_name+"\n")
+					prof_para = Paragraph(prof_string,styleN)
 				else:
-					data =[instance.course.course_code,instance_name,au.contact_ma,instance.professors.all(), '-']
+					prof_para = Paragraph("n/a",styleN)
+
+				concept_string = ""
+				if len(instance.concepts.all()) !=0:
+					for concept in instance.concepts.all():
+						concept_string += (concept.name +"\n")
+					concept_para = Paragraph(concept_string, styleN)
+				else:
+					concept_para=Paragraph("n/a",styleN)
+
+				data = [instance.course.course_code,instance_name,au.contact_ma,prof_para, concept_para]
 				total_math += au.contact_ma
 				math_data.append(data)
-            
+			 
+			TOTAL_AU += total_math
 			total_math_au = ['Total:','',total_math,'','']
 			math_data.append(total_math_au)
+			desired_ceab_au = ['CEAB Minimum:','',CEAB_MA_MIN,'','']
+			math_data.append(desired_ceab_au)
 			math_table = Table(math_data,colWidths=[3.0*cm,7.0*cm,2.5*cm,3.0*cm,4.0*cm])
 			math_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
 			elements.append(math_table)
-            
+			 
 			# SCIENCES
 			elements.append(Paragraph("Natural Sciences",styles['title_leftAlign']))
 			science_data = [['Course Number','Course Title','Science AU','Course Contact','Relevant Content'],]
-            
+			 
 			total_science = 0
 			for instance in science_instances:
 				au = ContactHours.objects.get(instance=instance)
 				instance_name = Paragraph(instance.course.name,styleN)
-				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance_name,au.contact_sc,'n/a', '-']
+
+				prof_string = ""
+				if len(instance.professors.all())!=0:
+					for prof in instance.professors.all():
+						prof_string += (prof.user.last_name +", "+prof.user.first_name+"\n")
+					prof_para = Paragraph(prof_string,styleN)
 				else:
-					instance_professors = Paragraph(instance.professors.all()[0], styleN)
-					data =[instance.course.course_code,instance_name,au.contact_sc,instance_professors, '-']
+					prof_para = Paragraph("n/a",styleN)
+				 
+				concept_string = ""
+				if len(instance.concepts.all()) !=0:
+					for concept in instance.concepts.all():
+						concept_string += (concept.name +"\n")
+					concept_para = Paragraph(concept_string, styleN)
+				else:
+					concept_para=Paragraph("n/a",styleN)
+				 
+				data = [instance.course.course_code,instance_name,au.contact_sc,prof_para, concept_para]
 				total_science += au.contact_sc
 				science_data.append(data)
-            
+
+			TOTAL_AU += total_science
 			total_science_au = ['Total:','',total_science,'','']
 			science_data.append(total_science_au)
+			desired_ceab_au = ['CEAB Minimum:','',CEAB_SC_MIN,'','']
+			science_data.append(desired_ceab_au)
 			science_table = Table(science_data, colWidths=[3.0*cm,7.0*cm,2.5*cm,3.0*cm,4.0*cm])
 			science_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
 			elements.append(science_table)
-            
+			 
 			# ENGINEERING SCIENCE AND DESIGN
 			contact_para = Paragraph("Course Contact",styleN)
 			content_para = Paragraph("Relevant Content",styleN)
+			prof_status_para = Paragraph("Licensure Status (P. Eng)",styleN)
 			elements.append(Paragraph("Engineering Science and Design",styles['title_leftAlign']))
-			eng_sc_ed_data = [['Course Number','Course Title','ES','ED','ES + ED',contact_para,content_para],]
-            
+			eng_sc_ed_data = [['Course Number','Course Title',contact_para,prof_status_para,'ES','ED','ES + ED',content_para],]
+			 
 			total_es = 0
 			total_ed = 0
 			for instance in eng_sc_ed_instances:
 				au = ContactHours.objects.get(instance=instance)
 				instance_name = Paragraph(instance.course.name,styleN)
-				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance_name,au.contact_es, au.contact_ed, (au.contact_es + au.contact_ed),'n/a', '-']
+
+				prof_string = ""
+				peng_string = " "
+				if len(instance.professors.all())!=0:
+					for prof in instance.professors.all():
+						prof_string += (prof.user.last_name +", "+prof.user.first_name+"\n")
+						if prof.is_peng:
+							peng_string = "X"
+	 
+					prof_para = Paragraph(prof_string,styleN)
 				else:
-					data =[instance.course.course_code,instance_name,au.contact_ma,instance.professors.all(), '-']
+					prof_para = Paragraph("n/a",styleN)
+				 
+				concept_string = ""
+				if len(instance.concepts.all()) !=0:
+					for concept in instance.concepts.all():
+						concept_string += (concept.name +"\n")
+					concept_para = Paragraph(concept_string, styleN)
+				else:
+					concept_para=Paragraph("n/a",styleN)
+
+
+
+				data = [instance.course.course_code,instance_name,prof_para, peng_string ,au.contact_es, au.contact_ed, (au.contact_es + au.contact_ed), concept_para]
+				 
 				total_es += au.contact_es
 				total_ed += au.contact_ed
 				eng_sc_ed_data.append(data)
-            
-			total_eng_au = ['Total:','',total_es,total_ed,(total_es+total_ed),'','']
+
+			TOTAL_AU += (total_es + total_ed)
+
+			total_eng_au = ['Total:','','','',total_es,total_ed,(total_es+total_ed),'']
 			eng_sc_ed_data.append(total_eng_au)
-			eng_table = Table(eng_sc_ed_data, colWidths=[3.0*cm,7.0*cm,1.5*cm,1.5*cm,2.0*cm,2.25*cm,2.25*cm])
-			eng_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(6,0),colors.grey)]))
+			desired_ceab_au = ['CEAB Minimum:','','','',CEAB_ES_MIN,CEAB_ED_MIN,CEAB_ES_ED_MIN,'']
+			eng_sc_ed_data.append(desired_ceab_au)
+			eng_table = Table(eng_sc_ed_data, colWidths=[3.0*cm,5.0*cm,2.25*cm,2.0*cm,1.5*cm,1.5*cm,2.0*cm,2.25*cm])
+			eng_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(7,0),colors.grey)]))
 			elements.append(eng_table)
-            
+			 
 			# COMP STUDIES
 			elements.append(Paragraph("Complementary Studies",styles['title_leftAlign']))
 			comp_data = [['Course Number','Course Title','CS AU','Course Contact','Relevant Content'],]
-            
+			 
 			total_comp = 0
 			for instance in comp_instances:
 				au = ContactHours.objects.get(instance=instance)
 				instance_name = Paragraph(instance.course.name,styleN)
-				if len(instance.professors.all())==0:
-					data = [instance.course.course_code,instance_name,au.contact_co,'n/a', '-']
+				prof_string = ""
+				if len(instance.professors.all())!=0:
+					for prof in instance.professors.all():
+						prof_string += (prof.user.last_name +", "+prof.user.first_name+"\n")
+					prof_para = Paragraph(prof_string,styleN)
 				else:
-					data =[instance.course.course_code,instance_name,au.contact_co,instance.professors.all(), '-']
+					prof_para = Paragraph("n/a",styleN)
+				 
+				concept_string = ""
+				if len(instance.concepts.all()) !=0:
+					for concept in instance.concepts.all():
+						concept_string += (concept.name +"\n")
+					concept_para = Paragraph(concept_string, styleN)
+				else:
+					concept_para=Paragraph("n/a",styleN)
+				 
+				data = [instance.course.course_code,instance_name,au.contact_co,prof_para, concept_para]
 				total_comp += au.contact_co
 				comp_data.append(data)
-            
+			 
+			TOTAL_AU += total_comp
 			comp_total = ['Total:','',total_comp,'','']
 			comp_data.append(comp_total)
+			desired_ceab_au = ['CEAB Minimum:','',CEAB_CO_MIN,'','']
+			comp_data.append(desired_ceab_au)
 			comp_table = Table(comp_data,colWidths=[3.0*cm,7.0*cm,2.5*cm,3.0*cm,4.0*cm])
 			comp_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(5,0),colors.grey)]))
 			elements.append(comp_table)
-            
+			 
 			# EMPTY
-			elements.append(Paragraph("Empty Instances",styles['title_leftAlign']))
-			elements.append(Paragraph("The following instances have no accreditation units available for analysis. Please make sure the instance is properly constructed/updated with all the appropriate information...",styles['body_leftAlign']))
-			for instance in empty_instances:
-				elements.append(Paragraph("<b>"+instance.course.course_code+" - "+instance.date+"</b>",styles['body_leftAlign']))
-            
-            
+			if empty_instances:
+				elements.append(Paragraph("Empty Instances",styles['title_leftAlign']))
+				elements.append(Paragraph("The following instances have no accreditation units available for analysis. Please make sure the instance is properly constructed/updated with all the appropriate information...",styles['body_leftAlign']))
+				for instance in empty_instances:
+					elements.append(Paragraph("<b>"+instance.course.course_code+" - "+instance.date+"</b>",styles['body_leftAlign']))
+			 
+			elements.append(Paragraph("Total Accreditation Score:",styles['title_leftAlign']))
+			score_data = [['Category','Minimum','Score','Pass/Fail'],]
+
+			if total_math >= CEAB_MA_MIN:
+				score_data.append(['Mathematics',CEAB_MA_MIN,total_math,'Pass'])
+			else:
+				score_data.append(['Mathematics',CEAB_MA_MIN,total_math,'Fail'])
+
+			if total_science >= CEAB_SC_MIN:
+				score_data.append(['Natural Sciences',CEAB_SC_MIN,total_science,'Pass'])
+			else:
+				score_data.append(['Natural Sciences',CEAB_SC_MIN,total_science,'Fail'])
+
+			if (total_science+total_math) >= CEAB_MA_SC_MIN:
+				score_data.append(['Math + Science',CEAB_MA_SC_MIN,(total_science+total_math),'Pass'])
+			else:
+				score_data.append(['Math + Science',CEAB_MA_SC_MIN,(total_science+total_math),'Fail'])
+
+			if total_es >= CEAB_ES_MIN:
+				score_data.append(['Engineering Science',CEAB_ES_MIN,total_es,'Pass'])
+			else:
+				score_data.append(['Engineering Science',CEAB_ES_MIN,total_es,'Fail'])
+
+			if total_ed >= CEAB_ED_MIN:
+				score_data.append(['Engineering Design',CEAB_ED_MIN,total_ed,'Pass'])
+			else:
+				score_data.append(['Engineering Design',CEAB_ED_MIN,total_ed,'Fail'])
+
+			if (total_ed+total_es) >= CEAB_ES_ED_MIN:
+				score_data.append(['Eng. Design + Eng. Science',CEAB_ES_ED_MIN,(total_ed+total_es),'Pass'])
+			else:
+				score_data.append(['Eng. Design + Eng. Science',CEAB_ES_ED_MIN,(total_ed+total_es),'Fail'])
+
+			if total_comp >= CEAB_CO_MIN:
+				score_data.append(['Complementary Studies',CEAB_CO_MIN,total_comp,'Pass'])
+			else:
+				score_data.append(['Complementary Studies',CEAB_CO_MIN,total_comp,'Fail'])
+
+			if TOTAL_AU >= CEAB_TOTAL_MIN:
+				score_data.append(['Total AU score',CEAB_TOTAL_MIN,TOTAL_AU,'Pass'])
+			else:
+				score_data.append(['Total AU score',CEAB_TOTAL_MIN,TOTAL_AU,'Fail'])
+
+
+			score_table = Table(score_data,colWidths=[5.0*cm,3.0*cm,3.0*cm,3.0*cm])
+			score_table.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),('BOX', (0, 0), (-1, -1), 0.25, colors.black),('BACKGROUND',(0,0),(4,0),colors.grey)]))
+			elements.append(score_table)
+	 
+	 
 			doc.build(elements)
+
 			# Get the value of the BytesIO buffer and write it to the response.
 			pdf = buffer.getvalue()
 			buffer.close()
@@ -2343,7 +2514,7 @@ def create_accreditation_report(request, option_url, date_url):
 			return response
 		except YearlyCourseList.DoesNotExist:
 			return HttpResponseRedirect()
-    
+	 
 	except Option.DoesNotExist:
 		return HttpResponseRedirect()
 
@@ -2454,20 +2625,20 @@ def meta_display_concepts_json(concept):
 	html_list = html_list + '{"id": "'+concept.name+'","name": "' + concept.name + '","data":[],"children":['
     
 	if(height > 0):
-		html_list = display_concepts_json(my_children, height, html_list)
+		html_list = display_concepts_json(my_children, height, html_list, concept.name)
     
     
 	html_list = html_list + '],}'
 	return html_list
 
 # Recursive function to get child concepts of a concept
-def display_concepts_json(concept_list, height, html_list):
+def display_concepts_json(concept_list, height, html_list, parent_name):
 	for c in concept_list:
-		html_list = html_list + '{"id": "'+c.name+'","name": "' + c.name + '","data":[],"children":['
+		html_list = html_list + '{"id": "'+c.name+parent_name+'","name": "' + c.name + '","data":[],"children":['
 		one_down = height - 1
 		if (one_down >= 0):
 			children = c.related_concepts.all()
-			html_list = display_concepts_json(children, one_down, html_list)
+			html_list = display_concepts_json(children, one_down, html_list, (c.name + parent_name))
 		html_list = html_list + ']},'
     
     
@@ -2511,7 +2682,7 @@ def course_hyper_map(request):
 					course_list = YearlyCourseList.objects.get(option = o, year=x)
 					courses = course_list.courses.all()
 					for c in courses:
-						html_list = html_list + '{"id": "'+c.name + o.name + '","name": "' + c.name + '","data":{"link":"courses/'+c.get_url+'"},"children":['
+						html_list = html_list + '{"id": "'+c.name + o.name + str(x)+ '","name": "' + c.name + '","data":{"link":"courses/'+c.get_url+'"},"children":['
 						html_list = html_list + ']},'
 					html_list = html_list + ']},'
 				html_list = html_list + ']},'

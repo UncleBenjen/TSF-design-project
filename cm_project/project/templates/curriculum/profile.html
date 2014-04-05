@@ -12,39 +12,52 @@
     <hr>
     <div class="row-fluid">
         <div class="span12">
-            <h3>User Info:</h3>
+            <br/>
             <div class = "row-fluid">
                 <div class="span6">
                     <table class="table">
                         <tr>
-                            <td>First Name: </td>
+                            <td><strong>First Name </strong></td>
                             <td>{{ user.first_name }}</td>
                         </tr>
                         <tr>
-                            <td>Last Name: </td>
+                            <td><strong>Last Name </srtong></td>
                             <td>{{ user.last_name }}</td>
                         </tr>
                         <tr>
-                            <td>Email: </td>
+                            <td><strong>Email </strong></td>
                             <td>{{ user.email }}</td>
                         </tr>
                         {% if userprofile %}
                         <tr>
-                            <td>Website: </td>
+                            <td><strong>Website </strong></td>
                             <td><a href = "{{ userprofile.website }}">{{ userprofile.website }}</a></td>
                         </tr>
                         <tr>
-                            <td>Type: </td>
-                            <td>{{ userprofile.type }}</td>
+                            <td><strong>Type </strong></td>
+                            <td>{{ userprofile.get_type_display }}</td>
                         </tr>
 						<tr>
-							<td>Tracking:</td>
-							<td>
-							{% for c in cohorts %}
-								<p>{{ c.program }}, {{ c.date_start }}, {{ c.date_end }} - <a href = "/curriculum/contact_hours_cohort/{{ c.id }}/">view</a></p>
-							{% endfor %}
-							</td>
+							<td><strong>Teaches</strong></td>
+							{% if teaches %}
+								{% for t in teaches %}
+									<td><a href="/curriculum/instances/{{ t.course.get_url }}/{{t.get_date}}/">{{ t.course }}, {{t.get_date}}</a></td>
+								{% endfor %}
+							{% else %}
+								<td>Nothing</td>
+							{% endif %}
 						</tr>
+						<tr>
+							<td><strong>Assists</strong></td>
+							{% if assists %}
+								{% for a in assists %}
+									<td>{{ a.course }}</td>
+								{% endfor %}
+							{% else %}
+								<td>Nothing</td>
+							{% endif %}
+						</tr>
+						
                         {% else %}
                         {% endif %}
                     </table>

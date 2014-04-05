@@ -12,7 +12,7 @@
             {% else %}
             <h1>Welcome!</h1>
             {% endif %}
-            <hr>
+			<br/>
             <p>This application offers a range of features and functionalitites that will allow professors and T.A's to input information on the courses they teach. The tracking and analysis of this information will facilitate the accredidation process, allowing CEAB reports to be conducted in a streamlined and effecient manner.</p>
             <p>
             
@@ -25,30 +25,42 @@
         <div class="row-fluid">
             <div class="span12">
                 <div class="row-fluid">
+                    <div class = "span4">		
+						<img src={% static "c_map.jpg" %} style = "max-height:210px;"></img>    
+                    </div>
+					<div class = "span4">
+						<img src={% static "bar.jpg" %} style = "padding-top:7%; min-width:200px;"></img>                        
+                    </div>
                     <div class = "span4">
-                        <h3>Constructing the curriculum map...</h3>
+						<img src={% static "pie.jpg" %}></img>               
+                    </div>
+            	</div>
+            </div>
+        </div>
+		<div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class = "span4">
+						<br/>
                         <ul>
-                            <li>Create and add new courses to the available programs.</li>
-                            <li>Link the courses together by defininng pre, co, and anti-requisites.</li>
-                            <li>Create concepts and define their CEAB accredidation unit.</li>
+                            <li style = "line-height: 140%; ">Create and add new courses to the available programs.</li>
+                            <li style = "line-height: 140%; ">Create concepts and define their CEAB accredidation unit.</li>
+                        </ul>      
+                    </div>
+					<div class = "span4">
+						<br/>
+                        <ul>
+                            <li style = "line-height: 140%; ">Create CEAB reports for a graduating year</li>
+                            <li style = "line-height: 140%; ">Easily view AU breakdowns.</li>
+                            <li style = "line-height: 140%; ">Generate a syllabus with the push of a button.</li>
                         </ul>
                         
                     </div>
                     <div class = "span4">
-                        <h3>Inputting course data...</h3>
-                        <ul>
-                            <li>Create a 'course instance' when you teach/assist in teaching a course.</li>
-                            <li>Define course related data.</li>
-                            <li>Upload graduate attribute measurements, and their respective rubriks.</li>
-                        </ul>
-                        
-                    </div>
-                    <div class = "span4">
-                        <h3>CEAB reporting and syllabus generation..</h3>
-                        <ul>
-                            <li>Create CEAB reports across courses and programs</li>
-                            <li>Easily view AU breakdowns.</li>
-                            <li>Generate a syllabus with the push of a button.</li>
+						<br/>
+						<ul>
+                            <li style = "line-height: 140%; ">Define course related data.</li>
+                            <li style = "line-height: 140%; ">Upload graduate attribute measurements, and their respective rubriks.</li>
                         </ul>
                         
                     </div>

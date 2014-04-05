@@ -29,7 +29,7 @@
 					{% if list1 %}
 						<ul>
 						{% for course in list1 %}
-								<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/1/">&times;</a></li>
+								<li style = "font-size:80%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/1/">&times;</a></li>
 						{% endfor %}
 						</ul>
 					{% else %}
@@ -56,7 +56,7 @@
 				{% if list2 %}
 					<ul>
 					{% for course in list2 %}
-							<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/2/">&times;</a></li>
+							<li style = "font-size:80%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/2/">&times;</a></li>
 					{% endfor %}
 					</ul>
 				{% else %}
@@ -81,7 +81,7 @@
 				{% if list3 %}
 					<ul>
 					{% for course in list3 %}
-						<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/3/">&times;</a></li>
+						<li style = "font-size:80%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/3/">&times;</a></li>
 					{% endfor %}
 					</ul>
 				{% else %}
@@ -107,7 +107,7 @@
 				{% if list4 %}
 					<ul>
 					{% for course in list4 %}
-						<li><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/4/">&times;</a></li>
+						<li style = "font-size:80%;"><a href = "/curriculum/courses/{{ course.get_url }}">{{ course.course_code }}</a><a class = "close" href = "/curriculum/delete_course_from_list/{{ option_url }}/{{ course.get_url }}/4/">&times;</a></li>
 					{% endfor %}
 					</ul>
 				{% else %}

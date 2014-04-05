@@ -11,6 +11,7 @@
             <!-- Dispay basic info; course code and name, as well as date -->
         	<h1>Course Instance</h1>
         	<h3><a href="/curriculum/courses/{{ parent_course.get_url }}">{{ parent_course.course_code }}</a> - {{ parent_course.name }}</h3>
+			<a class="btn btn-primary"href="/curriculum/download_syllabus/{{ course_url}}/{{ date_url }}/">Generate Syllabus</a>
             <hr>
             {% if instance %}
             <!-- If there was an instance found and passed through the context... -->
@@ -72,7 +73,7 @@
                         {% if textbooks %}
                         
                         {% for textbook in textbooks %}
-                        <li>{{ textbook.name }}{% if textbook.required %} (required){% endif %}<a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ textbook.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></li>
+                        <li>{{ textbook.name }}{% if textbook.required %} (required){% endif %}, ISBN: {{ textbook.isbn }}<a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_textbook/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ textbook.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a></li>
                         {% endfor %}
                         {% else %}
                         <li>No textbooks are listed under this course instance...</li>
@@ -261,10 +262,10 @@
             <h3>Learning Objectives</h3>
             {% if objectives %}
             {% for objective in objectives %}
-            <h5><strong>{{forloop.counter}}.</strong> {{ objective.name }}</h5>
+            <h4><strong>{{forloop.counter}}.</strong> {{ objective.name }}</h4>
             <a class="btn btn-small btn-danger" style="float:right;" href="/curriculum/delete_objective/{{ parent_course.get_url }}/{{ instance.get_date }}/{{ objective.pk }}/"><img src={% static "img/glyphicons_197_remove.png" %} alt="Delete" /></a>
             <ul>
-                <li><p>{{ objective.description }}</p></li>
+                <li style = "font-size: 90%;"><p>{{ objective.description }}</p></li>
             </ul>
             {% endfor %}
             <!-- if none were found alert the user -->
@@ -317,6 +318,8 @@
             
             <!--display ceab grad measurements if they exist-->
             <h3>CEAB Graduate Attribute Measurements</h3>
+			<p><a class="btn btn-success" href="/curriculum/add_ceab_measurement/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add CEAB Graduate Attribute</a></p>
+			<br/>
             {% if ceab_grads %}
             <div class="row-fluid">
                
@@ -338,23 +341,12 @@
                 </table>
                 
             </div>
-            <hr>
             
             {% else %}
             <p>There were no ceab graduate attributes listed under this course instance...</p>
             
             {% endif %}
-            <p><a class="btn btn-success" href="/curriculum/add_ceab_measurement/{{ parent_course.get_url }}/{{ instance.get_date }}/">Add CEAB Graduate Attribute</a></p>
             
-            
-            <hr>
-            <div class="span12">
-                <div class="row-fluid">
-                    <div class="span4 offset4">
-                        <a class="btn btn-primary"href="/curriculum/download_syllabus/{{ course_url}}/{{ date_url }}/">Generate Syllabus</a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

@@ -62,7 +62,7 @@ class ContactHoursCohort(models.Model):
 # Department model
 class Department(models.Model):
 	name = models.CharField(max_length = 128, unique = True)
-	head = models.OneToOneField(UserInfo)
+	head = models.OneToOneField(UserInfo, blank = True)
 	website = models.URLField(blank = True)
 	
 	@property

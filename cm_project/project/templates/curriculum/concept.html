@@ -214,54 +214,64 @@ function init(){
     <div class="row-fluid">
         <div class="span12">
             <h1>Concept Page</h1>
-            <hr>
             <h2>Name: {{ concept_name }}</h2>
+			<p><strong>CEAB Unit: </strong>{{ ceab_unit }}</p>
+            <p><strong>Description: </strong>{{ description }}</p>
+			<a class = "btn btn-primary" href = "/curriculum/add_child_concept_search/{{ concept_url }}/">Add Child Concepts</a>
             <hr>
         </div>
     </div>
 	<div class = "row-fluid">
 		<div class = "span12">
             <div class="row-fluid">
-                <div class="span6">
-                    <h3>Description:</h3>
-                    <p>{{ description }}</p>
-                    <hr>
-                    <p>Ceab Measurement Unit: {{ ceab_unit }}</p>
-                    
-                    <p>Highschool concept? {{ highschool }}</p>
-                    
-                    <p>Height: {{ level }}</p>
-                    <hr>
-                    <h4> My Children </h4>
-                    {% for c in my_children %}
-                    {{c}}
-                    {% endfor %}
+			
+				<div class="span4">
+                    <h2>Instances</h2>
+					{% if courses %}
+						{% for c in courses %}
+							<p style = "line-height:100%; font-size: 90%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}">{{ c.course }} - {{ c.date }}</a></p>
+						{% endfor %}
+					{% else %}
+						<p>None yet...</p>
+					{% endif %}
+
+                </div>
+					
+				<div class = "span4">
+					<h2>Courses</h2>
+					{% if courses2 %}
+						{% for c in courses2 %}
+							<p style = "line-height:100%; font-size: 90%;"><a href = "/curriculum/courses/{{ c.get_url }}/">{{ c.course_code }}</a></p>
+						{% endfor %}
+					{% else %}
+						<p>None yet...</p>
+					{% endif %}
+				</div>
+			
+                <div class="span4">	
+                    <h2>Children</h2>	
+
                     {% if concept_html %}
-                    {{ concept_html|safe }}
+						<div style = "height:200px; overflow-y:auto; font-size: 90%;">
+							{{ concept_html|safe }}
+						</div>
                     {% else %}
-                    <p>No Child Concepts yet</p>
+						<p><strong>Highschool? </strong>{{ highschool }}</p>
                     {% endif %}
-                    <a class = "btn btn-primary" href = "/curriculum/add_child_concept_search/{{ concept_url }}/">Add Child Concepts</a>
-                    <hr>
                 </div>
-                <div class="span6">
-                    <p>Courses Instances:</p>
-                    {% for c in courses %}
-                        <p style = "line-height:100%; font-size: 90%;"><a href = "/curriculum/instances/{{ c.course.get_url }}/{{ c.get_date }}">{{ c.course }} - {{ c.date }}</a></p>
-                    {% endfor %}
-                    <hr>
-                    
-                    <p>Courses:</p>
-                    {% for c in courses2 %}
-                        <p style = "line-height:100%; font-size: 90%;"><a href = "/curriculum/courses/{{ c.get_url }}/">{{ c.course_code }}</a></p>
-                    {% endfor %}
-                    <hr>
-                    
-                    
-                </div>
+                
             </div>
         </div>
-        <div class="well span12">
+
+	</div>
+</div>
+
+<div class = "well hero-unit " style = "max-width:80%; min-width:80%; float:right;">
+	<div class = "span12 text-center">
+		<h2>Concept Tree </h2>
+		<br/>
+	</div>
+	        <div class="well span12">
             <div id="infovis"    style = "width:800px;" >
  
             </div>
@@ -271,6 +281,5 @@ function init(){
             </div>
 
 		</div>
-	</div>
 </div>
 {% endblock %}
